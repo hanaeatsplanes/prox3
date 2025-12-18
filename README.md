@@ -1,15 +1,3 @@
-# Elysia with Bun runtime
-
-## Getting Started
-To get started with this template, simply paste this command into your terminal:
-```bash
-bun create elysia ./elysia-example
-```
-
-## Development
-To start the development server run:
-```bash
-bun run dev
-```
-
-Open http://localhost:3000/ with your browser to see the result.
+### This project is a reincarnation of *https://github.com/anirudhb/prox2*, but written using [ElysiaJS](https://elysiajs.com/). Kudos to @anirudhb (ani') for the original!
+# Prox2.5
+beans
