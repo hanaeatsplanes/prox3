@@ -1,15 +1,29 @@
 {
   "name": "app",
   "version": "1.0.50",
+  "type": "module",
   "scripts": {
+    "build": "bun build src/index.ts --outdir=dist --target=node",
+    "start": "bun run dist/index.js",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
+    "@libsql/client": "^0.15.15",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.45.1",
     "elysia": "latest"
   },
   "devDependencies": {
-    "bun-types": "latest"
-  },
-  "module": "src/index.js"
+    "@eslint/js": "^9.39.2",
+    "@eslint/json": "^0.14.0",
+    "bun-types": "latest",
+    "drizzle-kit": "^0.31.8",
+    "eslint": "^9.39.2",
+    "globals": "^16.5.0",
+    "jiti": "^2.6.1",
+    "typescript-eslint": "^8.50.0"
+  }
 }
