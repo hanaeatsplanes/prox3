@@ -3,7 +3,7 @@ module.exports = [
         ignores: [
             "dist/**",
             "node_modules/**",
-            "*.config.js",
+            "*.config.*js",
         ],
     },
 
