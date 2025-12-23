@@ -5,23 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="48495bde-987a-4232-b7d9-f2ca56d70412" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/prox2.5.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/drizzle.config.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/dmRecieved.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/db/schema.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/models.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/nextConfId.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/stageConfess.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copilot.data.migration.ask2agent.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bun.lock" beforeDir="false" afterPath="$PROJECT_DIR$/bun.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eslint.config.cjs" beforeDir="false" afterPath="$PROJECT_DIR$/eslint.config.cjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +77,7 @@
       <workItem from="1766161562104" duration="2428000" />
       <workItem from="1766203459707" duration="2363000" />
       <workItem from="1766205876864" duration="233000" />
-      <workItem from="1766206134924" duration="16348000" />
+      <workItem from="1766206134924" duration="19745000" />
     </task>
     <servers />
   </component>
