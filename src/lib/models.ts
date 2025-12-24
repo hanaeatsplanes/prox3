@@ -20,11 +20,11 @@ export class Confession {
 
 
 
-export type OuterEvent = {
+export type OuterEvent<T extends InnerEvent> = {
 	token: string,
 	team_id: string,
 	api_app_id: string,
-	event: InnerEvent,
+	event: T,
 	type: "event_callback",
 	authorizations: any,
 	event_context: string,
