@@ -3,7 +3,7 @@
   "version": "1.0.50",
   "type": "module",
   "scripts": {
-    "prebuild": "bun update && bun upgrade && bun run scripts/prebuild.ts",
+    "deploy": "vercel deploy --prod",
     "build": "bun build src/index.ts --outdir=dist --target=node",
     "start": "bun run dist/index.js",
     "lint": "eslint",
