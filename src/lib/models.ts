@@ -17,3 +17,30 @@ export class Confession {
 		return crypto.scryptSync(Buffer.from(slackId), this.salt, 64).toString("hex") === this.hash
 	}
 }
+
+
+
+export type OuterEvent = {
+	token: string,
+	team_id: string,
+	api_app_id: string,
+	event: InnerEvent,
+	type: "event_callback",
+	authorizations: any,
+	event_context: string,
+	event_id: string,
+	event_time: number
+}
+
+
+export type InnerEvent = MessageIMInnerEvent //TODO: define properly later
+
+export type MessageIMInnerEvent = {
+	type: "message",
+	channel: string,
+	user: string,
+	text: string,
+	ts: string,
+	event_ts: string,
+	channel_type: "im"
+}
