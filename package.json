@@ -3,6 +3,7 @@
   "version": "1.0.50",
   "type": "module",
   "scripts": {
+    "prebuild": "bun update && bun upgrade && bun run scripts/prebuild.ts",
     "build": "bun build src/index.ts --outdir=dist --target=node",
     "start": "bun run dist/index.js",
     "lint": "eslint",
@@ -25,6 +26,6 @@
     "eslint": "^9.39.2",
     "globals": "^16.5.0",
     "jiti": "^2.6.1",
-    "typescript-eslint": "^8.50.0"
+    "typescript-eslint": "^8.50.1"
   }
 }
