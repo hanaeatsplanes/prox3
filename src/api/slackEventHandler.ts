@@ -1,9 +1,7 @@
 import dmReceived from "./dmRecieved";
 import {InnerEvent, OuterEvent} from "../lib/models";
 
-export function slackEventHandler(req: ) {
-	const body: any = req.body;
-	const status = req.status;
+export function slackEventHandler(body: any, status: (code: number, message: string) => unknown) {
 	if (!body) {
 		return status(405, "Method Not Allowed")
 	}

@@ -42,5 +42,5 @@ package-lock.json
 **/*.bun
 /dist/
 /.idea/
-.idea
+.idea/
 .idea/*
