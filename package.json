@@ -15,7 +15,7 @@
     "@elysiajs/openapi": "^1.4.12",
     "@libsql/client": "^0.15.15",
     "drizzle-orm": "^0.45.1",
-    "elysia": "^1.4.19",
+    "elysia": "^1.4.19"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
