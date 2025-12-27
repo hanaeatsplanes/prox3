@@ -17,7 +17,7 @@ const db = drizzle({ connection: {
 		authToken: process.env.TURSO_AUTH_TOKEN
 	}});
 
-app.post("api", ({ body, status }) => slackEventHandler(body, status));
+// app.post("api", ({ body, status }) => slackEventHandler(body, status));
 
 app.listen(3000);
 
