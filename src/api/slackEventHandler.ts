@@ -1,5 +1,4 @@
 import dmReceived from "./dmRecieved";
-import {InnerEvent, OuterEvent} from "../lib/models";
 
 export function slackEventHandler(body: any, status: (code: number, message: string) => unknown) {
 	if (!body) {

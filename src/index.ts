@@ -10,6 +10,13 @@ const app = new Elysia()
 		})
 	)
 
+app.onAfterResponse(({ request, set }) => {
+	const url = new URL(request.url);
+	const path = url.pathname + url.search;
+	const status = set.status ?? 200;
+	console.log(`[${new Date().toLocaleTimeString()}] ${request.method} ${path} ${status}`);
+});
+
 // app.post("api", ({ body, status }) => slackEventHandler(body, status));
 
 app.get("/nextConfessionId", nextConfessionId);
