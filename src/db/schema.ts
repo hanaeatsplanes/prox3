@@ -1,22 +1,17 @@
-import { int, text, sqliteTable } from "drizzle-orm/sqlite-core";
+import {InferInsertModel, InferSelectModel } from "drizzle-orm";
+import * as p from "drizzle-orm/sqlite-core";
 
-export const stagedConfessionsTable = sqliteTable("staged_confessions",
+export const confessions = sqliteTable("confessions",
 	{
-		id: int().primaryKey(),
-		hash: text().notNull(),
-		salt: text().notNull(),
-		stagingTs: int().notNull().unique(),
-		content: text().notNull()
+		id: p.integer().primaryKey(),
+		hash: p.text().notNull(),
+		salt: p.text().notNull(),
+		published: p.integer({ mode: "boolean" }).notNull(),
+		publishTs: p.integer().unique(),
+		stagingTs: p.integer().notNull(),
+		content: p.text().notNull(),
 	}
 )
 
-export const confessionsTable = sqliteTable("confessions",
-	{
-		id: int().primaryKey().references(() => stagedConfessionsTable.id),
-		hash: text().notNull(),
-		salt: text().notNull(),
-		publishTs: int().notNull().unique(),
-		stagingTs: int().notNull(),
-		content: text().notNull(),
-	}
-)
+export type StagedConfession = InferSelectModel<typeof stagedConfessions>;
+export type NewStagedConfession = InferInsertModel<typeof users>;
