@@ -1,7 +1,8 @@
 import {Elysia} from "elysia";
 import openapi, {fromTypes} from "@elysiajs/openapi";
 import {drizzle} from 'drizzle-orm/libsql/node';
-import {slackEventHandler} from "./api/slackEventHandler";
+// import {slackEventHandler} from "./api/slackEventHandler";
+import nextConfessionId from "./lib/nextConfId";
 
 const app = new Elysia()
 	.use(
