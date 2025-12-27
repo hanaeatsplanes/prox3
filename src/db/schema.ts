@@ -3,7 +3,7 @@ import * as p from "drizzle-orm/sqlite-core";
 
 export const confessions = p.sqliteTable("confessions",
 	{
-		id: p.integer().primaryKey(),
+		id: p.integer().primaryKey().notNull(),
 		hash: p.text().notNull(),
 		salt: p.text().notNull(),
 		published: p.integer({ mode: "boolean" }).notNull(),
