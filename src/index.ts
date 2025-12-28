@@ -24,9 +24,5 @@ app.post("api/slack", (req) => {
 
 app.get("/nextConfessionId", nextConfessionId);
 
-if (process.env.NODE_ENV !== "production") {
-	app.listen(3000);
-	console.log("listening @ http://localhost:3000, docs at http://localhost:3000/openapi");
-}
-
-export default app;
+app.listen(3000);
+console.log("listening @ http://localhost:3000, docs at http://localhost:3000/openapi");

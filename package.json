@@ -4,7 +4,6 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "deploy": "vercel deploy --prod",
     "build": "bun build . --minify --outdir=dist --target=bun --footer='// gay gay homosexual gay :3'",
     "start": "bun run dist/src/index.js",
     "lint": "eslint",
