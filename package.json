@@ -13,7 +13,7 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
-    "@elysiajs/openapi": "^1.4.12",
+    "@elysiajs/openapi": "^1.4.13",
     "drizzle-orm": "^0.45.1",
     "elysia": "^1.4.19"
   },
