@@ -2,10 +2,11 @@
   "name": "app",
   "version": "1.0.50",
   "type": "module",
+  "main": "src/index.ts",
   "scripts": {
     "deploy": "vercel deploy --prod",
-    "build": "bun build src/index.ts --outdir=dist --target=bun",
-    "start": "bun run dist/index.js",
+    "build": "bun build . --minify --outdir=dist --target=bun --footer='// gay gay homosexual gay :3'",
+    "start": "bun run dist/src/index.js",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,7 +14,6 @@
   },
   "dependencies": {
     "@elysiajs/openapi": "^1.4.12",
-    "@libsql/client": "^0.15.15",
     "drizzle-orm": "^0.45.1",
     "elysia": "^1.4.19"
   },
