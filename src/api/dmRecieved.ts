@@ -1,30 +1,52 @@
-/*
-{
-    "token": "one-long-verification-token",
-    "team_id": "T061EG9R6",
-    "api_app_id": "A0PNCHHK2",
-    "event": {
-        "type": "message",
-        "channel": "D024BE91L",
-        "user": "U2147483697",
-        "text": "Hello hello can you hear me?",
-        "ts": "1355517523.000005",
-        "event_ts": "1355517523.000005",
-        "channel_type": "im"
-    },
-    "type": "event_callback",
-    "authed_teams": [
-        "T061EG9R6"
-    ],
-    "event_id": "Ev0PV52K21",
-    "event_time": 1355517523
-}
- */
-
-
-
-export default function (body: any) {
-
-	const event = body.event
-	console.log(`Direct message received from user ${event.user} in channel ${event.channel}: ${event.text}`)
+export default async function dmRecieved(ts: string, dmChannel: string, confession: string) {
+	const res = await fetch(new Request("https://slack.com/api/chat.postMessage", {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`,
+		},
+		body: JSON.stringify({
+			channel: dmChannel,
+			reply_broadcast: true,
+			blocks: [
+				{
+					type: "section",
+					text: {
+						type: "plain_text",
+						text: "Should we stage this confession? ^w^",
+						emoji: true
+					}
+				},
+				{
+					type: "actions",
+					elements: [
+						{
+							type: "button",
+							text: {
+								type: "plain_text",
+								text: "Yes",
+								emoji: true
+							},
+							style: "primary",
+							value: `${confession}`,
+							action_id: "stage-confession"
+						},
+						{
+							type: "button",
+							text: {
+								type: "plain_text",
+								text: "Click Me",
+								emoji: true
+							},
+							style: "danger",
+							action_id: "do-not-stage"
+						}
+					]
+				}
+			],
+			thread_ts: ts
+		})
+	}));
+	if (!res.ok) {
+		throw new Error(res.statusText);
+	}
 }

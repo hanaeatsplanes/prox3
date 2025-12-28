@@ -17,7 +17,10 @@ app.onAfterResponse(({ request, set }) => {
 	console.log(`[${new Date().toLocaleTimeString()}] ${request.method} ${path} ${status}`);
 });
 
-// app.post("api", ({ body, status }) => slackEventHandler(body, status));
+app.post("api/slack", (req) => {
+	const body = req.body;
+	console.log(body);
+});
 
 app.get("/nextConfessionId", nextConfessionId);
 
