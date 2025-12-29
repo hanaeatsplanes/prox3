@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "prox3",
   "version": "1.0.50",
   "type": "module",
   "main": "src/index.ts",
