@@ -49,4 +49,8 @@ export default async function dmRecieved(ts: string, dmChannel: string, confessi
 	if (!res.ok) {
 		throw new Error(res.statusText);
 	}
+	const body = await res.json()
+	if (!body.ok) {
+		throw new Error(body.error);
+	}
 }
