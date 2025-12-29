@@ -22,9 +22,9 @@ export default async function stageConfession(message: string, slackId: string) 
 
 		await db.insert(s.confessions).values(confession)
 
-		return true
+		return id
 	} catch (err) {
 		console.log(err)
-		return false
+		throw err
 	}
 }

@@ -5,16 +5,17 @@
     "": {
       "name": "app",
       "dependencies": {
-        "@elysiajs/openapi": "latest",
-        "drizzle-orm": "latest",
-        "elysia": "latest",
+        "@elysiajs/openapi": "^1.4.13",
+        "crypto": "^1.0.1",
+        "drizzle-orm": "^0.45.1",
+        "elysia": "^1.4.19",
       },
       "devDependencies": {
-        "@eslint/js": "latest",
-        "@eslint/json": "latest",
-        "drizzle-kit": "latest",
-        "eslint": "latest",
-        "typescript-eslint": "latest",
+        "@eslint/js": "^9.39.2",
+        "@eslint/json": "^0.14.0",
+        "drizzle-kit": "^0.31.8",
+        "eslint": "^9.39.2",
+        "typescript-eslint": "^8.50.1",
       },
     },
   },
@@ -206,6 +207,8 @@
     "cookie": ["cookie@1.1.1", "", {}, "sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ=="],
 
     "cross-spawn": ["cross-spawn@7.0.6", "", { "dependencies": { "path-key": "^3.1.0", "shebang-command": "^2.0.0", "which": "^2.0.1" } }, "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA=="],
+
+    "crypto": ["crypto@1.0.1", "", {}, "sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig=="],
 
     "data-uri-to-buffer": ["data-uri-to-buffer@4.0.1", "", {}, "sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A=="],
 

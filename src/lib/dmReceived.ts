@@ -1,8 +1,9 @@
-export default async function dmRecieved(ts: string, dmChannel: string, confession: string) {
+export default async function dmReceived(ts: string, dmChannel: string, confession: string) {
 	const res = await fetch(new Request("https://slack.com/api/chat.postMessage", {
 		method: "POST",
 		headers: {
 			Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`,
+			"Content-Type": 'application/json'
 		},
 		body: JSON.stringify({
 			channel: dmChannel,
