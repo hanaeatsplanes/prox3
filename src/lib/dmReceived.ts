@@ -34,7 +34,7 @@ export default async function dmRecieved(ts: string, dmChannel: string, confessi
 							type: "button",
 							text: {
 								type: "plain_text",
-								text: "Click Me",
+								text: "No",
 								emoji: true
 							},
 							style: "danger",
