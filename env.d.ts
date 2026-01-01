@@ -4,7 +4,10 @@ declare namespace NodeJS {
 		TURSO_DATABASE_URL: string
 		SLACK_BOT_TOKEN: string
 		SLACK_SIGNING_SECRET: string
-		SLACK_BOT_ID: string
+		CONFESSIONS: string
+		META: string
+		CONFESSIONS_REVIEW: string
+		CONFESSIONS_LOG: string
 		NODE_ENV: "development" | "production" | "test"
 	}
 }
