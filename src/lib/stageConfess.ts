@@ -11,6 +11,27 @@ export default async function stageConfession(message: string, slackId: string) 
 
 		const id = await nextConfessionId()
 
+		const res = await fetch(new Request("https://slack.com/api/chat.postMessage", {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`,
+				"Content-Type": 'application/json'
+			},
+			body: JSON.stringify({
+				channel: process.env.CONFESSIONS_REVIEW,
+				reply_broadcast: true,
+				message: `(staging) ${id} ${message}`,
+			})
+		}));
+
+		if (!res.ok) {
+			throw new Error(res.statusText);
+		}
+		const body = await res.json()
+		if (!body.ok) {
+			throw new Error(body.error ?? res.statusText);
+		}
+
 		const confession: s.NewConfession = {
 			hash: hash,
 			salt: salt,
