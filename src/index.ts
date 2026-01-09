@@ -6,11 +6,6 @@ import handleSlackEvent from "@/api/handleSlackEvent";
 import handleSlackInteraction from "@/api/handleSlackInteraction";
 
 const app = new Elysia()
-	.use(
-		openapi({
-			references: fromTypes()
-		})
-	)
 
 app.onAfterResponse(({ request, set, body, responseValue }) => {
 	const url = new URL(request.url);
