@@ -1,5 +1,4 @@
 import {Elysia} from "elysia";
-import openapi, {fromTypes} from "@elysiajs/openapi";
 // import {slackEventHandler} from "./api/slackEventHandler";
 import nextConfessionId from "./lib/nextId";
 import handleSlackEvent from "@/api/handleSlackEvent";
