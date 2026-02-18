@@ -1,3 +1,15 @@
-### This project is a reincarnation of *https://github.com/anirudhb/prox2*, but written using [ElysiaJS](https://elysiajs.com/). Kudos to @anirudhb (ani') for the original!
-# Prox3
-beans
+# prox2.5
+
+To install dependencies:
+
+```bash
+bun install
+```
+
+To run:
+
+```bash
+bun run index.ts
+```
+
+This project was created using `bun init` in bun v1.3.9. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
