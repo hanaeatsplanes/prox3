@@ -3,9 +3,9 @@ import validateRequest from "@/lib/validateRequest";
 import stageConfession from "@/lib/stageConfess";
 
 export default async function handleSlackInteraction(context: Context) {
-	const { body, headers, status } = context;
+	const { body, headers } = context;
 
-	validateRequest(headers, body);
+	validateRequest(headers,body);
 
 	try {
 		const params = new URLSearchParams(body as string)
