@@ -1,4 +1,4 @@
-export async function validateSlackRequest(request: Request): Promise<boolean> {
+export async function validateSlackRequest(request: Request): Promise<string | false> {
     const timestamp = request.headers.get('X-Slack-Request-Timestamp');
     const slackSignature = request.headers.get("X-Slack-Signature");
 
@@ -20,8 +20,9 @@ export async function validateSlackRequest(request: Request): Promise<boolean> {
         hasher.digest("hex")
     }`
     console.log(signature);
-    return crypto.timingSafeEqual(
+    const valid = crypto.timingSafeEqual(
         Buffer.from(slackSignature),
         Buffer.from(signature)
     )
+    return valid ? body : false
 }
