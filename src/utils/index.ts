@@ -19,10 +19,29 @@ export async function validateSlackRequest(
   hasher.update(baseString)
 
   const signature = `v0=${hasher.digest("hex")}`
-  console.log(signature)
   const valid = crypto.timingSafeEqual(
     Buffer.from(slackSignature),
     Buffer.from(signature)
   )
   return valid ? body : false
+}
+
+export async function postMessage(
+  channel: string,
+  content: string | any,
+  thread_ts?: string
+) {
+  const isText = typeof content === "string"
+  fetch("https://slack.com/api/chat.postMessage", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      channel,
+      ...(isText ? {text: content} : {blocks: content}),
+      thread_ts,
+    }),
+  })
 }
