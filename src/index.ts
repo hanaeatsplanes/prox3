@@ -1,5 +1,10 @@
 import { Elysia } from "elysia";
-import register from "./register";
+import command from "@/command";
+import events from "@/events";
 
 const app = new Elysia();
-register(app);
+app.use(command);
+app.use(events);
+app.listen(3000, () => {
+    console.log("Listening on port 3000");
+})
