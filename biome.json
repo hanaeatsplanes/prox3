@@ -11,6 +11,41 @@
         "noContinue": "error",
         "noDuplicateVariableNames": "error",
         "noDivRegex": "error"
+      },
+      "style": {
+        "useNamingConvention": {
+          "level": "warn",
+          "options": {
+            "strictCase": false,
+            "conventions": [
+              {
+                "selector": { "kind": "variable" },
+                "formats": ["camelCase"]
+              },
+              {
+                "selector": { "kind": "function" },
+                "formats": ["camelCase"]
+              },
+              {
+                "selector": { "kind": "typeLike" },
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": { "kind": "typeProperty" },
+                "formats": [
+                  "camelCase",
+                  "PascalCase",
+                  "CONSTANT_CASE",
+                  "snake_case"
+                ]
+              },
+              {
+                "selector": { "kind": "objectLiteralProperty" },
+                "formats": ["camelCase", "snake_case", "PascalCase"]
+              }
+            ]
+          }
+        }
       }
     }
   },
@@ -23,7 +58,7 @@
   "javascript": {
     "formatter": {
       "trailingCommas": "es5",
-      "semicolons": "asNeeded",
+      "semicolons": "always",
       "arrowParentheses": "always"
     }
   },
