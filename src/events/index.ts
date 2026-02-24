@@ -1,6 +1,6 @@
 import { type Context, Elysia } from "elysia";
 import dmedConfessionHandler from "@/events/dmedConfessionHandler.ts";
-import { validateSlackRequest } from "@/utils";
+import { validateSlackRequest } from "@/utils/slack/middleware";
 
 const app = new Elysia();
 
