@@ -7,7 +7,6 @@
       "Port": 5432,
       "MaintenanceDB": "prox3",
       "Username": "hana",
-      "PassFile": "/tmp/pgpassfile",
       "SSLMode": "prefer"
     }
   }
