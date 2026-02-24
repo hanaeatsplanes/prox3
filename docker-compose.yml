@@ -24,6 +24,19 @@ services:
       timeout: 5s
       retries: 5
 
+  pgadmin:
+    env_file:
+      - .env
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+
   redis:
     image: redis:7
     container_name: redis7
