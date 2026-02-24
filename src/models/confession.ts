@@ -1,10 +1,10 @@
 import type { ConfessionChannel } from "@/config/channels";
+import { hash } from "@/utils/hash";
 
 export class Confession {
   id: number;
   message: string;
   hash: string;
-  salt: string;
   channel?: ConfessionChannel;
   stagingTs?: string;
   state: "approved" | "rejected" | "staged" = "staged";
@@ -12,20 +12,6 @@ export class Confession {
   constructor(id: number, message: string, slackId: string) {
     this.id = id;
     this.message = message;
-  }
-
-  static from(confession: {
-    id: number;
-    message: string;
-    hash: string;
-    salt: string;
-    channel?: ConfessionChannel;
-    stagingTs?: string;
-    state?: "approved" | "rejected" | "staged";
-  }) {
-    Object.assign(
-      new Confession(confession.id, confession.message, ""),
-      confession
-    );
+    this.hash = hash(slackId);
   }
 }
