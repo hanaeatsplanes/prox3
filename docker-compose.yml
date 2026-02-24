@@ -37,12 +37,6 @@ services:
       - "8080:80"
     volumes:
       - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
-    entrypoint: >
-      /bin/sh -c "
-      echo $${POSTGRES_HOST:-postgres}:5432:*:$${POSTGRES_USER}:$${POSTGRES_PASSWORD} > /tmp/pgpassfile &&
-      chmod 600 /tmp/pgpassfile &&
-      /entrypoint.sh
-      "
     depends_on:
       postgres:
         condition: service_healthy
