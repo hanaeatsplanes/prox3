@@ -9,12 +9,12 @@ export class Confession {
   stagingTs?: string;
   state: "approved" | "rejected" | "staged" = "staged";
 
-  constructor(
-    id: number,
-    message: string,
-    channel?: ConfessionChannel
-  );
-  constructor(confession: {
+  constructor(id: number, message: string, slackId: string) {
+    this.id = id;
+    this.message = message;
+  }
+
+  static from(confession: {
     id: number;
     message: string;
     hash: string;
@@ -22,18 +22,10 @@ export class Confession {
     channel?: ConfessionChannel;
     stagingTs?: string;
     state?: "approved" | "rejected" | "staged";
-  });
-  constructor(
-    id: number | object,
-    message?: string,
-    channel?: ConfessionChannel
-  ) {
-    if (typeof id === "number") {
-      this.id = id;
-      this.message = message!;
-      if (channel) this.channel = channel;
-    } else {
-      Object.assign(this, id);
-    }
+  }) {
+    Object.assign(
+      new Confession(confession.id, confession.message, ""),
+      confession
+    );
   }
 }
