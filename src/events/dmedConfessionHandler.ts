@@ -1,4 +1,4 @@
-import { postMessage } from "@/utils";
+import { postMessage } from "@/utils/slack/client";
 
 const payload = (confession: string) => [
   {
