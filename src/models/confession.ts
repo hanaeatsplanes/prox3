@@ -1,5 +1,5 @@
 import type { ConfessionChannel } from "@/config/channels";
-import { nextId } from "@/utils/confession/db.ts";
+import { nextId } from "@/utils/db/confession.ts";
 import { hash } from "@/utils/hash";
 import { chatPostMessage } from "@/utils/slack/client.ts";
 
