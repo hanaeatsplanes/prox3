@@ -32,7 +32,8 @@ app.post("/api/events", async ({ request, status }: Context) => {
         event.type === "message" &&
         event.channel_type === "im" &&
         !event.subtype &&
-        !event.bot_id
+        !event.bot_id &&
+        !event.thread_ts
       ) {
         const confession = event.text;
         dmConfessionHandler(confession, event.channel, event.ts).catch(
