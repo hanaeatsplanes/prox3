@@ -13,10 +13,12 @@ app.post("/api/events", async ({ request, status }: Context) => {
       return JSON.stringify({ status: "unauthorized" });
     }
 
-    const body = extractEvent(
-      rawBody,
-      request.headers.get("content-type") ?? "application/json"
-    );
+    const contentType = request.headers.get("content-type");
+    if (!contentType) {
+      status(400);
+      return JSON.stringify({ status: "no content-type" });
+    }
+    const body = extractEvent(rawBody, contentType);
 
     const { type } = body;
 
