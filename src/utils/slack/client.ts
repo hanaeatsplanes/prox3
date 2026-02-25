@@ -1,6 +1,6 @@
 import { ErrorWithStatus } from "@/models/error.ts";
 
-export async function postMessage(
+export async function chatPostMessage(
   channel: string,
   content: string | object[],
   thread?: {

@@ -1,5 +1,7 @@
 import { Confession } from "@/models/confession.ts";
 import { ErrorWithStatus } from "@/models/error.ts";
+import { hasStaged, setStaged } from "@/utils/confession/db.ts";
+import { chatUpdate } from "@/utils/slack/client.ts";
 
 type Payload = {
   actions: {
@@ -118,15 +120,26 @@ type Payload = {
   };
 };
 
-export default function (payload: Payload) {
+export default async function (payload: Payload) {
   const action = payload.actions[0];
   if (!action) {
     throw new ErrorWithStatus("no action found in block action", 400);
   }
   switch (action.action_id) {
     case "stage_confession": {
+      const { container } = payload;
+      if (await hasStaged(container.thread_ts)) return;
+
       const confession = new Confession(action.value, payload.user.id);
-      confession.stage().catch(console.error);
+      await confession.stage();
+
+      chatUpdate(
+        container.message_ts,
+        container.channel_id,
+        `Staged as confession ${confession.id}`
+      ).catch(console.error);
+
+      await setStaged(container.thread_ts);
     }
   }
 }

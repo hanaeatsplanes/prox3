@@ -1,4 +1,4 @@
-import { postMessage } from "@/utils/slack/client";
+import { chatPostMessage } from "@/utils/slack/client";
 
 const payload = (confession: string) => [
   {
@@ -41,7 +41,7 @@ export default async function (
   dmChannelId: string,
   threadTs: string
 ) {
-  await postMessage(dmChannelId, payload(confession), {
+  await chatPostMessage(dmChannelId, payload(confession), {
     thread_ts: threadTs,
     reply_broadcast: true,
   });
