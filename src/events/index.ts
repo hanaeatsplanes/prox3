@@ -1,4 +1,5 @@
 import { type Context, Elysia } from "elysia";
+import buttonPressHandler from "@/events/buttonPressHandler.ts";
 import dmConfessionHandler from "@/events/dmConfessionHandler.ts";
 import { ErrorWithStatus } from "@/models/error.ts";
 import { extractEvent, validateSlackRequest } from "@/utils/slack/middleware";
@@ -41,6 +42,8 @@ app.post("/api/events", async ({ request, status }: Context) => {
         );
       }
       return { status: "ok" };
+    } else if (type === "block_actions") {
+      buttonPressHandler(body);
     }
   } catch (error) {
     if (error instanceof ErrorWithStatus) {

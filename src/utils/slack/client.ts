@@ -32,6 +32,11 @@ export async function postMessage(
 
   if (!response.ok) throw new Error(`Slack API error: ${response.status}`);
 
-  const data = (await response.json()) as { ok: boolean; error?: string };
+  const data = (await response.json()) as {
+    ok: boolean;
+    error?: string;
+    ts: string;
+  };
   if (!data.ok) throw new ErrorWithStatus(`Slack API: ${data.error}`, 500);
+  return data.ts;
 }
