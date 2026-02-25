@@ -1,3 +1,5 @@
+import { ErrorWithStatus } from "@/models/error.ts";
+
 export async function validateSlackRequest(
   request: Request
 ): Promise<string | false> {
@@ -24,4 +26,20 @@ export async function validateSlackRequest(
     Buffer.from(signature)
   );
   return valid ? body : false;
+}
+
+export function extractEvent(rawBody: string, contentType: string) {
+  if (contentType?.includes("application/json")) {
+    return JSON.parse(rawBody);
+  } else if (contentType?.includes("application/x-www-form-urlencoded")) {
+    const params = new URLSearchParams(rawBody);
+    const payload = params.get("payload");
+    if (!payload) {
+      throw new ErrorWithStatus(
+        "no payload in application/x-www-form-urlencoded",
+        400
+      );
+    }
+    return JSON.parse(payload);
+  }
 }

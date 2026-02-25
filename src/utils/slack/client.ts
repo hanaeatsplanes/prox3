@@ -1,3 +1,5 @@
+import { ErrorWithStatus } from "@/models/error.ts";
+
 export async function postMessage(
   channel: string,
   content: string | object[],
@@ -22,13 +24,14 @@ export async function postMessage(
 
   if (response.status === 429) {
     const retryAfter = response.headers.get("Retry-After");
-    throw new Error(
-      `Slack rate limited. Retry after ${retryAfter || "60"} seconds`
+    throw new ErrorWithStatus(
+      `Slack rate limited. Retry after ${retryAfter || "60"} seconds`,
+      500
     );
   }
 
   if (!response.ok) throw new Error(`Slack API error: ${response.status}`);
 
   const data = (await response.json()) as { ok: boolean; error?: string };
-  if (!data.ok) throw new Error(`Slack API: ${data.error}`);
+  if (!data.ok) throw new ErrorWithStatus(`Slack API: ${data.error}`, 500);
 }
