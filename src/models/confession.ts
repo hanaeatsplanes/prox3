@@ -13,10 +13,15 @@ export class Confession {
   stagingTs?: string;
   state: "approved" | "rejected" | "staged" | "unstaged" = "unstaged";
 
-  constructor(confession?: string, slackId?: string) {
-    this.id = nextId();
-    this.confession = confession ?? "";
-    this.hash = slackId ? hash(slackId) : "";
+  private constructor(id: number, confession: string, hash: string) {
+    this.id = id;
+    this.confession = confession;
+    this.hash = hash;
+  }
+
+  static async create(confession?: string, slackId?: string): Promise<Confession> {
+    const id = await nextId();
+    return new Confession(id, confession ?? "", slackId ? hash(slackId) : "");
   }
 
   async stage(): Promise<void> {
