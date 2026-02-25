@@ -7,5 +7,5 @@ export async function hasStaged(ts: string) {
   return !!(await redis.get(`dm-ts:${ts}`));
 }
 export async function setStaged(ts: string) {
-  return await redis.setex(`dm-ts:${ts}`, 1, "1");
+  return await redis.setex(`dm-ts:${ts}`, 30, "1");
 }
