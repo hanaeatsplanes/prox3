@@ -1,5 +1,5 @@
 import { type Context, Elysia } from "elysia";
-import dmedConfessionHandler from "@/events/dmedConfessionHandler.ts";
+import dmConfessionHandler from "@/events/dmConfessionHandler.ts";
 import { ErrorWithStatus } from "@/models/error.ts";
 import { extractEvent, validateSlackRequest } from "@/utils/slack/middleware";
 
@@ -35,7 +35,7 @@ app.post("/api/events", async ({ request, status }: Context) => {
           !event.bot_id
         ) {
           const confession = event.text;
-          dmedConfessionHandler(confession, event.channel, event.ts).catch(
+          dmConfessionHandler(confession, event.channel, event.ts).catch(
             console.error
           );
         }
