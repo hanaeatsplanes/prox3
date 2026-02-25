@@ -27,19 +27,17 @@ app.post("/api/events", async ({ request, status }: Context) => {
     }
 
     if (type === "event_callback") {
-      (async () => {
-        const { event } = body;
-        if (
-          event.type === "message" &&
-          event.channel_type === "im" &&
-          !event.bot_id
-        ) {
-          const confession = event.text;
-          dmConfessionHandler(confession, event.channel, event.ts).catch(
-            console.error
-          );
-        }
-      })().catch(console.error);
+      const { event } = body;
+      if (
+        event.type === "message" &&
+        event.channel_type === "im" &&
+        !event.bot_id
+      ) {
+        const confession = event.text;
+        dmConfessionHandler(confession, event.channel, event.ts).catch(
+          console.error
+        );
+      }
       return { status: "ok" };
     }
   } catch (error) {
