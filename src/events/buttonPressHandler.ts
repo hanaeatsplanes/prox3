@@ -1,6 +1,6 @@
 import { Confession } from "@/models/confession.ts";
 import { ErrorWithStatus } from "@/models/error.ts";
-import { hasStaged, setStaged } from "@/utils/confession/db.ts";
+import { hasStaged, setStaged } from "@/utils/db/dm.ts";
 import { chatUpdate } from "@/utils/slack/client.ts";
 
 type Payload = {
