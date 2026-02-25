@@ -31,6 +31,7 @@ app.post("/api/events", async ({ request, status }: Context) => {
       if (
         event.type === "message" &&
         event.channel_type === "im" &&
+        !event.subtype &&
         !event.bot_id
       ) {
         const confession = event.text;
