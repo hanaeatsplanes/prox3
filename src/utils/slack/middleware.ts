@@ -1,4 +1,5 @@
 import { ErrorWithStatus } from "@/models/error.ts";
+import type { ButtonPressBody } from "@/models/event.ts";
 
 export async function validateSlackRequest(
   request: Request
@@ -28,7 +29,10 @@ export async function validateSlackRequest(
   return valid ? body : false;
 }
 
-export function extractEvent(rawBody: string, contentType: string): unknown {
+export function extractEvent(
+  rawBody: string,
+  contentType: string
+): ButtonPressBody {
   if (contentType?.includes("application/json")) {
     return JSON.parse(rawBody);
   } else if (contentType?.includes("application/x-www-form-urlencoded")) {
@@ -40,6 +44,7 @@ export function extractEvent(rawBody: string, contentType: string): unknown {
         400
       );
     }
-    return JSON.parse(payload);
+    return JSON.parse(payload) as ButtonPressBody;
   }
+  throw new ErrorWithStatus("not able to parse", 400);
 }
