@@ -4,7 +4,7 @@ import dmConfessionHandler from "@/events/dmConfessionHandler.ts";
 import { ErrorWithStatus } from "@/models/error.ts";
 import { extractEvent, validateSlackRequest } from "@/utils/slack/middleware";
 
-const app = new Elysia();
+const app: Elysia = new Elysia();
 
 app.post("/api/events", async ({ request, status }: Context) => {
   try {

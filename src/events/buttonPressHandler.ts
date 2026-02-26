@@ -3,7 +3,7 @@ import { ErrorWithStatus } from "@/models/error.ts";
 import { hasStaged, setStaged } from "@/utils/db/dm.ts";
 import { chatUpdate } from "@/utils/slack/client.ts";
 
-type Payload = {
+type Body = {
   actions: {
     action_id: string;
     block_id: string;
@@ -120,17 +120,17 @@ type Payload = {
   };
 };
 
-export default async function (payload: Payload) {
-  const action = payload.actions[0];
+export default async function (body: Body): Promise<void> {
+  const action = body.actions[0];
   if (!action) {
     throw new ErrorWithStatus("no action found in block action", 400);
   }
   switch (action.action_id) {
     case "stage_confession": {
-      const { container } = payload;
+      const { container } = body;
       if (await hasStaged(container.thread_ts)) return;
 
-      const confession = new Confession(action.value, payload.user.id);
+      const confession = await Confession.create(action.value, body.user.id);
       await confession.stage();
 
       chatUpdate(

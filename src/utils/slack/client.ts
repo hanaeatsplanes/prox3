@@ -7,7 +7,7 @@ export async function chatPostMessage(
     thread_ts: string;
     reply_broadcast?: true;
   }
-) {
+): Promise<string> {
   const isText = typeof content === "string";
   const response = await fetch("https://slack.com/api/chat.postMessage", {
     method: "POST",
@@ -45,7 +45,7 @@ export async function chatUpdate(
   ts: string,
   channel: string,
   content: string | object[]
-) {
+): Promise<string> {
   const isText = typeof content === "string";
   const response = await fetch("https://slack.com/api/chat.update", {
     method: "POST",

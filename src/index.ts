@@ -5,7 +5,7 @@ import events from "@/events";
 
 await redis.connect();
 
-const app = new Elysia();
+const app: Elysia = new Elysia();
 app.use(command);
 app.use(events);
 app.get("/", "gay");
