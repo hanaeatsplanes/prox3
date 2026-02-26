@@ -9,6 +9,7 @@
 		"start": "bun run dist/src/index.js",
 		"ci": "biome check . --error-on-warnings",
 		"lint": "biome check . --fix && biome format . --write",
+		"lint:unsafe": "biome check . --fix --unsafe && biome format . --write",
 		"lint:check": "biome check . && biome format .",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "bun run --watch src/index.ts"
