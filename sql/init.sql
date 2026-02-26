@@ -7,7 +7,6 @@ CREATE TABLE confessions (
     state TEXT NOT NULL
         CHECK ( state in ('approved',
                           'rejected',
-                          'staged',
-                          'unstaged'
+                          'staged'
                          ))
 )
