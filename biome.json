@@ -10,7 +10,8 @@
       "nursery": {
         "noContinue": "error",
         "noDuplicateVariableNames": "error",
-        "noDivRegex": "error"
+        "noDivRegex": "error",
+        "useExplicitType": "error"
       },
       "style": {
         "useNamingConvention": {

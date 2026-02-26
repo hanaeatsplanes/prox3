@@ -1,6 +1,19 @@
 import { chatPostMessage } from "@/utils/slack/client";
 
-const payload = (confession: string) => [
+const responseBlocks = (
+  confession: string
+): Array<{
+  type: string;
+  text?: { type: string; text: string };
+  elements?: Array<{
+    type: string;
+    style: string;
+    text: { type: string; text: string };
+    value: string;
+    action_id: string;
+    emoji?: true;
+  }>;
+}> => [
   {
     type: "section",
     text: {
@@ -40,8 +53,8 @@ export default async function (
   confession: string,
   dmChannelId: string,
   threadTs: string
-) {
-  await chatPostMessage(dmChannelId, payload(confession), {
+): Promise<void> {
+  await chatPostMessage(dmChannelId, responseBlocks(confession), {
     thread_ts: threadTs,
     reply_broadcast: true,
   });

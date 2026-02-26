@@ -28,7 +28,7 @@ export async function validateSlackRequest(
   return valid ? body : false;
 }
 
-export function extractEvent(rawBody: string, contentType: string) {
+export function extractEvent(rawBody: string, contentType: string): unknown {
   if (contentType?.includes("application/json")) {
     return JSON.parse(rawBody);
   } else if (contentType?.includes("application/x-www-form-urlencoded")) {
