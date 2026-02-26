@@ -9,4 +9,4 @@ CREATE TABLE confessions (
                           'rejected',
                           'staged'
                          ))
-)
+);
