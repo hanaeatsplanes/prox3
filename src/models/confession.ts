@@ -55,4 +55,3 @@ export class Confession {
     return confessionObject;
   }
 }
-

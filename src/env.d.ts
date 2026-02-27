@@ -16,4 +16,3 @@ declare namespace NodeJS {
     REDIS_URL: string;
   }
 }
-

@@ -7,7 +7,7 @@
 		"build": "bun build . --minify --outdir=dist --target=bun --footer='// made w <3 by @hanaeatsplanes'",
 		"compile": "bun build . --compile --outfile=dist/app",
 		"start": "bun run dist/src/index.js",
-		"ci": "biome check . --error-on-warnings",
+		"ci/cd": "biome check . --error-on-warnings",
 		"lint": "biome check . --fix && biome format . --write",
 		"lint:unsafe": "biome check . --fix --unsafe && biome format . --write",
 		"lint:check": "biome check . && biome format .",

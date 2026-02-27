@@ -7,4 +7,3 @@ app.post("/api/command", () => {
 });
 
 export default app;
-
