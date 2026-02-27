@@ -5,3 +5,4 @@ export const confessionChannel = {
 
 export type ConfessionChannel =
   (typeof confessionChannel)[keyof typeof confessionChannel];
+

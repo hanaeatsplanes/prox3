@@ -6,3 +6,4 @@ export async function hasStaged(ts: string): Promise<boolean> {
 export async function setStaged(ts: string): Promise<unknown> {
   return await redis.setex(`dm-ts:${ts}`, 20, "1");
 }
+
