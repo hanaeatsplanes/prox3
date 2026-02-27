@@ -8,7 +8,7 @@ const responseBlocks = (
   elements?: Array<{
     type: string;
     style: string;
-    text: { type: string; text: string };
+    text: { type: string; text: string; emoji?: boolean };
     value: string;
     action_id: string;
     emoji?: true;
