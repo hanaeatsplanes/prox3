@@ -66,3 +66,4 @@ jobs:
             echo "::error::Outdated packages found. Please update dependencies."
             exit 1
           fi
+

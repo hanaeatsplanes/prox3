@@ -32,3 +32,4 @@ export async function putConfession(confession: Confession): Promise<void> {
 }
 
 export async function updateConfession(id): Promise<void> {}
+
