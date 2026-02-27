@@ -43,7 +43,7 @@ app.post("/api/events", async ({ request, status }: Context) => {
       }
       return { status: "ok" };
     } else if (type === "block_actions") {
-      buttonPressHandler(body);
+      buttonPressHandler(body).catch(console.error);
     }
   } catch (error) {
     if (error instanceof ErrorWithStatus) {

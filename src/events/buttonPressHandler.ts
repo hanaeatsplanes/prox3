@@ -1,10 +1,10 @@
 import { Confession } from "@/models/confession.ts";
 import { ErrorWithStatus } from "@/models/error.ts";
-import type { ButtonPressBody } from "@/models/event.ts";
+import type { BlockActionsPayload } from "@/models/event.ts";
 import { hasStaged, setStaged } from "@/utils/db/dm.ts";
 import { chatUpdate } from "@/utils/slack/client.ts";
 
-export default async function (body: ButtonPressBody): Promise<void> {
+export default async function (body: BlockActionsPayload): Promise<void> {
   const action = body.actions[0];
   if (!action) {
     throw new ErrorWithStatus("no action found in block action", 400);
