@@ -5,7 +5,7 @@ CREATE TABLE confessions (
     confession TEXT NOT NULL,
     hash TEXT NOT NULL,
     channel TEXT,
-    stagingTs TEXT UNIQUE,
+    staging_ts TEXT UNIQUE,
     state TEXT NOT NULL
         CHECK ( state in ('approved',
                           'rejected',
