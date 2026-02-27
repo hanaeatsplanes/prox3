@@ -2,6 +2,7 @@ import { ErrorWithStatus } from "@/models/error.ts";
 import type {
   BlockActionsPayload,
   SlackEventCallback,
+  SlackURLVerification,
 } from "@/models/event.ts";
 
 export async function validateSlackRequest(
@@ -35,9 +36,9 @@ export async function validateSlackRequest(
 export function extractEvent(
   rawBody: string,
   contentType: string
-): SlackEventCallback | BlockActionsPayload {
+): SlackEventCallback | BlockActionsPayload | SlackURLVerification {
   if (contentType?.includes("application/json")) {
-    return JSON.parse(rawBody) as SlackEventCallback;
+    return JSON.parse(rawBody) as SlackEventCallback | SlackURLVerification;
   } else if (contentType?.includes("application/x-www-form-urlencoded")) {
     const params = new URLSearchParams(rawBody);
     const payload = params.get("payload");

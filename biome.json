@@ -46,6 +46,12 @@
               }
             ]
           }
+        },
+        "useConsistentArrayType": {
+          "level": "warn",
+          "options": {
+            "syntax": "shorthand"
+          }
         }
       }
     }
