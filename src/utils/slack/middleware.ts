@@ -1,5 +1,8 @@
 import { ErrorWithStatus } from "@/models/error.ts";
-import type { ButtonPressBody } from "@/models/event.ts";
+import type {
+  BlockActionsPayload,
+  SlackEventCallback,
+} from "@/models/event.ts";
 
 export async function validateSlackRequest(
   request: Request
@@ -32,9 +35,9 @@ export async function validateSlackRequest(
 export function extractEvent(
   rawBody: string,
   contentType: string
-): ButtonPressBody {
+): SlackEventCallback | BlockActionsPayload {
   if (contentType?.includes("application/json")) {
-    return JSON.parse(rawBody);
+    return JSON.parse(rawBody) as SlackEventCallback;
   } else if (contentType?.includes("application/x-www-form-urlencoded")) {
     const params = new URLSearchParams(rawBody);
     const payload = params.get("payload");
@@ -44,7 +47,7 @@ export function extractEvent(
         400
       );
     }
-    return JSON.parse(payload) as ButtonPressBody;
+    return JSON.parse(payload) as BlockActionsPayload;
   }
   throw new ErrorWithStatus("not able to parse", 400);
 }
