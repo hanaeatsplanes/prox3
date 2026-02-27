@@ -22,7 +22,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Run biome checks
-        run: bun ci
+        run: bun ci/cd
 
   build:
     runs-on: ubuntu-latest
