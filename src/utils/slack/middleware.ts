@@ -48,4 +48,3 @@ export function extractEvent(
   }
   throw new ErrorWithStatus("not able to parse", 400);
 }
-

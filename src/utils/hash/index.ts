@@ -7,4 +7,3 @@ export function hash(slackId: string): string {
 export function verify(slackId: string, hash: string): boolean {
   return password.verifySync(slackId, hash);
 }
-

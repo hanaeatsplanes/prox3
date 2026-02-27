@@ -5,4 +5,3 @@ export class ErrorWithStatus extends Error {
     this.statusCode = statusCode;
   }
 }
-
