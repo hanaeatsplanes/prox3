@@ -1,78 +1,34 @@
+export type SlackURLVerification = {
+  token: string;
+  challenge: string;
+  type: "url_verification";
+};
+
 export type SlackEventCallback = {
   token: string;
   team_id: string;
-  enterprise_id: string | null;
-  context_team_id: string | null;
-  context_enterprise_id: string;
   api_app_id: string;
   event: {
     type: string;
-    subtype: string;
-    message: {
-      subtype?: string;
-      bot_id?: string;
-      thread_ts?: string;
-      root?: {
-        user: string;
-        type: string;
-        ts: string;
-        client_msg_id?: string;
-        text: string;
-        thread_ts: string;
-        reply_count?: number;
-        reply_users_count?: number;
-        latest_reply?: string;
-        reply_users?: string[];
-        is_locked?: boolean;
-        subscribed?: boolean;
-        blocks?: Array<{
-          type: string;
-          block_id: string;
-          elements?: Array<{
-            type: string;
-            elements?: Array<{ type: string; text: string }>;
-          }>;
-        }>;
-      };
-      user?: string;
-      app_id?: string;
-      type?: string;
-      text: string;
-      blocks?: Array<{
-        type: string;
-        block_id: string;
-        text?: { type: string; text: string; emoji: boolean };
-        elements?: Array<{
-          type: string;
-          action_id: string;
-          text: { type: string; text: string; emoji: boolean };
-          style: string;
-          value: string;
-        }>;
-      }>;
-      ts: string;
-      source_team?: string;
-      user_team?: string;
-    };
-    previous_message?: Record<string, unknown>;
-    channel: string;
-    hidden?: boolean;
-    ts: string;
-    event_ts: string;
-    channel_type: string;
+    subtype?: string;
+    channel_type?: string;
+    bot_id?: string;
+    text?: string;
+    ts?: string;
+    channel?: string;
+    thread_ts?: string;
   };
-  type: string;
+  type: "event_callback";
+  authorizations?: {
+    enterprise_id?: string;
+    team_id: string;
+    user_id?: string;
+    is_bot?: boolean;
+    is_enterprise_install?: boolean;
+  }[];
+  event_context?: string;
   event_id: string;
   event_time: number;
-  authorizations?: Array<{
-    enterprise_id: string;
-    team_id: string;
-    user_id: string;
-    is_bot: boolean;
-    is_enterprise_install: boolean;
-  }>;
-  is_ext_shared_channel?: boolean;
-  event_context?: string;
 };
 
 export type BlockActionsPayload = {
@@ -183,7 +139,7 @@ export type BlockActionsPayload = {
   };
   token: string;
   trigger_id: string;
-  type: string;
+  type: "block_actions";
   user: {
     id: string;
     username: string;

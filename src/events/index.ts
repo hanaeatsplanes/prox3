@@ -2,6 +2,10 @@ import { type Context, Elysia } from "elysia";
 import buttonPressHandler from "@/events/buttonPressHandler.ts";
 import dmConfessionHandler from "@/events/dmConfessionHandler.ts";
 import { ErrorWithStatus } from "@/models/error.ts";
+import type {
+  SlackEventCallback,
+  SlackURLVerification,
+} from "@/models/event.ts";
 import { extractEvent, validateSlackRequest } from "@/utils/slack/middleware";
 
 const app: Elysia = new Elysia();
@@ -24,22 +28,29 @@ app.post("/api/events", async ({ request, status }: Context) => {
     const { type } = body;
 
     if (type === "url_verification") {
-      return body.challenge;
+      return (body as SlackURLVerification).challenge;
     }
 
     if (type === "event_callback") {
-      const { event } = body;
+      const { event } = body as SlackEventCallback;
+      const {
+        type: eventType,
+        channel_type,
+        bot_id,
+        text,
+        ts,
+        subtype,
+        channel,
+        thread_ts,
+      } = event;
       if (
-        event.type === "message" &&
-        event.channel_type === "im" &&
-        !event.subtype &&
-        !event.bot_id &&
-        !event.thread_ts
+        eventType === "message" &&
+        channel_type === "im" &&
+        !subtype &&
+        !bot_id &&
+        !thread_ts
       ) {
-        const confession = event.text;
-        dmConfessionHandler(confession, event.channel, event.ts).catch(
-          console.error
-        );
+        dmConfessionHandler(text!, channel!, ts!).catch(console.error);
       }
       return { status: "ok" };
     } else if (type === "block_actions") {
