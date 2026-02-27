@@ -1,74 +1,9 @@
+import { password } from "bun";
 import type { ConfessionChannel } from "@/config/channels";
-import { nextId } from "@/utils/db/confession.ts";
-import { hash } from "@/utils/hash";
-import { chatPostMessage } from "@/utils/slack/client.ts";
-
-const stagingBlocks = (
-  id: number,
-  confession: string
-): Array<{
-  type: string;
-  text?: { type: string; text: string };
-  elements?: Array<{
-    type: string;
-    action_id: string;
-    text: { type: string; text: string; emoji: boolean };
-    value: string;
-  }>;
-}> => [
-  {
-    type: "section",
-    text: {
-      type: "mrkdwn",
-      text: `(staging) *${id}* ${confession}`,
-    },
-  },
-  {
-    type: "actions",
-    elements: [
-      {
-        type: "button",
-        action_id: "approve",
-        text: {
-          type: "plain_text",
-          text: ":true: Approve",
-          emoji: true,
-        },
-        value: "approve",
-      },
-      {
-        type: "button",
-        action_id: "disapprove",
-        text: {
-          type: "plain_text",
-          text: ":x: Reject",
-          emoji: true,
-        },
-        value: "disapprove",
-      },
-      {
-        type: "button",
-        action_id: "approve:tw",
-        text: {
-          type: "plain_text",
-          text: ":angerydog: Approve with TW",
-          emoji: true,
-        },
-        value: "approve:tw",
-      },
-      {
-        type: "button",
-        action_id: "approve:meta",
-        text: {
-          type: "plain_text",
-          text: ":office: Approve for meta",
-          emoji: true,
-        },
-        value: "approve:meta",
-      },
-    ],
-  },
-];
+import { stagingBlocks } from "@/config/language/staging";
+import { nextId } from "@/utils/db/confession";
+import { hash, verify } from "@/utils/hash";
+import { chatPostMessage } from "@/utils/slack/client";
 
 export class Confession {
   id: number;
@@ -85,16 +20,18 @@ export class Confession {
   }
 
   static async create(
-    confession?: string,
-    slackId?: string
+    confession: string,
+    slackId: string
   ): Promise<Confession> {
     const id = await nextId();
-    return new Confession(id, confession ?? "", slackId ? hash(slackId) : "");
+    return new Confession(id, confession, hash(slackId));
   }
 
-  async updateDb(): Promise<void> {
-    // check if in db
+  sameUser(slackId: string): boolean {
+    return verify(slackId, this.hash);
   }
+
+  async updateDb(): Promise<void> {}
 
   async stage(): Promise<void> {
     this.stagingTs = await chatPostMessage(
