@@ -1,4 +1,3 @@
-import { password } from "bun";
 import type { ConfessionChannel } from "@/config/channels";
 import { stagingBlocks } from "@/config/language/staging";
 import { nextId } from "@/utils/db/confession";
