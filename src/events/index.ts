@@ -48,9 +48,12 @@ app.post("/api/events", async ({ request, status }: Context) => {
         channel_type === "im" &&
         !subtype &&
         !bot_id &&
-        !thread_ts
+        !thread_ts &&
+        text &&
+        channel &&
+        ts
       ) {
-        dmConfessionHandler(text!, channel!, ts!).catch(console.error);
+        dmConfessionHandler(text, channel, ts).catch(console.error);
       }
       return { status: "ok" };
     } else if (type === "block_actions") {
