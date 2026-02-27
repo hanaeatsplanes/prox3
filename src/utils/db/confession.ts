@@ -31,4 +31,4 @@ export async function putConfession(confession: Confession): Promise<void> {
   redis.del(`confession:${confession.id}`);
 }
 
-export async function updateConfession(id): Promise<void> {}
+// export async function updateConfession(id): Promise<void> {}
