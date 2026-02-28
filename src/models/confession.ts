@@ -30,7 +30,7 @@ export class Confession {
     return verify(slackId, this.hash);
   }
 
-  async updateDb(): Promise<void> {}
+  async updateDB(): Promise<void> {}
 
   async stage(): Promise<void> {
     this.stagingTs = await chatPostMessage(
