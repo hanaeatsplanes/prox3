@@ -33,10 +33,13 @@ export class Confession {
   async updateDB(): Promise<void> {}
 
   async stage(): Promise<void> {
-    this.stagingTs = await chatPostMessage(
-      process.env.CONFESSIONS_REVIEW,
-      stagingBlocks(this.id, this.confession)
-    );
+    [this.stagingTs] = await Promise.all([
+      chatPostMessage(
+        process.env.CONFESSIONS_REVIEW,
+        stagingBlocks(this.id, this.confession)
+      ),
+      this.updateDB(),
+    ]);
     this.state = "staged";
   }
 
