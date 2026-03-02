@@ -5,30 +5,42 @@ export async function nextId(): Promise<number> {
   return await redis.incr("id");
 }
 
-export async function getConfession(
-  id: string
-): Promise<Confession | undefined> {
-  // check redis
+export async function getConfession(id: string): Promise<Confession | null> {
   const redisRes = await redis.get(`confession:${id}`);
   if (redisRes) {
     redis.expire(`confession:${id}`, 60 * 10).catch(console.error);
-    const confessionBody = JSON.parse(redisRes);
-    return Confession.from(confessionBody);
+    return Confession.from(JSON.parse(redisRes));
   }
+
   const confessionBody = await sql`
-    SELECT * FROM confessions
-    WHERE id = ${id};
+    SELECT * FROM confessions WHERE id = ${id}
   `;
 
-  redis
-    .setex(`confession:${id}`, 60 * 10, JSON.stringify(confessionBody))
-    .catch(console.error);
+  const confession = confessionBody?.[0];
+  if (confession) {
+    redis
+      .setex(`confession:${id}`, 60 * 10, JSON.stringify(confession))
+      .catch(console.error);
+  }
 
-  return Confession.from(confessionBody[0]);
+  return confession ? Confession.from(confession) : null;
 }
 
 export async function putConfession(confession: Confession): Promise<void> {
-  redis.del(`confession:${confession.id}`).catch(console.error);
+  await Promise.all([
+    sql`
+      INSERT INTO confessions (id, hash, confession, stagingts, state)
+      VALUES (${confession.id}, ${confession.hash}, ${confession.confession}, ${confession.stagingTs}, ${confession.state})
+      ON CONFLICT (id) DO UPDATE SET
+        hash = EXCLUDED.hash,
+        confession = EXCLUDED.confession,
+        stagingts = EXCLUDED.stagingts,
+        state = EXCLUDED.state
+    `,
+    redis.setex(
+      `confession:${confession.id}`,
+      60 * 10,
+      JSON.stringify(confession)
+    ),
+  ]);
 }
-
-// export async function updateConfession(id): Promise<void> {}
