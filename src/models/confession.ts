@@ -10,6 +10,7 @@ export class Confession {
   hash: string;
   channel?: ConfessionChannel;
   stagingTs?: string;
+  approvalTs?: string;
   state: "approved" | "rejected" | "staged" | "unstaged" = "unstaged";
 
   private constructor(id: number, confession: string, hash: string) {

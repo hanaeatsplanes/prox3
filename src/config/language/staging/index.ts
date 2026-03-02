@@ -1,16 +1,16 @@
 export const stagingBlocks = (
   id: number,
   confession: string
-): Array<{
+): {
   type: string;
   text?: { type: string; text: string };
-  elements?: Array<{
+  elements?: {
     type: string;
     action_id: string;
     text: { type: string; text: string; emoji: boolean };
     value: string;
-  }>;
-}> => [
+  }[];
+}[] => [
   {
     type: "section",
     text: {

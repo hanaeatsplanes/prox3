@@ -9,7 +9,6 @@ import type {
 import { extractEvent, validateSlackRequest } from "@/utils/slack/middleware";
 
 const app: Elysia = new Elysia();
-
 app.post("/api/events", async ({ request, status }: Context) => {
   try {
     const rawBody = await validateSlackRequest(request);
