@@ -52,3 +52,14 @@ export function extractEvent(
   }
   throw new ErrorWithStatus("not able to parse", 400);
 }
+
+export function extractCommandBody(rawBody: string): CommandBody {
+  return JSON.parse(rawBody) as CommandBody;
+}
+
+export function sanitizeMessage(message: string): string {
+  return message
+    .replaceAll(/<@[A-Z0-9]+\|([^>]+)>/g, "<@redacted>") //person
+    .replaceAll(/<!subteam\^[A-Z0-9]+(\|([^>]+))?>/g, "<@redacted>") //pg
+    .replaceAll(/<!(channel|here|everyone)>/g, "<@redacted>");
+}
