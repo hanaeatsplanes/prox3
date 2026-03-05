@@ -49,7 +49,8 @@ export function extractEvent(
 }
 
 export function extractCommandBody(rawBody: string): CommandBody {
-  return JSON.parse(rawBody) as CommandBody;
+  const params = new URLSearchParams(rawBody);
+  return Object.fromEntries(params.entries()) as CommandBody;
 }
 
 export function sanitizeMessage(message: string): string {
