@@ -1,11 +1,12 @@
-import { ErrorWithStatus } from "@/models/error.ts";
+import { CryptoHasher } from "bun";
 import type {
-  BlockActionsPayload,
-  SlackEventCallback,
+  BlockActionEvent,
+  CommandBody,
+  MessageIMEvent,
   SlackURLVerification,
 } from "@/models/event.ts";
 
-export async function validateSlackRequest(
+export async function parseWithVerification(
   request: Request
 ): Promise<string | false> {
   const timestamp = request.headers.get("X-Slack-Request-Timestamp");
@@ -18,10 +19,7 @@ export async function validateSlackRequest(
   const body = await request.text();
   const baseString = `v0:${timestamp}:${body}`;
 
-  const hasher = new Bun.CryptoHasher(
-    "sha256",
-    process.env.SLACK_SIGNING_SECRET
-  );
+  const hasher = new CryptoHasher("sha256", process.env.SLACK_SIGNING_SECRET);
 
   hasher.update(baseString);
 
@@ -36,21 +34,18 @@ export async function validateSlackRequest(
 export function extractEvent(
   rawBody: string,
   contentType: string
-): SlackEventCallback | BlockActionsPayload | SlackURLVerification {
+): MessageIMEvent | BlockActionEvent | SlackURLVerification {
   if (contentType?.includes("application/json")) {
-    return JSON.parse(rawBody) as SlackEventCallback | SlackURLVerification;
+    return JSON.parse(rawBody) as MessageIMEvent | SlackURLVerification;
   } else if (contentType?.includes("application/x-www-form-urlencoded")) {
     const params = new URLSearchParams(rawBody);
     const payload = params.get("payload");
     if (!payload) {
-      throw new ErrorWithStatus(
-        "no payload in application/x-www-form-urlencoded",
-        400
-      );
+      throw new Error("no payload in application/x-www-form-urlencoded");
     }
-    return JSON.parse(payload) as BlockActionsPayload;
+    return JSON.parse(payload) as BlockActionEvent;
   }
-  throw new ErrorWithStatus("not able to parse", 400);
+  throw new Error("not able to parse");
 }
 
 export function extractCommandBody(rawBody: string): CommandBody {
@@ -61,5 +56,5 @@ export function sanitizeMessage(message: string): string {
   return message
     .replaceAll(/<@[A-Z0-9]+\|([^>]+)>/g, "<@redacted>") //person
     .replaceAll(/<!subteam\^[A-Z0-9]+(\|([^>]+))?>/g, "<@redacted>") //pg
-    .replaceAll(/<!(channel|here|everyone)>/g, "<@redacted>");
+    .replaceAll(/<!(channel|here|everyone)>/g, ""); //chanael
 }

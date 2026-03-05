@@ -1,13 +1,13 @@
 import { Confession } from "@/models/confession.ts";
-import { ErrorWithStatus } from "@/models/error.ts";
-import type { BlockActionsPayload } from "@/models/event.ts";
+import type { BlockActionEvent } from "@/models/event.ts";
 import { hasStaged, setStaged } from "@/utils/db/dm.ts";
 import { chatUpdate } from "@/utils/slack/client.ts";
 
-export default async function (body: BlockActionsPayload): Promise<void> {
+export default async function (body: BlockActionEvent): Promise<void> {
   const action = body.actions[0];
   if (!action) {
-    throw new ErrorWithStatus("no action found in block action", 400);
+    console.error("no action found in block action");
+    return;
   }
   switch (action.action_id) {
     case "stage_confession": {

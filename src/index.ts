@@ -5,11 +5,10 @@ import events from "@/events";
 
 await redis.connect();
 
-const app: Elysia = new Elysia();
-app.use(command);
-app.use(events);
-app.get("/", "gay");
-
-app.listen(3000, () => {
-  console.log("Listening on port 3000");
-});
+new Elysia()
+  .use(command)
+  .use(events)
+  .get("/", "gay")
+  .listen(3000, () => {
+    console.log("Listening on port 3000");
+  });
