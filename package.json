@@ -4,8 +4,7 @@
 	"type": "module",
 	"main": "src/index.ts",
 	"scripts": {
-		"build": "bun build . --minify --outdir=dist --target=bun --footer='// made w <3 by @hanaeatsplanes'",
-		"compile": "bun build . --compile --outfile=dist/app",
+		"build": "bun build . --minify --outdir=dist --target=bun --external=elysia --footer='// made w <3 by @hanaeatsplanes'",
 		"start": "bun run dist/src/index.js",
 		"ci/cd": "biome check . --error-on-warnings",
 		"lint": "biome check . --fix && biome format . --write",
@@ -24,4 +23,3 @@
 		"typescript": "latest"
 	}
 }
-

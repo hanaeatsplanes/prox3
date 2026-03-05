@@ -1,27 +1,21 @@
 import { type Context, Elysia } from "elysia";
 import buttonPressHandler from "@/events/buttonPressHandler.ts";
 import dmConfessionHandler from "@/events/dmConfessionHandler.ts";
-import { ErrorWithStatus } from "@/models/error.ts";
-import type {
-  SlackEventCallback,
-  SlackURLVerification,
-} from "@/models/event.ts";
-import { extractEvent, validateSlackRequest } from "@/utils/slack/middleware";
+import type { MessageIMEvent, SlackURLVerification } from "@/models/event.ts";
+import { extractEvent, parseWithVerification } from "@/utils/slack/middleware";
 
-const app: Elysia = new Elysia();
-app.post("/api/events", async ({ request, status }: Context) => {
+export default new Elysia().post("/api/events", handler);
+
+async function handler({
+  request,
+}: Context): Promise<{ status: string; error?: string } | string> {
   try {
-    const rawBody = await validateSlackRequest(request);
-    if (!rawBody) {
-      status("Unauthorized");
-      return JSON.stringify({ status: "unauthorized" });
+    const contentType = request.headers.get("content-type");
+    const rawBody = await parseWithVerification(request);
+    if (!contentType || !rawBody) {
+      return { status: "error", error: "missing body or content-type" };
     }
 
-    const contentType = request.headers.get("content-type");
-    if (!contentType) {
-      status(400);
-      return JSON.stringify({ status: "no content-type" });
-    }
     const body = extractEvent(rawBody, contentType);
 
     const { type } = body;
@@ -31,42 +25,24 @@ app.post("/api/events", async ({ request, status }: Context) => {
     }
 
     if (type === "event_callback") {
-      const { event } = body as SlackEventCallback;
-      const {
-        type: eventType,
-        channel_type,
-        bot_id,
-        text,
-        ts,
-        subtype,
-        channel,
-        thread_ts,
-      } = event;
+      const { event } = body as MessageIMEvent;
       if (
-        eventType === "message" &&
-        channel_type === "im" &&
-        !subtype &&
-        !bot_id &&
-        !thread_ts &&
-        text &&
-        channel &&
-        ts
+        event.type === "message" &&
+        event.channel_type === "im" &&
+        !event.subtype &&
+        !event.bot_id &&
+        !event.thread_ts
       ) {
-        dmConfessionHandler(text, channel, ts).catch(console.error);
+        dmConfessionHandler(event.text, event.channel, event.ts).catch(
+          console.error
+        );
       }
-      return { status: "ok" };
     } else if (type === "block_actions") {
       buttonPressHandler(body).catch(console.error);
     }
   } catch (error) {
-    if (error instanceof ErrorWithStatus) {
-      status(error.statusCode);
-      console.error(error);
-    } else if (error instanceof Error) {
-      status(500);
-      console.error(error);
-    }
+    console.error(error);
+    return { status: "error" };
   }
-});
-
-export default app;
+  return { status: "ok" };
+}

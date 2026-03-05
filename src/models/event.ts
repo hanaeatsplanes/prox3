@@ -4,20 +4,11 @@ export type SlackURLVerification = {
   type: "url_verification";
 };
 
-export type SlackEventCallback = {
+type SlackEventCallback<E> = {
   token: string;
   team_id: string;
   api_app_id: string;
-  event: {
-    type: string;
-    subtype?: string;
-    channel_type?: string;
-    bot_id?: string;
-    text?: string;
-    ts?: string;
-    channel?: string;
-    thread_ts?: string;
-  };
+  event: E;
   type: "event_callback";
   authorizations?: {
     enterprise_id?: string;
@@ -31,7 +22,18 @@ export type SlackEventCallback = {
   event_time: number;
 };
 
-export type BlockActionsPayload = {
+export type MessageIMEvent = SlackEventCallback<{
+  type: "message";
+  subtype?: string;
+  channel_type: "im";
+  bot_id?: string;
+  text: string;
+  ts: string;
+  channel: string;
+  thread_ts?: string;
+}>;
+
+export type BlockActionEvent = {
   actions: {
     action_id: string;
     block_id: string;
@@ -146,4 +148,22 @@ export type BlockActionsPayload = {
     name: string;
     team_id: string;
   };
+};
+
+export type CommandBody = {
+  token: string;
+  team_id: string;
+  team_domain: string;
+  channel_id: string;
+  channel_name: string;
+  user_id: string;
+  user_name: string;
+  command: string;
+  text: string;
+  api_app_id: string;
+  is_enterprise_install: string;
+  enterprise_id: string;
+  enterprise_name: string;
+  response_url: string;
+  trigger_id: string;
 };
