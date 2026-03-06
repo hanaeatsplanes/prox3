@@ -1,6 +1,6 @@
 export const confessionChannel = {
-  meta: process.env.META,
   confessions: process.env.CONFESSIONS,
+  meta: process.env.META,
 } as const;
 
 export type ConfessionChannel =
