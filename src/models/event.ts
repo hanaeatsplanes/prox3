@@ -36,6 +36,7 @@ export type BlockActionEvent = {
 };
 
 export type CommandBody = {
+  user_id: string;
   command: string;
   text: string;
 };
