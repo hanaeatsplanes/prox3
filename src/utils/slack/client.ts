@@ -8,16 +8,16 @@ export async function chatPostMessage(
 ): Promise<string> {
   const isText = typeof content === "string";
   const response = await fetch("https://slack.com/api/chat.postMessage", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({
       channel,
       ...(isText ? { text: content } : { blocks: content }),
       ...thread,
     }),
+    headers: {
+      Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    method: "POST",
   });
 
   if (response.status === 429) {
@@ -46,16 +46,16 @@ export async function chatUpdate(
 ): Promise<string> {
   const isText = typeof content === "string";
   const response = await fetch("https://slack.com/api/chat.update", {
-    method: "POST",
+    body: JSON.stringify({
+      channel,
+      ts,
+      ...(isText ? { text: content } : { blocks: content }),
+    }),
     headers: {
       Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      ts,
-      channel,
-      ...(isText ? { text: content } : { blocks: content }),
-    }),
+    method: "POST",
   });
   if (!response.ok) throw new Error(`Slack API error: ${response.status}`);
 

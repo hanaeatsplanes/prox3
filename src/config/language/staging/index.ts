@@ -12,56 +12,56 @@ export const stagingBlocks = (
   }[];
 }[] => [
   {
-    type: "section",
     text: {
-      type: "mrkdwn",
       text: `(staging) *${id}* ${confession}`,
+      type: "mrkdwn",
     },
+    type: "section",
   },
   {
-    type: "actions",
     elements: [
       {
-        type: "button",
         action_id: "approve",
         text: {
-          type: "plain_text",
-          text: ":true: Approve",
           emoji: true,
+          text: ":true: Approve",
+          type: "plain_text",
         },
+        type: "button",
         value: "approve",
       },
       {
-        type: "button",
         action_id: "disapprove",
         text: {
-          type: "plain_text",
-          text: ":x: Reject",
           emoji: true,
+          text: ":x: Reject",
+          type: "plain_text",
         },
+        type: "button",
         value: "disapprove",
       },
       {
-        type: "button",
         action_id: "approve:tw",
         text: {
-          type: "plain_text",
-          text: ":angerydog: Approve with TW",
           emoji: true,
+          text: ":angerydog: Approve with TW",
+          type: "plain_text",
         },
+        type: "button",
         value: "approve:tw",
       },
       {
-        type: "button",
         action_id: "approve:meta",
         text: {
-          type: "plain_text",
-          text: ":office: Approve for meta",
           emoji: true,
+          text: ":office: Approve for meta",
+          type: "plain_text",
         },
+        type: "button",
         value: "approve:meta",
       },
     ],
+    type: "actions",
   },
 ];
 export const confirmStaging = (
@@ -79,36 +79,36 @@ export const confirmStaging = (
   }>;
 }> => [
   {
-    type: "section",
     text: {
-      type: "plain_text",
       text: "Would you like to stage this confession?",
+      type: "plain_text",
     },
+    type: "section",
   },
   {
-    type: "actions",
     elements: [
       {
-        type: "button",
+        action_id: "stage_confession",
         style: "primary",
         text: {
-          type: "plain_text",
           text: "Yes",
+          type: "plain_text",
         },
+        type: "button",
         value: confession,
-        action_id: "stage_confession",
       },
       {
-        type: "button",
+        action_id: "do-not-stage",
         style: "danger",
         text: {
-          type: "plain_text",
-          text: "No",
           emoji: true,
+          text: "No",
+          type: "plain_text",
         },
+        type: "button",
         value: "do-not-stage",
-        action_id: "do-not-stage",
       },
     ],
+    type: "actions",
   },
 ];

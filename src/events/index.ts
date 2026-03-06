@@ -13,7 +13,7 @@ async function handler({
     const contentType = request.headers.get("content-type");
     const rawBody = await parseWithVerification(request);
     if (!contentType || !rawBody) {
-      return { status: "error", error: "missing body or content-type" };
+      return { error: "missing body or content-type", status: "error" };
     }
 
     const body = extractEvent(rawBody, contentType);

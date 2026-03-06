@@ -37,6 +37,7 @@ export type BlockActionEvent = {
 
 export type CommandBody = {
   user_id: string;
+  channel_id: string;
   command: string;
   text: string;
 };

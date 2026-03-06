@@ -7,7 +7,7 @@ export default async function (
   threadTs: string
 ): Promise<void> {
   await chatPostMessage(dmChannelId, confirmStaging(confession), {
-    thread_ts: threadTs,
     reply_broadcast: true,
+    thread_ts: threadTs,
   });
 }
