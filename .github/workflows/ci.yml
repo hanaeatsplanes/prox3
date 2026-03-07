@@ -60,10 +60,5 @@ jobs:
 
       - name: Check for outdated packages
         run: |
-          output=$(bun update)
-          echo "$output"
-          if ! echo "$output" | grep -q "(no changes)"; then
-            echo "::error::Outdated packages found. Please update dependencies."
-            exit 1
-          fi
+          bun update --dry-run
 

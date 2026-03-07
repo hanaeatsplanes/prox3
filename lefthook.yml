@@ -11,4 +11,4 @@ pre-push:
       run: bun run lint
       stage_fixed: true
     - name: update
-      run: bun update
+      run: bun update --latest
