@@ -4,3 +4,11 @@ pre-commit:
     - name: lint
       run: bun run lint
       stage_fixed: true
+pre-push:
+  parallel: true
+  jobs:
+    - name: lint
+      run: bun run lint
+      stage_fixed: true
+    - name: update
+      run: bun update
