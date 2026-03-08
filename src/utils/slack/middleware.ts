@@ -6,9 +6,10 @@ import type {
   SlackURLVerification,
 } from "@/models/event.ts";
 
-export async function parseWithVerification(
-  request: Request
-): Promise<string | false> {
+export async function verifySlackRequest(
+  request: Request,
+  rawBody: string
+): Promise<boolean> {
   const timestamp = request.headers.get("X-Slack-Request-Timestamp");
   const slackSignature = request.headers.get("X-Slack-Signature");
 
@@ -16,19 +17,17 @@ export async function parseWithVerification(
 
   if (Math.abs(Date.now() / 1000 - parseInt(timestamp, 10)) > 300) return false;
 
-  const body = await request.text();
-  const baseString = `v0:${timestamp}:${body}`;
+  const baseString = `v0:${timestamp}:${rawBody}`;
 
   const hasher = new CryptoHasher("sha256", process.env.SLACK_SIGNING_SECRET);
 
   hasher.update(baseString);
 
   const signature = `v0=${hasher.digest("hex")}`;
-  const valid = crypto.timingSafeEqual(
+  return crypto.timingSafeEqual(
     Buffer.from(slackSignature),
     Buffer.from(signature)
   );
-  return valid ? body : false;
 }
 
 export function extractEvent(

@@ -2,7 +2,7 @@ import { type Context, Elysia } from "elysia";
 import buttonPressHandler from "@/events/buttonPressHandler.ts";
 import dmConfessionHandler from "@/events/dmConfessionHandler.ts";
 import type { MessageIMEvent, SlackURLVerification } from "@/models/event.ts";
-import { extractEvent, parseWithVerification } from "@/utils/slack/middleware";
+import { extractEvent, verifySlackRequest } from "@/utils/slack/middleware";
 
 export default new Elysia().post("/api/events", handler);
 
@@ -11,9 +11,13 @@ async function handler({
 }: Context): Promise<{ status: string; error?: string } | string> {
   try {
     const contentType = request.headers.get("content-type");
-    const rawBody = await parseWithVerification(request);
+    const rawBody = await request.text();
     if (!contentType || !rawBody) {
       return { error: "missing body or content-type", status: "error" };
+    }
+
+    if (!(await verifySlackRequest(request, rawBody))) {
+      return { error: "invalid signature", status: "error" };
     }
 
     const body = extractEvent(rawBody, contentType);
