@@ -1,4 +1,21 @@
 services:
+  app:
+    build: .
+    container_name: prox3
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   postgres:
     image: postgres:18
     container_name: postgres18
