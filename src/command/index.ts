@@ -6,8 +6,6 @@ import {
   verifySlackRequest,
 } from "@/utils/slack/middleware.ts";
 
-export default new Elysia().post("/api/command", handler);
-
 async function handler({ request }: Context): Promise<void> {
   const rawBody = await request.text();
   if (!(await verifySlackRequest(request, rawBody))) return;
@@ -18,3 +16,5 @@ async function handler({ request }: Context): Promise<void> {
   await confession.updateDB();
   await chatPostMessage(user_id, `Staged as confession ${confession.id}`);
 }
+
+export default new Elysia().post("/api/command", handler);
