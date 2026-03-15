@@ -62,10 +62,11 @@ services:
       - dragonfly_data:/data
 
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      test: ["CMD-SHELL", "printf 'AUTH ${REDIS_PASSWORD}\r\nPING\r\n' | nc localhost 6379 | grep PONG"]
       interval: 5s
       timeout: 3s
-      retries: 5
+      retries: 10
+      start_period: 5s
 
 volumes:
   postgres_data:
