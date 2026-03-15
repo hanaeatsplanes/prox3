@@ -54,7 +54,6 @@ services:
     command: >
       dragonfly
       --requirepass ${REDIS_PASSWORD}
-      --appendonly yes
 
     ports:
       - "${REDIS_PORT}:6379"
