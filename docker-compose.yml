@@ -13,7 +13,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
+      dragonfly:
         condition: service_healthy
 
   postgres:
@@ -41,16 +41,18 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:8
-    container_name: redis8
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
+    container_name: dragonfly
     restart: unless-stopped
+    ulimits:
+      memlock: -1
 
     env_file:
       - .env
 
     command: >
-      redis-server
+      dragonfly
       --requirepass ${REDIS_PASSWORD}
       --appendonly yes
 
@@ -58,7 +60,7 @@ services:
       - "${REDIS_PORT}:6379"
 
     volumes:
-      - redis_data:/data
+      - dragonfly_data:/data
 
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
@@ -68,5 +70,5 @@ services:
 
 volumes:
   postgres_data:
-  redis_data:
+  dragonfly_data:
 
