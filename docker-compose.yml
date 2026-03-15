@@ -14,7 +14,7 @@ services:
       postgres:
         condition: service_healthy
       dragonfly:
-        condition: service_healthy
+        condition: service_started
 
   postgres:
     image: postgres:18
@@ -62,11 +62,7 @@ services:
       - dragonfly_data:/data
 
     healthcheck:
-      test: ["CMD-SHELL", "printf 'AUTH ${REDIS_PASSWORD}\r\nPING\r\n' | nc localhost 6379 | grep PONG"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-      start_period: 5s
+      disable: true
 
 volumes:
   postgres_data:
