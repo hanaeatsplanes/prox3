@@ -14,7 +14,7 @@ services:
       postgres:
         condition: service_healthy
       dragonfly:
-        condition: service_started
+        condition: service_healthy
 
   postgres:
     image: postgres:18
@@ -54,6 +54,8 @@ services:
     command: >
       dragonfly
       --requirepass ${REDIS_PASSWORD}
+      --proactor_threads=1
+      --maxmemory=256mb
 
     ports:
       - "${REDIS_PORT}:6379"
