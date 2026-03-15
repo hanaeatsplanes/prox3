@@ -1,5 +1,5 @@
-import type { ConfessionChannel } from "@/config/channels";
 import { stagingBlocks } from "@/config/language/staging";
+import type { ConfessionChannel } from "@/models/channels.ts";
 import { nextId } from "@/utils/db/confession";
 import { hash, verify } from "@/utils/hash";
 import { chatPostMessage } from "@/utils/slack/client";
