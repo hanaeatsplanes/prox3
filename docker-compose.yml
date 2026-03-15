@@ -62,7 +62,10 @@ services:
       - dragonfly_data:/data
 
     healthcheck:
-      disable: true
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
