@@ -67,3 +67,18 @@ export async function chatUpdate(
   if (!data.ok) console.error(`Slack API: ${data.error}`);
   return data.ts;
 }
+
+export async function chatDelete(ts: string, channel: string): Promise<void> {
+  const response = await fetch("https://slack.com/api/chat.delete", {
+    body: JSON.stringify({ channel, ts }),
+    headers: {
+      Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+  if (!response.ok) throw new Error(`Slack API error: ${response.status}`);
+
+  const data = (await response.json()) as { ok: boolean; error?: string };
+  if (!data.ok) console.error(`Slack API: ${data.error}`);
+}
