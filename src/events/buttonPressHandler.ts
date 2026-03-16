@@ -1,7 +1,7 @@
 import { Confession } from "@/models/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { hasStaged, setStaged } from "@/utils/db/dm.ts";
-import { chatUpdate } from "@/utils/slack/client.ts";
+import { chatDelete, chatUpdate } from "@/utils/slack/client.ts";
 
 export default async function (body: BlockActionEvent): Promise<void> {
   const action = body.actions[0];
@@ -24,6 +24,12 @@ export default async function (body: BlockActionEvent): Promise<void> {
       ).catch(console.error);
 
       await setStaged(container.thread_ts);
+      break;
+    }
+    case "do-not-stage": {
+      const { container } = body;
+      await chatDelete(container.message_ts, container.channel_id);
+      break;
     }
   }
 }
