@@ -34,7 +34,7 @@ export async function putConfession(confession: Confession): Promise<void> {
       ON CONFLICT (id) DO UPDATE SET
         hash = EXCLUDED.hash,
         confession = EXCLUDED.confession,
-        stagingts = EXCLUDED.stagingts,
+        staging_ts = EXCLUDED.staging_ts,
         state = EXCLUDED.state
     `,
     redis.setex(
