@@ -56,5 +56,7 @@ export function sanitizeMessage(message: string): string {
   return message
     .replaceAll(/<@[A-Z0-9]+(\|[^>]+)?>/g, "<@redacted>") //person
     .replaceAll(/<!subteam\^[A-Z0-9]+(\|[^>]+)?>/g, "<@redacted>") //group
-    .replaceAll(/<!(channel|here|everyone)>/g, ""); //channel
+    .replaceAll(/<!(channel|here|everyone)>/g, "") //broadcast
+    .replaceAll(/@(channel|here|everyone)\b/g, "@ $1") //plain broadcast
+    .replaceAll(/<#[A-Z0-9]+(\|[^>]+)?>/g, "<#redacted>"); //channel
 }
