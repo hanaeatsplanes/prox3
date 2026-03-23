@@ -1,8 +1,9 @@
 import { stagingBlocks } from "@/config/language/staging";
 import type { ConfessionChannel } from "@/models/channels.ts";
-import { nextId } from "@/utils/db/confession";
+import { nextId, putConfession } from "@/utils/db/confession";
 import { hash, verify } from "@/utils/hash";
 import { chatPostMessage } from "@/utils/slack/client";
+import { sanitizeMessage } from "@/utils/slack/middleware.ts";
 
 export class Confession {
   id: number;
@@ -15,7 +16,7 @@ export class Confession {
 
   private constructor(id: number, confession: string, hash: string) {
     this.id = id;
-    this.confession = confession;
+    this.confession = sanitizeMessage(confession);
     this.hash = hash;
   }
 
@@ -31,7 +32,9 @@ export class Confession {
     return verify(slackId, this.hash);
   }
 
-  async updateDB(): Promise<void> {}
+  async updateDB(): Promise<void> {
+    await putConfession(this);
+  }
 
   async stage(): Promise<void> {
     [this.stagingTs] = await Promise.all([
