@@ -30,8 +30,9 @@ export async function putConfession(confession: Confession): Promise<void> {
   await Promise.all([
     sql`
         INSERT INTO confessions (id, hash, confession, staging_ts, state)
-      VALUES (${confession.id}, ${confession.hash}, ${confession.confession}, ${confession.stagingTs}, ${confession.state})
-      ON CONFLICT (id) DO UPDATE SET
+        VALUES (${confession.id}, ${confession.hash}, ${confession.confession}, ${confession.stagingTs},
+                ${confession.state})
+        ON CONFLICT (id) DO UPDATE SET
         hash = EXCLUDED.hash,
         confession = EXCLUDED.confession,
         staging_ts = EXCLUDED.staging_ts,
