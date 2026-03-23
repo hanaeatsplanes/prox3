@@ -49,7 +49,7 @@ export async function chatUpdate(
     body: JSON.stringify({
       channel,
       ts,
-      ...(isText ? { text: content } : { blocks: content }),
+      ...(isText ? { blocks: [], text: content } : { blocks: content }),
     }),
     headers: {
       Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
