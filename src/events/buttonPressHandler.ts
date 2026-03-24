@@ -17,12 +17,14 @@ export default async function (body: BlockActionEvent): Promise<void> {
       const confession = await Confession.create(action.value, body.user.id);
       await confession.stage();
 
-      chatUpdate(
-        container.message_ts,
-        container.channel_id,
-        `Staged as confession ${confession.id}`
-      ).catch(console.error);
-      setStaged(container.thread_ts);
+      Promise.all([
+        chatUpdate(
+          container.message_ts,
+          container.channel_id,
+          `Staged as confession ${confession.id}`
+        ).catch(console.error),
+        setStaged(container.thread_ts),
+      ]).error(console.error);
       break;
     }
     case "do-not-stage": {
