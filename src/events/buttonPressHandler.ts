@@ -22,8 +22,7 @@ export default async function (body: BlockActionEvent): Promise<void> {
         container.channel_id,
         `Staged as confession ${confession.id}`
       ).catch(console.error);
-
-      await setStaged(container.thread_ts);
+      setStaged(container.thread_ts);
       break;
     }
     case "do-not-stage": {
