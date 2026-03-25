@@ -1,7 +1,11 @@
 import { type Context, Elysia } from "elysia";
 import buttonPressHandler from "@/events/buttonPressHandler.ts";
 import dmConfessionHandler from "@/events/dmConfessionHandler.ts";
-import type { MessageIMEvent, SlackURLVerification } from "@/models/event.ts";
+import type {
+  BlockActionEvent,
+  MessageIMEvent,
+  SlackURLVerification,
+} from "@/models/event.ts";
 import { extractEvent, verifySlackRequest } from "@/utils/slack/middleware";
 
 export default new Elysia().post("/api/events", handler);
