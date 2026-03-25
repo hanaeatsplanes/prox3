@@ -62,9 +62,8 @@ export function extractCommandBody(rawBody: string): CommandBody {
 
 export function sanitizeMessage(message: string): string {
 	return message
-		.replaceAll(/<@[A-Z0-9]+(\|[^>]*)?>/g, "@redacted") //person
-		.replaceAll(/<!subteam\^[A-Z0-9]+(\|[^>]*)?>/g, "@redacted") //group
-		.replaceAll(/<!(channel|here|everyone)(\|[^>]*)?>/g, "@redacted") //broadcast
-		.replaceAll(/@(channel|here|everyone)\b/gi, "@redacted") //plain broadcast
-		.replaceAll(/<#[A-Z0-9]+(\|[^>]*)?>/g, "#redacted"); //channel
+		.replaceAll(/<@[A-Z0-9]+(\|[^>]*)?>/gi, "@redacted") //person (<@U...> or <@W...>)
+		.replaceAll(/<!subteam\^[A-Z0-9]+(\|[^>]*)?>/gi, "@redacted") //group
+		.replaceAll(/<!(channel|here|everyone)(\|[^>]*)?>/gi, "@redacted") //broadcast
+		.replaceAll(/@(channel|here|everyone)\b/gi, "@redacted"); //plain text broadcasts (auto-parsed)
 }
