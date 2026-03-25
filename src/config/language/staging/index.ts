@@ -1,114 +1,114 @@
 export const stagingBlocks = (
-    id: number,
-    confession: string
+	id: number,
+	confession: string
 ): {
-    type: string;
-    text?: { type: string; text: string };
-    elements?: {
-        type: string;
-        action_id: string;
-        text: { type: string; text: string; emoji: boolean };
-        value: string;
-    }[];
+	type: string;
+	text?: { type: string; text: string };
+	elements?: {
+		type: string;
+		action_id: string;
+		text: { type: string; text: string; emoji: boolean };
+		value: string;
+	}[];
 }[] => [
-    {
-        text: {
-            text: `(staging) *${id}* ${confession}`,
-            type: "mrkdwn",
-        },
-        type: "section",
-    },
-    {
-        elements: [
-            {
-                action_id: "approve",
-                text: {
-                    emoji: true,
-                    text: ":true: Approve",
-                    type: "plain_text",
-                },
-                type: "button",
-                value: "approve",
-            },
-            {
-                action_id: "disapprove",
-                text: {
-                    emoji: true,
-                    text: ":x: Reject",
-                    type: "plain_text",
-                },
-                type: "button",
-                value: "disapprove",
-            },
-            {
-                action_id: "approve:tw",
-                text: {
-                    emoji: true,
-                    text: ":angerydog: Approve with TW",
-                    type: "plain_text",
-                },
-                type: "button",
-                value: "approve:tw",
-            },
-            {
-                action_id: "approve:meta",
-                text: {
-                    emoji: true,
-                    text: ":office: Approve for meta",
-                    type: "plain_text",
-                },
-                type: "button",
-                value: "approve:meta",
-            },
-        ],
-        type: "actions",
-    },
+	{
+		text: {
+			text: `(staging) *${id}* ${confession}`,
+			type: "mrkdwn",
+		},
+		type: "section",
+	},
+	{
+		elements: [
+			{
+				action_id: "approve",
+				text: {
+					emoji: true,
+					text: ":true: Approve",
+					type: "plain_text",
+				},
+				type: "button",
+				value: "approve",
+			},
+			{
+				action_id: "disapprove",
+				text: {
+					emoji: true,
+					text: ":x: Reject",
+					type: "plain_text",
+				},
+				type: "button",
+				value: "disapprove",
+			},
+			{
+				action_id: "approve:tw",
+				text: {
+					emoji: true,
+					text: ":angerydog: Approve with TW",
+					type: "plain_text",
+				},
+				type: "button",
+				value: "approve:tw",
+			},
+			{
+				action_id: "approve:meta",
+				text: {
+					emoji: true,
+					text: ":office: Approve for meta",
+					type: "plain_text",
+				},
+				type: "button",
+				value: "approve:meta",
+			},
+		],
+		type: "actions",
+	},
 ];
 export const confirmStaging = (
-    confession: string
+	confession: string
 ): Array<{
-    type: string;
-    text?: { type: string; text: string };
-    elements?: Array<{
-        type: string;
-        style: string;
-        text: { type: string; text: string; emoji?: boolean };
-        value: string;
-        action_id: string;
-        emoji?: true;
-    }>;
+	type: string;
+	text?: { type: string; text: string };
+	elements?: Array<{
+		type: string;
+		style: string;
+		text: { type: string; text: string; emoji?: boolean };
+		value: string;
+		action_id: string;
+		emoji?: true;
+	}>;
 }> => [
-    {
-        text: {
-            text: "Would you like to stage this confession?",
-            type: "plain_text",
-        },
-        type: "section",
-    },
-    {
-        elements: [
-            {
-                action_id: "stage_confession",
-                style: "primary",
-                text: {
-                    text: "Yes",
-                    type: "plain_text",
-                },
-                type: "button",
-                value: confession,
-            },
-            {
-                action_id: "do-not-stage",
-                style: "danger",
-                text: {
-                    emoji: true,
-                    text: "No",
-                    type: "plain_text",
-                },
-                type: "button",
-                value: "do-not-stage",
-            },
-        ],
-        type: "actions",
-    },
+	{
+		text: {
+			text: "Would you like to stage this confession?",
+			type: "plain_text",
+		},
+		type: "section",
+	},
+	{
+		elements: [
+			{
+				action_id: "stage_confession",
+				style: "primary",
+				text: {
+					text: "Yes",
+					type: "plain_text",
+				},
+				type: "button",
+				value: confession,
+			},
+			{
+				action_id: "do-not-stage",
+				style: "danger",
+				text: {
+					emoji: true,
+					text: "No",
+					type: "plain_text",
+				},
+				type: "button",
+				value: "do-not-stage",
+			},
+		],
+		type: "actions",
+	},
 ];
