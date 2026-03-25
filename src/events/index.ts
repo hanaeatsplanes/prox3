@@ -13,10 +13,12 @@ async function handler({
     const contentType = request.headers.get("content-type");
     const rawBody = await request.text();
     if (!contentType || !rawBody) {
+      console.error("[events] missing body or content-type");
       return { error: "missing body or content-type", status: "error" };
     }
 
     if (!(await verifySlackRequest(request, rawBody))) {
+      console.error("[events] failed slack request verification");
       return { error: "invalid signature", status: "error" };
     }
 
@@ -25,6 +27,7 @@ async function handler({
     const { type } = body;
 
     if (type === "url_verification") {
+      console.log("[events] url verification challenge");
       return (body as SlackURLVerification).challenge;
     }
 
@@ -37,15 +40,23 @@ async function handler({
         !event.bot_id &&
         !event.thread_ts
       ) {
-        dmConfessionHandler(event.text, event.channel, event.ts).catch(
-          console.error
+        console.log(
+          `[events] incoming DM confession from channel ${event.channel}`
+        );
+        dmConfessionHandler(event.text, event.channel, event.ts).catch((err) =>
+          console.error("[events] dmConfessionHandler failed:", err)
         );
       }
     } else if (type === "block_actions") {
-      buttonPressHandler(body).catch(console.error);
+      console.log(
+        `[events] block action received: ${(body as BlockActionEvent).actions[0]?.action_id}`
+      );
+      buttonPressHandler(body).catch((err) =>
+        console.error("[events] buttonPressHandler failed:", err)
+      );
     }
   } catch (error) {
-    console.error(error);
+    console.error("[events] unhandled error:", error);
     return { status: "error" };
   }
   return { status: "ok" };

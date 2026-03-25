@@ -13,9 +13,15 @@ export async function verifySlackRequest(
   const timestamp = request.headers.get("X-Slack-Request-Timestamp");
   const slackSignature = request.headers.get("X-Slack-Signature");
 
-  if (!timestamp || !slackSignature) return false;
+  if (!timestamp || !slackSignature) {
+    console.error("[middleware] missing timestamp or signature headers");
+    return false;
+  }
 
-  if (Math.abs(Date.now() / 1000 - parseInt(timestamp, 10)) > 300) return false;
+  if (Math.abs(Date.now() / 1000 - parseInt(timestamp, 10)) > 300) {
+    console.error("[middleware] request timestamp too old, rejecting");
+    return false;
+  }
 
   const baseString = `v0:${timestamp}:${rawBody}`;
 
@@ -40,10 +46,12 @@ export function extractEvent(
     const params = new URLSearchParams(rawBody);
     const payload = params.get("payload");
     if (!payload) {
+      console.error("[middleware] no payload in form-urlencoded body");
       throw new Error("no payload in application/x-www-form-urlencoded");
     }
     return JSON.parse(payload) as BlockActionEvent;
   }
+  console.error(`[middleware] unsupported content-type: ${contentType}`);
   throw new Error("not able to parse");
 }
 

@@ -23,19 +23,20 @@ export async function chatPostMessage(
   if (response.status === 429) {
     const retryAfter = response.headers.get("Retry-After");
     console.error(
-      `Slack rate limited. Retry after ${retryAfter || "60"} seconds`
+      `[slack] chat.postMessage rate limited, retry after ${retryAfter || "60"}s`
     );
     return "";
   }
 
-  if (!response.ok) throw new Error(`Slack API error: ${response.status}`);
+  if (!response.ok)
+    throw new Error(`[slack] chat.postMessage HTTP ${response.status}`);
 
   const data = (await response.json()) as {
     ok: boolean;
     error?: string;
     ts: string;
   };
-  if (!data.ok) console.error(`Slack API: ${data.error}`);
+  if (!data.ok) console.error(`[slack] chat.postMessage error: ${data.error}`);
   return data.ts;
 }
 
@@ -57,14 +58,15 @@ export async function chatUpdate(
     },
     method: "POST",
   });
-  if (!response.ok) throw new Error(`Slack API error: ${response.status}`);
+  if (!response.ok)
+    throw new Error(`[slack] chat.update HTTP ${response.status}`);
 
   const data = (await response.json()) as {
     ok: boolean;
     error?: string;
     ts: string;
   };
-  if (!data.ok) console.error(`Slack API: ${data.error}`);
+  if (!data.ok) console.error(`[slack] chat.update error: ${data.error}`);
   return data.ts;
 }
 
@@ -77,8 +79,9 @@ export async function chatDelete(ts: string, channel: string): Promise<void> {
     },
     method: "POST",
   });
-  if (!response.ok) throw new Error(`Slack API error: ${response.status}`);
+  if (!response.ok)
+    throw new Error(`[slack] chat.delete HTTP ${response.status}`);
 
   const data = (await response.json()) as { ok: boolean; error?: string };
-  if (!data.ok) console.error(`Slack API: ${data.error}`);
+  if (!data.ok) console.error(`[slack] chat.delete error: ${data.error}`);
 }
