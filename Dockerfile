@@ -1,21 +1,14 @@
-FROM oven/bun:1 AS base
+FROM oven/bun:1 AS build
 WORKDIR /app
 
-FROM base AS deps
-COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile --production
-
-FROM base AS build
-COPY package.json bun.lock ./
+COPY package.json bun.lock tsconfig.json ./
 RUN bun install --frozen-lockfile
-COPY . .
+COPY src ./src
 RUN bun run build
 
-FROM base AS final
+FROM oven/bun:1-slim AS final
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/package.json ./
+COPY --from=build /app/dist/prox3 ./prox3
 
 EXPOSE 3000
-CMD ["bun", "run", "start"]
+CMD ["./prox3"]
