@@ -1,3 +1,31 @@
+type SlackApiResponse = {
+	ok: boolean;
+	error?: string;
+	ts?: string;
+};
+
+async function readSlackResponse(response: Response, operation: string) {
+	if (response.status === 429) {
+		const retryAfter = response.headers.get("Retry-After") || "60";
+		throw new Error(
+			`[slack] ${operation} rate limited, retry after ${retryAfter}s`
+		);
+	}
+
+	if (!response.ok) {
+		throw new Error(`[slack] ${operation} HTTP ${response.status}`);
+	}
+
+	const data = (await response.json()) as SlackApiResponse;
+	if (!data.ok) {
+		throw new Error(
+			`[slack] ${operation} error: ${data.error || "unknown_error"}`
+		);
+	}
+
+	return data;
+}
+
 export async function chatPostMessage(
 	channel: string,
 	content: string | object[],
@@ -19,24 +47,11 @@ export async function chatPostMessage(
 		},
 		method: "POST",
 	});
-
-	if (response.status === 429) {
-		const retryAfter = response.headers.get("Retry-After");
-		console.error(
-			`[slack] chat.postMessage rate limited, retry after ${retryAfter || "60"}s`
-		);
-		return "";
+	const data = await readSlackResponse(response, "chat.postMessage");
+	if (!data.ts) {
+		throw new Error("[slack] chat.postMessage response missing ts");
 	}
 
-	if (!response.ok)
-		throw new Error(`[slack] chat.postMessage HTTP ${response.status}`);
-
-	const data = (await response.json()) as {
-		ok: boolean;
-		error?: string;
-		ts: string;
-	};
-	if (!data.ok) console.error(`[slack] chat.postMessage error: ${data.error}`);
 	return data.ts;
 }
 
@@ -58,15 +73,11 @@ export async function chatUpdate(
 		},
 		method: "POST",
 	});
-	if (!response.ok)
-		throw new Error(`[slack] chat.update HTTP ${response.status}`);
+	const data = await readSlackResponse(response, "chat.update");
+	if (!data.ts) {
+		throw new Error("[slack] chat.update response missing ts");
+	}
 
-	const data = (await response.json()) as {
-		ok: boolean;
-		error?: string;
-		ts: string;
-	};
-	if (!data.ok) console.error(`[slack] chat.update error: ${data.error}`);
 	return data.ts;
 }
 
@@ -79,9 +90,5 @@ export async function chatDelete(ts: string, channel: string) {
 		},
 		method: "POST",
 	});
-	if (!response.ok)
-		throw new Error(`[slack] chat.delete HTTP ${response.status}`);
-
-	const data = (await response.json()) as { ok: boolean; error?: string };
-	if (!data.ok) console.error(`[slack] chat.delete error: ${data.error}`);
+	await readSlackResponse(response, "chat.delete");
 }
