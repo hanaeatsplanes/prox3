@@ -2,8 +2,7 @@ import { redis, sql } from "bun";
 import { Confession } from "@/models/confession.ts";
 
 export async function nextId() {
-	const id = await redis.incr("id");
-	return id;
+	return await redis.incr("id");
 }
 
 export async function getConfession(id: string) {
