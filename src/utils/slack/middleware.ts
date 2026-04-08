@@ -15,7 +15,13 @@ export async function verifySlackRequest(request: Request, rawBody: string) {
 		return false;
 	}
 
-	if (Math.abs(Date.now() / 1000 - parseInt(timestamp, 10)) > 300) {
+	const parsedTimestamp = Number.parseInt(timestamp, 10);
+	if (Number.isNaN(parsedTimestamp)) {
+		console.error("[middleware] invalid slack timestamp header");
+		return false;
+	}
+
+	if (Math.abs(Date.now() / 1000 - parsedTimestamp) > 300) {
 		console.error("[middleware] request timestamp too old, rejecting");
 		return false;
 	}
