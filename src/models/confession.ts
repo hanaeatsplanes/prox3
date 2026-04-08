@@ -20,20 +20,20 @@ export class Confession {
 		this.hash = hash;
 	}
 
-	static async create(confession: string, slackId: string): Promise<Confession> {
+	static async create(confession: string, slackId: string) {
 		const id = await nextId();
 		return new Confession(id, confession, hash(slackId));
 	}
 
-	sameUser(slackId: string): boolean {
+	sameUser(slackId: string) {
 		return verify(slackId, this.hash);
 	}
 
-	async updateDB(): Promise<void> {
+	async updateDB() {
 		await putConfession(this);
 	}
 
-	async stage(): Promise<void> {
+	async stage() {
 		[this.stagingTs] = await Promise.all([
 			chatPostMessage(
 				process.env.CONFESSIONS_REVIEW,
@@ -51,7 +51,7 @@ export class Confession {
 		channel?: ConfessionChannel;
 		stagingTs?: string;
 		state: "approved" | "rejected" | "staged" | "unstaged";
-	}): Confession {
+	}) {
 		const { id, confession, hash } = params;
 		const confessionObject = new Confession(id, confession, hash);
 		Object.assign(confessionObject, params);

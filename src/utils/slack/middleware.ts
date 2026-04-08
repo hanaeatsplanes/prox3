@@ -6,10 +6,7 @@ import type {
 	SlackURLVerification,
 } from "@/models/event.ts";
 
-export async function verifySlackRequest(
-	request: Request,
-	rawBody: string
-): Promise<boolean> {
+export async function verifySlackRequest(request: Request, rawBody: string) {
 	const timestamp = request.headers.get("X-Slack-Request-Timestamp");
 	const slackSignature = request.headers.get("X-Slack-Signature");
 
@@ -36,10 +33,7 @@ export async function verifySlackRequest(
 	);
 }
 
-export function extractEvent(
-	rawBody: string,
-	contentType: string
-): MessageIMEvent | BlockActionEvent | SlackURLVerification {
+export function extractEvent(rawBody: string, contentType: string) {
 	if (contentType?.includes("application/json")) {
 		return JSON.parse(rawBody) as MessageIMEvent | SlackURLVerification;
 	} else if (contentType?.includes("application/x-www-form-urlencoded")) {
@@ -55,12 +49,12 @@ export function extractEvent(
 	throw new Error("not able to parse");
 }
 
-export function extractCommandBody(rawBody: string): CommandBody {
+export function extractCommandBody(rawBody: string) {
 	const params = new URLSearchParams(rawBody);
 	return Object.fromEntries(params.entries()) as CommandBody;
 }
 
-export function sanitizeMessage(message: string): string {
+export function sanitizeMessage(message: string) {
 	return message
 		.replaceAll(/<@[A-Z0-9]+(\|[^>]*)?>/gi, "@redacted") //person (<@U...> or <@W...>)
 		.replaceAll(/<!subteam\^[A-Z0-9]+(\|[^>]*)?>/gi, "@redacted") //group

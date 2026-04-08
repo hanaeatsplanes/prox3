@@ -1,16 +1,4 @@
-export const stagingBlocks = (
-	id: number,
-	confession: string
-): {
-	type: string;
-	text?: { type: string; text: string };
-	elements?: {
-		type: string;
-		action_id: string;
-		text: { type: string; text: string; emoji: boolean };
-		value: string;
-	}[];
-}[] => [
+export const stagingBlocks = (id: number, confession: string) => [
 	{
 		text: {
 			text: `(staging) *${id}* ${confession}`,
@@ -64,20 +52,7 @@ export const stagingBlocks = (
 		type: "actions",
 	},
 ];
-export const confirmStaging = (
-	confession: string
-): Array<{
-	type: string;
-	text?: { type: string; text: string };
-	elements?: Array<{
-		type: string;
-		style: string;
-		text: { type: string; text: string; emoji?: boolean };
-		value: string;
-		action_id: string;
-		emoji?: true;
-	}>;
-}> => [
+export const confirmStaging = (confession: string) => [
 	{
 		text: {
 			text: "Would you like to stage this confession?",

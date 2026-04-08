@@ -38,7 +38,7 @@
 				"noContinue": "error",
 				"noDivRegex": "error",
 				"noDuplicateVariableNames": "error",
-				"useExplicitType": "error"
+				"useExplicitType": "off"
 			},
 			"recommended": true,
 			"style": {

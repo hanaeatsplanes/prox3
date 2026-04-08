@@ -6,7 +6,7 @@ export default async function (
 	confession: string,
 	dmChannelId: string,
 	threadTs: string
-): Promise<void> {
+) {
 	console.log(`[dm] sending staging confirmation to ${dmChannelId}`);
 	await chatPostMessage(
 		dmChannelId,

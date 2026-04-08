@@ -3,7 +3,7 @@ import type { BlockActionEvent } from "@/models/event.ts";
 import { hasStaged, setStaged } from "@/utils/db/dm.ts";
 import { chatDelete, chatUpdate } from "@/utils/slack/client.ts";
 
-export default async function (body: BlockActionEvent): Promise<void> {
+export default async function (body: BlockActionEvent) {
 	const action = body.actions[0];
 	if (!action) {
 		console.error("[button] no action found in block action");
