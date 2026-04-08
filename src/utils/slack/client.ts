@@ -5,7 +5,7 @@ export async function chatPostMessage(
 		thread_ts: string;
 		reply_broadcast?: true;
 	}
-): Promise<string> {
+) {
 	const isText = typeof content === "string";
 	const response = await fetch("https://slack.com/api/chat.postMessage", {
 		body: JSON.stringify({
@@ -44,7 +44,7 @@ export async function chatUpdate(
 	ts: string,
 	channel: string,
 	content: string | object[]
-): Promise<string> {
+) {
 	const isText = typeof content === "string";
 	const response = await fetch("https://slack.com/api/chat.update", {
 		body: JSON.stringify({
@@ -70,7 +70,7 @@ export async function chatUpdate(
 	return data.ts;
 }
 
-export async function chatDelete(ts: string, channel: string): Promise<void> {
+export async function chatDelete(ts: string, channel: string) {
 	const response = await fetch("https://slack.com/api/chat.delete", {
 		body: JSON.stringify({ channel, ts }),
 		headers: {

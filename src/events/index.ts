@@ -8,9 +8,7 @@ import type {
 } from "@/models/event.ts";
 import { extractEvent, verifySlackRequest } from "@/utils/slack/middleware";
 
-async function handler({
-	request,
-}: Context): Promise<{ status: string; error?: string } | string> {
+async function handler({ request }: Context) {
 	try {
 		const contentType = request.headers.get("content-type");
 		const rawBody = await request.text();

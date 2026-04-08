@@ -1,13 +1,13 @@
 import { redis, sql } from "bun";
 import { Confession } from "@/models/confession.ts";
 
-export async function nextId(): Promise<number> {
+export async function nextId() {
 	const id = await redis.incr("id");
 	console.log(`[db] next confession id: ${id}`);
 	return id;
 }
 
-export async function getConfession(id: string): Promise<Confession | null> {
+export async function getConfession(id: string) {
 	const redisRes = await redis.get(`confession:${id}`);
 	if (redisRes) {
 		console.log(`[db] cache hit for confession ${id}`);
@@ -38,7 +38,7 @@ export async function getConfession(id: string): Promise<Confession | null> {
 	return confession ? Confession.from(confession) : null;
 }
 
-export async function putConfession(confession: Confession): Promise<void> {
+export async function putConfession(confession: Confession) {
 	console.log(
 		`[db] saving confession ${confession.id} (state: ${confession.state})`
 	);
