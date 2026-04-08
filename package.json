@@ -14,7 +14,8 @@
 		"dev": "bun run --watch src/index.ts"
 	},
 	"dependencies": {
-		"elysia": "^1.4.28"
+		"elysia": "^1.4.28",
+		"prox2.5": "."
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.10",
