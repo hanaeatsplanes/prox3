@@ -1,4 +1,4 @@
-import { stagingBlocks } from "@/config/language/staging";
+import { stagingBlocks } from "@/config/language/staging.ts";
 import type { ConfessionChannel } from "@/models/channels.ts";
 import { nextId, putConfession } from "@/utils/db/confession";
 import { hash, verify } from "@/utils/hash";

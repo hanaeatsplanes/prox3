@@ -22,7 +22,7 @@ jobs:
         run: bun ci
 
       - name: Run biome checks
-        run: bun ci/cd
+        run: bun run ci/cd
 
   build:
     runs-on: ubuntu-latest
@@ -61,4 +61,3 @@ jobs:
       - name: Check for outdated packages
         run: |
           bun update --dry-run
-
