@@ -12,7 +12,7 @@ export class Confession {
 	channel?: ConfessionChannel;
 	stagingTs?: string;
 	approvalTs?: string;
-	state: "approved" | "rejected" | "staged" | "unstaged" = "unstaged";
+	state: ConfessionState = "unstaged";
 
 	private constructor(id: number, confession: string, hash: string) {
 		this.id = id;
@@ -32,17 +32,7 @@ export class Confession {
 	async updateDB() {
 		await putConfession(this);
 	}
-
-	async stage() {
-		[this.stagingTs] = await Promise.all([
-			chatPostMessage(
-				process.env.CONFESSIONS_REVIEW,
-				stagingBlocks(this.id, this.confession)
-			),
-			this.updateDB(),
-		]);
-		this.state = "staged";
-	}
+	i;
 
 	static from(params: {
 		id: number;
@@ -50,11 +40,21 @@ export class Confession {
 		hash: string;
 		channel?: ConfessionChannel;
 		stagingTs?: string;
-		state: "approved" | "rejected" | "staged" | "unstaged";
+		approvalTs?: string;
+		state: ConfessionState;
 	}) {
 		const { id, confession, hash } = params;
 		const confessionObject = new Confession(id, confession, hash);
 		Object.assign(confessionObject, params);
 		return confessionObject;
+	}
+
+	async stage() {
+		this.stagingTs = await chatPostMessage(
+			process.env.CONFESSIONS_REVIEW,
+			stagingBlocks(this.id, this.confession)
+		);
+		this.state = "staged";
+		await this.updateDB();
 	}
 }
