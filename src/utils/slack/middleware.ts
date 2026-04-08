@@ -9,8 +9,9 @@ import type {
 export async function verifySlackRequest(request: Request, rawBody: string) {
 	const timestamp = request.headers.get("X-Slack-Request-Timestamp");
 	const slackSignature = request.headers.get("X-Slack-Signature");
+	const signingSecret = process.env.SLACK_SIGNING_SECRET;
 
-	if (!timestamp || !slackSignature) {
+	if (!timestamp || !slackSignature || !signingSecret) {
 		console.error("[middleware] missing timestamp or signature headers");
 		return false;
 	}
@@ -28,15 +29,18 @@ export async function verifySlackRequest(request: Request, rawBody: string) {
 
 	const baseString = `v0:${timestamp}:${rawBody}`;
 
-	const hasher = new CryptoHasher("sha256", process.env.SLACK_SIGNING_SECRET);
+	const hasher = new CryptoHasher("sha256", signingSecret);
 
 	hasher.update(baseString);
 
 	const signature = `v0=${hasher.digest("hex")}`;
-	return crypto.timingSafeEqual(
-		Buffer.from(slackSignature),
-		Buffer.from(signature)
-	);
+	const actualSignature = Buffer.from(slackSignature);
+	const expectedSignature = Buffer.from(signature);
+	if (actualSignature.length !== expectedSignature.length) {
+		return false;
+	}
+
+	return crypto.timingSafeEqual(actualSignature, expectedSignature);
 }
 
 export function extractEvent(rawBody: string, contentType: string) {
