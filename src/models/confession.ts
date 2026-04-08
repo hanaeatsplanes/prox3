@@ -34,7 +34,6 @@ export class Confession {
 	async updateDB() {
 		await putConfession(this);
 	}
-	i;
 
 	static from(params: {
 		id: number;
