@@ -13,15 +13,13 @@ export default async function (body: BlockActionEvent) {
 		case "stage_confession": {
 			const { container } = body;
 			if (await hasStaged(container.thread_ts)) {
-				console.log("[button] duplicate stage attempt, skipping");
 				return;
 			}
 
 			const confession = await Confession.create(action.value, body.user.id);
 			await confession.stage();
-			console.log(`[button] staged confession ${confession.id}`);
 
-			Promise.all([
+			void Promise.all([
 				chatUpdate(
 					container.message_ts,
 					container.channel_id,
@@ -33,9 +31,11 @@ export default async function (body: BlockActionEvent) {
 		}
 		case "do-not-stage": {
 			const { container } = body;
-			console.log("[button] user declined to stage confession");
 			await chatDelete(container.message_ts, container.channel_id);
 			break;
+		}
+		default: {
+			console.error(`[button] unhandled action: ${action.action_id}`);
 		}
 	}
 }

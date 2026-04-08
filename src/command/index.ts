@@ -6,26 +6,29 @@ import {
 	verifySlackRequest,
 } from "@/utils/slack/middleware.ts";
 
-async function handler({ request }: Context) {
+async function handler({ request, set }: Context) {
 	const rawBody = await request.text();
 	if (!(await verifySlackRequest(request, rawBody))) {
 		console.error("[command] failed slack request verification");
+		set.status = 503;
 		return;
 	}
+
+	void handleValidatedCommand(rawBody).catch((error) => {
+		console.error("[command] confession not staged:", error);
+	});
+}
+
+async function handleValidatedCommand(rawBody: string) {
 	const { text, user_id } = extractCommandBody(rawBody);
-	stageConfession(text, user_id).catch(
-		(reason) => `[command] confession not staged: ${reason}`
-	);
-	console.log(`[command] received from user, text length: ${text.length}`);
+	await stageConfession(text, user_id);
 	// todo: check for revive
 }
 
 async function stageConfession(text: string, userId: string) {
 	const confession = await Confession.create(text, userId);
 	await confession.stage();
-	await confession.updateDB();
 	await chatPostMessage(userId, `Staged as confession ${confession.id}`);
-	console.log(`[command] staged confession ${confession.id}`);
 }
 
 export default new Elysia().post("/api/command", handler);
