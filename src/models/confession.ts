@@ -5,6 +5,8 @@ import { hash, verify } from "@/utils/hash";
 import { chatPostMessage } from "@/utils/slack/client";
 import { sanitizeMessage } from "@/utils/slack/middleware.ts";
 
+type ConfessionState = "approved" | "rejected" | "staged" | "unstaged";
+
 export class Confession {
 	id: number;
 	confession: string;
