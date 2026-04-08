@@ -4,9 +4,9 @@
 	"type": "module",
 	"main": "src/index.ts",
 	"scripts": {
-		"build": "bun build . --minify --outdir=dist --target=bun --clean --footer='// made w <3 by @hanaeatsplanes'",
-		"compile": "bun build ./src/index.ts --compile --outfile dist/app",
-		"start": "bun run dist/src/index.js",
+		"build": "bun build . --compile --minify --outfile dist/prox3 --footer='// made w <3 by @hanaeatsplanes'",
+		"compile": "bun build . --compile --outfile dist/app",
+		"start": "./dist/prox3",
 		"ci/cd": "biome check . --error-on-warnings",
 		"lint": "biome check . --fix && biome format . --write",
 		"lint:unsafe": "biome check . --fix --unsafe && biome format . --write",
