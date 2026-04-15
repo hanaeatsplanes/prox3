@@ -90,7 +90,9 @@ export class Confession {
 			);
 		}
 
-		await Promise.all([await chatDelete(this.approvalTs, this.channel)]);
+		const channel = this.channel;
+		const messages = await getAllMyMessages(channel, this.approvalTs);
+		await Promise.allSettled(messages.map((id) => chatDelete(id, channel)));
 		this.state = "staged";
 		this.channel = undefined;
 	}
