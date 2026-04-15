@@ -4,7 +4,7 @@ import type { ConfessionChannel } from "@/models/channels.ts";
 import { nextId, putConfession } from "@/utils/db/confession.ts";
 import { hash, verify } from "@/utils/hash";
 import { chatDelete, chatPostMessage } from "@/utils/slack/client.ts";
-import { sanitizeMessage } from "@/utils/slack/middleware.ts";
+import { getAllMyMessages, sanitizeMessage } from "@/utils/slack/middleware.ts";
 
 type ConfessionState = "approved" | "rejected" | "staged" | "unstaged";
 
