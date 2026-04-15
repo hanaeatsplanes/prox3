@@ -1,5 +1,5 @@
 import { type Context, Elysia } from "elysia";
-import { Confession } from "@/core/models/confession.ts";
+import { Confession } from "@/core/confession.ts";
 import { chatPostMessage } from "@/utils/slack/client.ts";
 import {
 	extractCommandBody,

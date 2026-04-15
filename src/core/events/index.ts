@@ -6,7 +6,7 @@ import type {
 	BlockActionEvent,
 	MessageIMEvent,
 	SlackURLVerification,
-} from "@/core/models/event.ts";
+} from "@/models/event.ts";
 import { extractEvent, verifySlackRequest } from "@/utils/slack/middleware";
 
 async function handler({ request, set }: Context) {
