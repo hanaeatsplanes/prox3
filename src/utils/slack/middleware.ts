@@ -86,7 +86,8 @@ export async function getAllMyMessages(
 	}
 	const messages = response.messages;
 	while (response.has_more) {
-		response = await conversationsReplies(channel, threadTs);
+		const cursor = response.response_metadata?.next_cursor;
+		response = await conversationsReplies(channel, threadTs, cursor);
 		if (!response.ok) {
 			throw new Error(
 				`getAllMyMessages failed: conversations.replies call failed: ${response.error}`
