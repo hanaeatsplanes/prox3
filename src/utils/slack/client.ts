@@ -92,3 +92,14 @@ export async function chatDelete(ts: string, channel: string) {
 	});
 	await readSlackResponse(response, "chat.delete");
 }
+
+export async function conversationsReplies(channel: string, threadTs: string) {
+	return await fetch(
+		`https://slack.com/api/conversations.replies?channel=${channel}&ts=${threadTs}`,
+		{
+			headers: {
+				Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
+			},
+		}
+	);
+}
