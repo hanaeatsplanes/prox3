@@ -19,7 +19,7 @@ export default async function (body: BlockActionEvent) {
 			const confession = await Confession.create(action.value, body.user.id);
 			await confession.stage();
 
-			void Promise.all([
+			await Promise.all([
 				chatUpdate(
 					container.message_ts,
 					container.channel_id,
