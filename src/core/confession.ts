@@ -3,7 +3,7 @@ import { stagingBlocks } from "@/config/language/staging.ts";
 import type { ConfessionChannel } from "@/models/channels.ts";
 import { nextId, putConfession } from "@/utils/db/confession.ts";
 import { hash, verify } from "@/utils/hash";
-import { chatPostMessage } from "@/utils/slack/client.ts";
+import { chatDelete, chatPostMessage } from "@/utils/slack/client.ts";
 import { sanitizeMessage } from "@/utils/slack/middleware.ts";
 
 type ConfessionState = "approved" | "rejected" | "staged" | "unstaged";
@@ -73,5 +73,25 @@ export class Confession {
 			),
 		]);
 		await this.updateDB();
+	}
+
+	async undo() {
+		if (this.state !== "approved" && this.state !== "rejected") {
+			return;
+		}
+		if (!this.approvalTs) {
+			throw new Error(
+				`[confession]: confession ${this.id} not unapproved: null approvalTs`
+			);
+		}
+		if (!this.channel) {
+			throw new Error(
+				`[confession]: confession ${this.id} not unapproved: null channel`
+			);
+		}
+
+		await Promise.all([await chatDelete(this.approvalTs, this.channel)]);
+		this.state = "staged";
+		this.channel = undefined;
 	}
 }
