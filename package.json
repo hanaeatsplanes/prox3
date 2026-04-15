@@ -4,9 +4,8 @@
 	"type": "module",
 	"main": "src/index.ts",
 	"scripts": {
-		"build": "bun build . --compile --minify --outfile dist/prox3",
-		"compile": "bun build . --compile --outfile dist/app",
-		"start": "./dist/prox3",
+		"build": "bun build . --production --minify --drop=debugger --target=bun --outfile dist/index.js",
+		"start": "bun run dist/index.js",
 		"ci/cd": "biome check . --error-on-warnings",
 		"lint": "biome check . --fix && biome format . --write",
 		"lint:unsafe": "biome check . --fix --unsafe && biome format . --write",
