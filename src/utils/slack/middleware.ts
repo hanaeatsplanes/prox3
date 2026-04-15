@@ -95,5 +95,6 @@ export async function getAllMyMessages(
 		}
 		messages.push(...response.messages);
 	}
+	messages.filter(({ bot_id }) => bot_id === process.env.SLACK_BOT_ID);
 	return messages;
 }
