@@ -1,5 +1,5 @@
-import { Confession } from "@/models/confession.ts";
-import type { BlockActionEvent } from "@/models/event.ts";
+import { Confession } from "@/core/models/confession.ts";
+import type { BlockActionEvent } from "@/core/models/event.ts";
 import { hasStaged, setStaged } from "@/utils/db/dm.ts";
 import { chatDelete, chatUpdate } from "@/utils/slack/client.ts";
 

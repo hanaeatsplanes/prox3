@@ -1,6 +1,6 @@
 import { approvalMessage } from "@/config/language/review.ts";
 import { stagingBlocks } from "@/config/language/staging.ts";
-import type { ConfessionChannel } from "@/models/channels.ts";
+import type { ConfessionChannel } from "@/core/models/channels.ts";
 import { nextId, putConfession } from "@/utils/db/confession";
 import { hash, verify } from "@/utils/hash";
 import { chatPostMessage } from "@/utils/slack/client";
