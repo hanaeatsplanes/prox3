@@ -142,10 +142,11 @@ export async function chatDelete(ts: string, channel: string) {
 
 export async function conversationsReplies(
 	channel: string,
-	threadTs: string
+	threadTs: string,
+	cursor?: string
 ): Promise<ConversationRepliesResponse> {
 	const response = await slackFetch(
-		`https://slack.com/api/conversations.replies?channel=${channel}&ts=${threadTs}`,
+		`https://slack.com/api/conversations.replies?channel=${channel}&ts=${threadTs}&limit=10${cursor ? `&cursor=${cursor}` : ""}`,
 		{
 			headers: {
 				Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
