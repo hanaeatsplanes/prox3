@@ -9,6 +9,7 @@ RUN bun build ./src/index.ts --production --minify --drop=debugger --target=bun 
 FROM oven/bun:1-slim AS final
 WORKDIR /app
 COPY --from=build /app/dist/index.js ./index.js
+COPY sql ./sql
 
 EXPOSE 3000
 CMD ["bun", "run", "index.js"]
