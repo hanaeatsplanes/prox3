@@ -1,3 +1,4 @@
+import { approvalMessage } from "@/config/language/review.ts";
 import { stagingBlocks } from "@/config/language/staging.ts";
 import type { ConfessionChannel } from "@/models/channels.ts";
 import { nextId, putConfession } from "@/utils/db/confession";
@@ -56,6 +57,18 @@ export class Confession {
 			stagingBlocks(this.id, this.confession)
 		);
 		this.state = "staged";
+		await this.updateDB();
+	}
+
+	async reject() {}
+
+	async approve(channel: ConfessionChannel) {
+		this.approvalTs = await chatPostMessage(
+			channel,
+			approvalMessage(this.id, this.confession)
+		);
+		this.state = "approved";
+		this.channel = channel;
 		await this.updateDB();
 	}
 }
