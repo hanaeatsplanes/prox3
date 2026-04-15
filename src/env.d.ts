@@ -12,6 +12,7 @@ declare namespace NodeJS {
 		REDIS_PASSWORD: string;
 		REDIS_PORT: number;
 		REDIS_URL: string;
+		SLACK_BOT_ID: string;
 		SLACK_SIGNING_SECRET: string;
 		SLACK_TOKEN: string;
 	}
