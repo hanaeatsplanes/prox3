@@ -1,7 +1,7 @@
 import { redis } from "bun";
 import { Elysia } from "elysia";
-import command from "@/command";
-import events from "@/events";
+import command from "@/core/command";
+import events from "@/core/events";
 
 console.log("[startup] connecting to redis...");
 await redis.connect();

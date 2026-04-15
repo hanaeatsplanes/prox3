@@ -1,5 +1,5 @@
 import { redis, sql } from "bun";
-import { Confession } from "@/models/confession.ts";
+import { Confession } from "@/core/models/confession.ts";
 
 export async function nextId() {
 	return await redis.incr("id");
