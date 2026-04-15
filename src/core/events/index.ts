@@ -1,6 +1,7 @@
 import { type Context, Elysia } from "elysia";
-import buttonPressHandler from "@/core/events/buttonPressHandler.ts";
-import dmConfessionHandler from "@/core/events/dmConfessionHandler.ts";
+import blockActionHandler from "@/core/events/blockActionHandler.ts";
+import commandHandler from "@/core/events/commandHandler.ts";
+import dmHandler from "@/core/events/dmHandler.ts";
 import type {
 	BlockActionEvent,
 	MessageIMEvent,
@@ -51,11 +52,11 @@ async function handleValidatedEvent(body: BlockActionEvent | MessageIMEvent) {
 			return;
 		}
 
-		await dmConfessionHandler(event.text, event.channel, event.ts);
+		await dmHandler(event.text, event.channel, event.ts);
 		return;
 	}
 
-	await buttonPressHandler(body);
+	await blockActionHandler(body);
 }
 
-export default new Elysia().post("/api/events", handler);
+export default new Elysia().use(commandHandler).post("/api/events", handler);
