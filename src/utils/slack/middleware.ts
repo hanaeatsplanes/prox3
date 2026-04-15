@@ -4,7 +4,7 @@ import type {
 	CommandBody,
 	MessageIMEvent,
 	SlackURLVerification,
-} from "@/core/models/event.ts";
+} from "@/models/event.ts";
 
 export async function verifySlackRequest(request: Request, rawBody: string) {
 	const timestamp = request.headers.get("X-Slack-Request-Timestamp");

@@ -1,9 +1,9 @@
 import { approvalMessage } from "@/config/language/review.ts";
 import { stagingBlocks } from "@/config/language/staging.ts";
-import type { ConfessionChannel } from "@/core/models/channels.ts";
-import { nextId, putConfession } from "@/utils/db/confession";
+import type { ConfessionChannel } from "@/models/channels.ts";
+import { nextId, putConfession } from "@/utils/db/confession.ts";
 import { hash, verify } from "@/utils/hash";
-import { chatPostMessage } from "@/utils/slack/client";
+import { chatPostMessage } from "@/utils/slack/client.ts";
 import { sanitizeMessage } from "@/utils/slack/middleware.ts";
 
 type ConfessionState = "approved" | "rejected" | "staged" | "unstaged";
@@ -63,12 +63,15 @@ export class Confession {
 	async reject() {}
 
 	async approve(channel: ConfessionChannel) {
-		this.approvalTs = await chatPostMessage(
-			channel,
-			approvalMessage(this.id, this.confession)
-		);
 		this.state = "approved";
 		this.channel = channel;
+		[this.approvalTs] = await Promise.all([
+			await chatPostMessage(channel, approvalMessage(this.id, this.confession)),
+			await chatPostMessage(
+				process.env.CONFESSIONS_LOG,
+				`Confession #${this.id} has been ${channel === process.env.META ? "approved for meta" : "approved"}.`
+			),
+		]);
 		await this.updateDB();
 	}
 }
