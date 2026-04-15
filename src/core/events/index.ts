@@ -56,7 +56,9 @@ async function handleValidatedEvent(body: BlockActionEvent | MessageIMEvent) {
 		return;
 	}
 
-	await blockActionHandler(body);
+	void blockActionHandler(body).catch((err) =>
+		console.error("[button] handler failed:", err)
+	);
 }
 
 export default new Elysia().use(commandHandler).post("/api/events", handler);
