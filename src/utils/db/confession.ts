@@ -5,28 +5,29 @@ export async function nextId() {
 	return await redis.incr("id");
 }
 
-export async function getConfession(id: string) {
-	const redisRes = await redis.get(`confession:${id}`);
+export async function getConfessionBy(
+	column: "staging_ts" | "approval_ts",
+	ts: string
+) {
+	const tag = column === "staging_ts" ? "staging" : "approval";
+	const key = `confession:${tag}:${ts}`;
+
+	const redisRes = await redis.get(key);
 	if (redisRes) {
 		redis
-			.expire(`confession:${id}`, 60 * 10)
-			.catch((err) =>
-				console.error(`[db] redis expire failed for confession ${id}:`, err)
-			);
+			.expire(key, 60 * 10)
+			.catch((err) => console.error(`[db] redis expire failed for ${key}:`, err));
 		return Confession.from(JSON.parse(redisRes));
 	}
 
-	const confessionBody = await sql`
-    SELECT * FROM confessions WHERE id = ${id}
-  `;
+	const confessionBody =
+		await sql`SELECT * FROM confessions WHERE ${column} = ${ts} `;
 
 	const confession = confessionBody?.[0];
 	if (confession) {
 		redis
-			.setex(`confession:${id}`, 60 * 10, JSON.stringify(confession))
-			.catch((err) =>
-				console.error(`[db] redis setex failed for confession ${id}:`, err)
-			);
+			.setex(key, 60 * 10, JSON.stringify(confession))
+			.catch((err) => console.error(`[db] redis setex failed for ${key}:`, err));
 	}
 
 	return confession ? Confession.from(confession) : null;
@@ -62,9 +63,19 @@ export async function putConfession(confession: Confession) {
         approval_ts = EXCLUDED.approval_ts
     `,
 		redis.setex(
-			`confession:${confession.id}`,
+			`confession:staging:${confession.stagingTs}`,
 			60 * 10,
 			JSON.stringify(confession)
 		),
+		(() => {
+			if (confession.approvalTs) {
+				return redis.setex(
+					`confession:approval:${confession.approvalTs}`,
+					60 * 10,
+					JSON.stringify(confession)
+				);
+			}
+			return Promise.resolve();
+		})(),
 	]);
 }
