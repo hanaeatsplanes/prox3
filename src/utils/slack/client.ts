@@ -161,3 +161,23 @@ export async function conversationsReplies(
 
 	return (await response.json()) as ConversationRepliesResponse;
 }
+
+export async function chatPostEphemeral(
+	channel: string,
+	user: string,
+	text: string
+) {
+	const response = await slackFetch(
+		"https://slack.com/api/chat.postEphemeral",
+		{
+			body: JSON.stringify({ channel, text, user }),
+			headers: {
+				Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
+				"Content-Type": "application/json",
+			},
+			method: "POST",
+		},
+		"chat.postEphemeral"
+	);
+	return response.ok;
+}
