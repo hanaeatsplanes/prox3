@@ -1,5 +1,6 @@
 import { Confession } from "@/core/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
+import { getConfessionBy } from "@/utils/db/confession.ts";
 import { hasStaged, setStaged } from "@/utils/db/dm.ts";
 import { chatDelete, chatUpdate } from "@/utils/slack/client.ts";
 
@@ -9,9 +10,9 @@ export default async function (body: BlockActionEvent) {
 		console.error("[button] no action found in block action");
 		return;
 	}
+	const { container } = body;
 	switch (action.action_id) {
 		case "stage_confession": {
-			const { container } = body;
 			if (await hasStaged(container.thread_ts)) {
 				return;
 			}
@@ -30,10 +31,25 @@ export default async function (body: BlockActionEvent) {
 			break;
 		}
 		case "do-not-stage": {
-			const { container } = body;
 			await chatDelete(container.message_ts, container.channel_id);
 			break;
 		}
+		case "approve": {
+			const ts = container.message_ts;
+			const confession = await getConfessionBy("staging_ts", ts);
+
+			if (!confession) {
+				throw new Error("[button] no confession found in block action");
+			}
+
+			break;
+		}
+		case "disapprove":
+		case "approve:tw":
+		case "approve:meta":
+			throw new Error(
+				`[button] action "${action.action_id}" is not yet implemented`
+			);
 		default: {
 			console.error(`[button] unhandled action: ${action.action_id}`);
 		}
