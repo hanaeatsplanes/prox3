@@ -17,6 +17,7 @@ export type MessageIMEvent = SlackEventCallback<{
 	ts: string;
 	channel: string;
 	thread_ts?: string;
+	user: string;
 }>;
 
 export type BlockActionEvent = {

@@ -170,7 +170,7 @@ export async function chatPostEphemeral(
 	const response = await slackFetch(
 		"https://slack.com/api/chat.postEphemeral",
 		{
-			body: JSON.stringify({ channel, text, user }),
+			body: JSON.stringify({ channel, markdown_text: text, user }),
 			headers: {
 				Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
 				"Content-Type": "application/json",
