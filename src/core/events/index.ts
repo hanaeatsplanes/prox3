@@ -31,7 +31,16 @@ async function handler({ request, set }: Context) {
 		}
 
 		void handleValidatedEvent(body).catch((error) => {
-			console.error("[events] validated event failed:", error);
+			const rayId = Math.random().toString(36).slice(2, 10);
+			console.error(`${rayId}: event failed:`, { cause: error });
+			const isBlock = body.type === "block_actions";
+			const channel = isBlock ? body.container.channel_id : body.event.channel;
+			const user = isBlock ? body.user.id : body.event.user;
+			void chatPostEphemeral(
+				channel,
+				user,
+				`Something went wrong :( Please give @hna this Ray ID: **${rayId}**.`
+			);
 		});
 	} catch (error) {
 		console.error("[events] unhandled error:", error);
