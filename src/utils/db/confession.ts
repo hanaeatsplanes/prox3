@@ -14,9 +14,11 @@ export async function getConfessionBy(
 
 	const redisRes = await redis.get(key);
 	if (redisRes) {
-		redis
-			.expire(key, 60 * 10)
-			.catch((err) => console.error(`[db] redis expire failed for ${key}:`, err));
+		try {
+			await redis.expire(key, 60 * 10);
+		} catch (error) {
+			console.error(`[db] redis expire failed for ${key}`, error);
+		}
 		return Confession.from(JSON.parse(redisRes));
 	}
 
@@ -25,9 +27,11 @@ export async function getConfessionBy(
 
 	const confession = confessionBody?.[0];
 	if (confession) {
-		redis
-			.setex(key, 60 * 10, JSON.stringify(confession))
-			.catch((err) => console.error(`[db] redis setex failed for ${key}:`, err));
+		try {
+			await redis.setex(key, 60 * 10, JSON.stringify(confession));
+		} catch (error) {
+			console.error(`[db] redis setex failed for ${key}`, error);
+		}
 	}
 
 	return confession ? Confession.from(confession) : null;

@@ -1,14 +1,18 @@
+import { approvalBlocks } from "@/config/language/approval.ts";
 import { Confession } from "@/core/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
 import { hasStaged, setStaged } from "@/utils/db/dm.ts";
-import { chatDelete, chatUpdate } from "@/utils/slack/client.ts";
+import {
+	chatDelete,
+	chatPostMessage,
+	chatUpdate,
+} from "@/utils/slack/client.ts";
 
 export default async function (body: BlockActionEvent) {
 	const action = body.actions[0];
 	if (!action) {
-		console.error("[button] no action found in block action");
-		return;
+		throw new Error("[button] no action found in block action");
 	}
 	const { container } = body;
 	switch (action.action_id) {
@@ -20,14 +24,20 @@ export default async function (body: BlockActionEvent) {
 			const confession = await Confession.create(action.value, body.user.id);
 			await confession.stage();
 
-			await Promise.all([
-				chatUpdate(
-					container.message_ts,
-					container.channel_id,
-					`Staged as confession ${confession.id}`
-				).catch((err) => console.error("[button] chatUpdate failed:", err)),
-				setStaged(container.thread_ts),
-			]).catch((err) => console.error("[button] post-stage cleanup failed:", err));
+			try {
+				await Promise.all([
+					chatUpdate(
+						container.message_ts,
+						container.channel_id,
+						`Staged as confession ${confession.id}`
+					),
+					setStaged(container.thread_ts),
+				]);
+			} catch (error) {
+				throw new Error("[button] post-stage cleanup failed", {
+					cause: error,
+				});
+			}
 			break;
 		}
 		case "do-not-stage": {
@@ -41,6 +51,10 @@ export default async function (body: BlockActionEvent) {
 			if (!confession) {
 				throw new Error("[button] no confession found in block action");
 			}
+			await Promise.all([
+				confession.approve(process.env.CONFESSIONS),
+				chatPostMessage(process.env.CONFESSIONS_LOG, approvalBlocks(confession.id)),
+			]);
 
 			break;
 		}
@@ -51,7 +65,7 @@ export default async function (body: BlockActionEvent) {
 				`[button] action "${action.action_id}" is not yet implemented`
 			);
 		default: {
-			console.error(`[button] unhandled action: ${action.action_id}`);
+			throw new Error(`[button] unhandled action: ${action.action_id}`);
 		}
 	}
 }
