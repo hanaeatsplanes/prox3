@@ -1,4 +1,5 @@
 import { Confession } from "@/core/confession.ts";
+import { confessionChannel } from "@/models/channels.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
 import { hasStaged, setStaged } from "@/utils/db/dm.ts";
@@ -46,8 +47,7 @@ export default async function (body: BlockActionEvent) {
 			if (!confession) {
 				throw new Error("[button] no confession found in block action");
 			}
-			await confession.approve(process.env.CONFESSIONS);
-
+			await confession.approve(confessionChannel.confessions);
 			break;
 		}
 		case "disapprove":

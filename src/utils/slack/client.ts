@@ -6,6 +6,11 @@ type SlackApiResponse = {
 	ts?: string;
 };
 
+const headers = {
+	Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
+	"Content-Type": "application/json",
+};
+
 async function slackFetch(
 	url: string,
 	options: RequestInit,
@@ -78,10 +83,7 @@ export async function chatPostMessage(
 				...(isText ? { text: content } : { blocks: content }),
 				...thread,
 			}),
-			headers: {
-				Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-				"Content-Type": "application/json",
-			},
+			headers: headers,
 			method: "POST",
 		},
 		"chat.postMessage"
@@ -108,10 +110,7 @@ export async function chatUpdate(
 				ts,
 				...(isText ? { blocks: [], text: content } : { blocks: content }),
 			}),
-			headers: {
-				Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-				"Content-Type": "application/json",
-			},
+			headers: headers,
 			method: "POST",
 		},
 		"chat.update"
@@ -129,10 +128,7 @@ export async function chatDelete(ts: string, channel: string) {
 		"https://slack.com/api/chat.delete",
 		{
 			body: JSON.stringify({ channel, ts }),
-			headers: {
-				Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-				"Content-Type": "application/json",
-			},
+			headers: headers,
 			method: "POST",
 		},
 		"chat.delete"
@@ -148,9 +144,7 @@ export async function conversationsReplies(
 	const response = await slackFetch(
 		`https://slack.com/api/conversations.replies?channel=${channel}&ts=${threadTs}&limit=10${cursor ? `&cursor=${cursor}` : ""}`,
 		{
-			headers: {
-				Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-			},
+			headers: headers,
 		},
 		"conversations.replies"
 	);
@@ -171,10 +165,7 @@ export async function chatPostEphemeral(
 		"https://slack.com/api/chat.postEphemeral",
 		{
 			body: JSON.stringify({ channel, markdown_text: text, user }),
-			headers: {
-				Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-				"Content-Type": "application/json",
-			},
+			headers: headers,
 			method: "POST",
 		},
 		"chat.postEphemeral"
