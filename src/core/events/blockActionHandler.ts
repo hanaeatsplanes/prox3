@@ -1,13 +1,8 @@
-import { approvalBlocks } from "@/config/language/approval.ts";
 import { Confession } from "@/core/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
 import { hasStaged, setStaged } from "@/utils/db/dm.ts";
-import {
-	chatDelete,
-	chatPostMessage,
-	chatUpdate,
-} from "@/utils/slack/client.ts";
+import { chatDelete, chatUpdate } from "@/utils/slack/client.ts";
 
 export default async function (body: BlockActionEvent) {
 	const action = body.actions[0];
@@ -51,10 +46,7 @@ export default async function (body: BlockActionEvent) {
 			if (!confession) {
 				throw new Error("[button] no confession found in block action");
 			}
-			await Promise.all([
-				confession.approve(process.env.CONFESSIONS),
-				chatPostMessage(process.env.CONFESSIONS_LOG, approvalBlocks(confession.id)),
-			]);
+			await confession.approve(process.env.CONFESSIONS);
 
 			break;
 		}
