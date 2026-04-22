@@ -8,7 +8,7 @@ export const approvalMessage = (id: number, confession: string) => [
 	},
 ];
 
-export const reviewedMessage = (
+export const logMessage = (
 	id: number,
 	status: "approved" | "approved for meta" | "rejected"
 ) => {
