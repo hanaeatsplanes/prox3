@@ -69,7 +69,7 @@ export class Confession {
 			await chatPostMessage(channel, approvalMessage(this.id, this.confession)),
 			await chatPostMessage(
 				process.env.CONFESSIONS_LOG,
-				`Confession #${this.id} has been ${channel === process.env.META ? "approved for meta" : "approved"}.`
+				reviewedMessage(this.id, "approved")
 			),
 		]);
 		await this.updateDB();
