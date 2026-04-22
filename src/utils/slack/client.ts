@@ -1,10 +1,7 @@
-import type { ConversationRepliesResponse } from "@/models/slack";
-
-type SlackApiResponse = {
-	ok: boolean;
-	error?: string;
-	ts?: string;
-};
+import type {
+	ConversationRepliesResponse,
+	SlackApiResponse,
+} from "@/models/slack";
 
 const headers = {
 	Authorization: `Bearer ${process.env.SLACK_TOKEN}`,

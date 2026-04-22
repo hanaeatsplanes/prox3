@@ -1,5 +1,8 @@
-import { approvalMessage } from "@/config/language/review.ts";
-import { stagingBlocks } from "@/config/language/staging.ts";
+import {
+	approvalMessage,
+	reviewedMessage,
+	stagingBlocks,
+} from "@/config/language/index.ts";
 import type { ConfessionChannel } from "@/models/channels.ts";
 import { nextId, putConfession } from "@/utils/db/confession.ts";
 import { hash, verify } from "@/utils/hash";
@@ -60,11 +63,12 @@ export class Confession {
 		await this.updateDB();
 	}
 
-	async reject() {}
+	async reject() {
+		this.state = "rejected";
+		this;
+	}
 
 	async approve(channel: ConfessionChannel) {
-		this.state = "approved";
-		this.channel = channel;
 		[this.approvalTs] = await Promise.all([
 			await chatPostMessage(channel, approvalMessage(this.id, this.confession)),
 			await chatPostMessage(
@@ -72,6 +76,8 @@ export class Confession {
 				reviewedMessage(this.id, "approved")
 			),
 		]);
+		this.state = "approved";
+		this.channel = channel;
 		await this.updateDB();
 	}
 
@@ -79,20 +85,11 @@ export class Confession {
 		if (this.state !== "approved" && this.state !== "rejected") {
 			return;
 		}
-		if (!this.approvalTs) {
-			throw new Error(
-				`[confession]: confession ${this.id} not unapproved: null approvalTs`
-			);
+		if (this.channel && this.approvalTs) {
+			const channel = this.channel;
+			const messages = await getAllMyMessages(channel, this.approvalTs);
+			await Promise.allSettled(messages.map((id) => chatDelete(id, channel)));
 		}
-		if (!this.channel) {
-			throw new Error(
-				`[confession]: confession ${this.id} not unapproved: null channel`
-			);
-		}
-
-		const channel = this.channel;
-		const messages = await getAllMyMessages(channel, this.approvalTs);
-		await Promise.allSettled(messages.map((id) => chatDelete(id, channel)));
 		this.state = "staged";
 		this.channel = undefined;
 	}

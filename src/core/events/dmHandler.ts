@@ -1,4 +1,4 @@
-import { confirmStaging } from "@/config/language/staging.ts";
+import { confirmStaging } from "@/config/language/index.ts";
 import { chatPostMessage } from "@/utils/slack/client";
 import { sanitizeMessage } from "@/utils/slack/middleware";
 

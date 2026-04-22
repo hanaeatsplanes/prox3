@@ -5,11 +5,11 @@
     "": {
       "name": "prox2.5",
       "dependencies": {
-        "elysia": "^1.4.28",
+        "elysia": "latest",
       },
       "devDependencies": {
-        "@biomejs/biome": "2.4.12",
-        "@types/bun": "^1.3.12",
+        "@biomejs/biome": "latest",
+        "@types/bun": "latest",
       },
     },
   },

@@ -1,3 +1,28 @@
+export const approvalMessage = (id: number, confession: string) => [
+	{
+		text: {
+			text: `*${id}* ${confession}`,
+			type: "mrkdwn",
+		},
+		type: "section",
+	},
+];
+
+export const reviewedMessage = (
+	id: number,
+	status: "approved" | "approved for meta" | "rejected"
+) => {
+	return [
+		{
+			text: {
+				text: `Confession *#${id}* has been *${status}*`,
+				type: "mrkdwn",
+			},
+			type: "section",
+		},
+	];
+};
+
 export const stagingBlocks = (id: number, confession: string) => [
 	{
 		text: {
@@ -52,6 +77,7 @@ export const stagingBlocks = (id: number, confession: string) => [
 		type: "actions",
 	},
 ];
+
 export const confirmStaging = (confession: string) => [
 	{
 		text: {
