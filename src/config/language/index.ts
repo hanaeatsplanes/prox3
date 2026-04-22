@@ -23,7 +23,7 @@ export const logMessage = (
 	];
 };
 
-export const stagingBlocks = (id: number, confession: string) => [
+export const stagingMessage = (id: number, confession: string) => [
 	{
 		text: {
 			text: `(staging) *${id}* ${confession}`,
