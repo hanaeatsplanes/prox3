@@ -36,14 +36,6 @@ export class Confession {
 		return new Confession(id, confession, hash(slackId));
 	}
 
-	sameUser(slackId: string) {
-		return verify(slackId, this.hash);
-	}
-
-	async updateDB() {
-		await putConfession(this);
-	}
-
 	static from(params: {
 		id: number;
 		confession: string;
@@ -57,6 +49,14 @@ export class Confession {
 		const confessionObject = new Confession(id, confession, hash);
 		Object.assign(confessionObject, params);
 		return confessionObject;
+	}
+
+	sameUser(slackId: string) {
+		return verify(slackId, this.hash);
+	}
+
+	async updateDB() {
+		await putConfession(this);
 	}
 
 	async stage() {
