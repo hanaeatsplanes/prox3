@@ -33,6 +33,8 @@ bun run build
 bun run start
 ```
 
+and test --- go to http://localhost:3000 or whatever URL its on and you should get "Up!"
+
 ## Usage
 
 DM Prox3 or use /prox3.
