@@ -68,8 +68,20 @@ export class Confession {
 		await this.updateDB();
 	}
 
-	async reject() {
+	async reject(reviewer: string) {
 		this.state = "rejected";
+		if (!this.stagingTs) {
+			// this should never happen :DDDD
+			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
+		}
+		await Promise.all([
+			chatUpdate(
+				this.stagingTs,
+				process.env.CONFESSIONS_REVIEW,
+				reviewedMessage(this.id, this.confession, "rejected", reviewer)
+			),
+			this.updateDB(),
+		]);
 	}
 
 	async approve(channel: ConfessionChannel, reviewer: string) {

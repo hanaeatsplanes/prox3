@@ -31,7 +31,8 @@ export default async function (body: BlockActionEvent) {
 			await chatDelete(container.message_ts, container.channel_id);
 			break;
 		}
-		case "approve": {
+		case "approve":
+		case "approve:meta": {
 			const ts = container.message_ts;
 			const confession = await getConfessionBy("staging_ts", ts);
 
@@ -39,12 +40,24 @@ export default async function (body: BlockActionEvent) {
 				throw new Error("[button] no confession found in block action");
 			}
 
-			await confession.approve(confessionChannel.confessions, body.user.id);
+			const channel =
+				action.action_id === "approve" ? process.env.CONFESSIONS : process.env.META;
+
+			await confession.approve(channel, body.user.id);
 			break;
 		}
-		case "disapprove":
+		case "disapprove": {
+			const ts = container.message_ts;
+			const confession = await getConfessionBy("staging_ts", ts);
+
+			if (!confession) {
+				throw new Error("[button] no confession found in block action");
+			}
+
+			await confession.reject(body.user.id);
+			break;
+		}
 		case "approve:tw":
-		case "approve:meta":
 			throw new Error(
 				`[button] action "${action.action_id}" is not yet implemented`
 			);
