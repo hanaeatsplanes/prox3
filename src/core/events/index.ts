@@ -50,7 +50,7 @@ function onFail(body: MessageIMEvent | BlockActionEvent, error: Error) {
 	void chatPostEphemeral(
 		channel,
 		user,
-		`Something went wrong :( Please give @hna this Ray ID: **${rayId}**.`
+		`Something went wrong :( Please give <@U081C6XT885> this Ray ID: **${rayId}**.`
 	).catch((error) =>
 		console.error(`[failure]: Ray ID ${rayId} sending failed: `, error)
 	);
