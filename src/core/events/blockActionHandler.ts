@@ -48,7 +48,7 @@ export default async function (body: BlockActionEvent) {
 				throw new Error("[button] no confession found in block action");
 			}
 
-			await confession.approve(confessionChannel.confessions);
+			await confession.approve(confessionChannel.confessions, body.user.id);
 			break;
 		}
 		case "disapprove":

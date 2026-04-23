@@ -1,12 +1,17 @@
 import {
 	approvalMessage,
+	logMessage,
 	reviewedMessage,
-	stagingBlocks,
+	stagingMessage,
 } from "@/config/language/index.ts";
 import type { ConfessionChannel } from "@/models/channels.ts";
 import { nextId, putConfession } from "@/utils/db/confession.ts";
 import { hash, verify } from "@/utils/hash";
-import { chatDelete, chatPostMessage } from "@/utils/slack/client.ts";
+import {
+	chatDelete,
+	chatPostMessage,
+	chatUpdate,
+} from "@/utils/slack/client.ts";
 import { getAllMyMessages, sanitizeMessage } from "@/utils/slack/middleware.ts";
 
 type ConfessionState = "approved" | "rejected" | "staged" | "unstaged";
@@ -57,7 +62,7 @@ export class Confession {
 	async stage() {
 		this.stagingTs = await chatPostMessage(
 			process.env.CONFESSIONS_REVIEW,
-			stagingBlocks(this.id, this.confession)
+			stagingMessage(this.id, this.confession)
 		);
 		this.state = "staged";
 		await this.updateDB();
@@ -65,20 +70,31 @@ export class Confession {
 
 	async reject() {
 		this.state = "rejected";
-		this;
 	}
 
-	async approve(channel: ConfessionChannel) {
+	async approve(channel: ConfessionChannel, reviewer: string) {
 		[this.approvalTs] = await Promise.all([
 			await chatPostMessage(channel, approvalMessage(this.id, this.confession)),
 			await chatPostMessage(
 				process.env.CONFESSIONS_LOG,
-				reviewedMessage(this.id, "approved")
+				logMessage(this.id, "approved")
 			),
 		]);
 		this.state = "approved";
 		this.channel = channel;
-		await this.updateDB();
+		if (!this.stagingTs) {
+			// this should never happen :DDDD
+			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
+		}
+		const status = channel === process.env.META ? "meta" : "approved";
+		await Promise.all([
+			chatUpdate(
+				this.stagingTs,
+				process.env.CONFESSIONS_REVIEW,
+				reviewedMessage(this.id, this.confession, status, reviewer)
+			),
+			this.updateDB(),
+		]);
 	}
 
 	async undo() {

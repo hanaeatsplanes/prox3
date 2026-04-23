@@ -11,17 +11,15 @@ export const approvalMessage = (id: number, confession: string) => [
 export const logMessage = (
 	id: number,
 	status: "approved" | "approved for meta" | "rejected"
-) => {
-	return [
-		{
-			text: {
-				text: `Confession *#${id}* has been *${status}*`,
-				type: "mrkdwn",
-			},
-			type: "section",
+) => [
+	{
+		text: {
+			text: `Confession *#${id}* has been *${status}*`,
+			type: "mrkdwn",
 		},
-	];
-};
+		type: "section",
+	},
+];
 
 export const reviewedMessage = (
 	id: number,
@@ -116,7 +114,7 @@ export const stagingMessage = (id: number, confession: string) => [
 	},
 ];
 
-export const confirmStaging = (confession: string) => [
+export const confirmStagingMessage = (confession: string) => [
 	{
 		text: {
 			text: "Would you like to stage this confession?",
