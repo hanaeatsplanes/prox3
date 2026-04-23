@@ -5,5 +5,5 @@ export async function isCached(ts: string) {
 }
 
 export async function cache(ts: string) {
-	return redis.setex(`cache:${ts}`, 20, "1");
+	return redis.setex(`cache:${ts}`, 300, "1");
 }

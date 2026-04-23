@@ -14,6 +14,7 @@ export default async function (body: BlockActionEvent) {
 	if (await isCached(container.thread_ts)) {
 		return;
 	}
+	await cache(container.thread_ts);
 	switch (action.action_id) {
 		case "stage_confession": {
 			const confession = await Confession.create(action.value, body.user.id);
@@ -51,5 +52,4 @@ export default async function (body: BlockActionEvent) {
 			throw new Error(`[button] unhandled action: ${action.action_id}`);
 		}
 	}
-	await cache(container.thread_ts);
 }
