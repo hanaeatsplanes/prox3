@@ -11,10 +11,10 @@ export default async function (body: BlockActionEvent) {
 		throw new Error("[button] no action found in block action");
 	}
 	const { container } = body;
-	if (await isCached(container.thread_ts)) {
+	if (await isCached(container.message_ts)) {
 		return;
 	}
-	await cache(container.thread_ts);
+	await cache(container.message_ts);
 	switch (action.action_id) {
 		case "stage_confession": {
 			const confession = await Confession.create(action.value, body.user.id);
