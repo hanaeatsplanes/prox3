@@ -9,7 +9,7 @@ export default async function (
 ) {
 	await chatPostMessage(
 		dmChannelId,
-		confirmStaging(sanitizeMessage(confession)),
+		confirmStagingMessage(sanitizeMessage(confession)),
 		{
 			reply_broadcast: true,
 			thread_ts: threadTs,
