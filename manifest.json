@@ -1,0 +1,97 @@
+{
+  "display_information": {
+    "name": "Prox3",
+    "description": "gay",
+    "background_color": "#000000"
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "Prox3",
+      "always_online": true
+    },
+    "shortcuts": [
+      {
+        "name": "Reply Anonymously",
+        "type": "message",
+        "callback_id": "reply_anon",
+        "description": "Adds a reply as Prox3"
+      },
+      {
+        "name": "React Anonymously",
+        "type": "message",
+        "callback_id": "react_anon",
+        "description": "adds a reaction as prox3"
+      }
+    ],
+    "slash_commands": [
+      {
+        "command": "/prox3",
+        "url": "https://prox3.sahana.dev/api/command",
+        "description": "Confess your secrets",
+        "usage_hint": "message",
+        "should_escape": true
+      }
+    ]
+  },
+  "oauth_config": {
+    "scopes": {
+      "user": [
+        "search:read.public",
+        "search:read.private",
+        "search:read.mpim",
+        "search:read.im",
+        "search:read.files",
+        "search:read.users",
+        "chat:write",
+        "channels:history",
+        "groups:history",
+        "mpim:history",
+        "im:history",
+        "canvases:read",
+        "canvases:write",
+        "users:read",
+        "users:read.email"
+      ],
+      "user_optional": [
+        "search:read.private",
+        "search:read.mpim",
+        "search:read.im",
+        "search:read.files",
+        "chat:write",
+        "groups:history",
+        "mpim:history",
+        "im:history",
+        "canvases:read",
+        "canvases:write"
+      ],
+      "bot": [
+        "groups:history",
+        "chat:write",
+        "commands",
+        "im:history",
+        "im:read",
+        "im:write",
+        "reactions:write",
+        "channels:history",
+        "channels:join"
+      ]
+    },
+    "pkce_enabled": false
+  },
+  "settings": {
+    "event_subscriptions": {
+      "request_url": "https://prox3.sahana.dev/api/events",
+      "bot_events": [
+        "message.im"
+      ]
+    },
+    "interactivity": {
+      "is_enabled": true,
+      "request_url": "https://prox3.sahana.dev/api/events"
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false,
+    "is_mcp_enabled": false
+  }
+}
