@@ -12,3 +12,5 @@ pre-push:
       stage_fixed: true
     - name: update
       run: bun update --latest
+    - name: "migrate biome"
+      run: biome migrate --write
