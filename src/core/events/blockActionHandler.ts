@@ -1,5 +1,4 @@
 import { Confession } from "@/core/confession.ts";
-import { confessionChannel } from "@/models/channels.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
 import { cache, isCached } from "@/utils/db/dm.ts";
