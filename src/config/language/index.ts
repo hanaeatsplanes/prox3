@@ -23,6 +23,44 @@ export const logMessage = (
 	];
 };
 
+export const reviewedMessage = (
+	id: number,
+	confession: string,
+	status: "approved" | "meta" | "rejected",
+	reviewer: string
+) => {
+	let text: string;
+	switch (status) {
+		case "approved":
+			text = ":true: Approved";
+			break;
+		case "meta":
+			text = ":true: Approved for meta";
+			break;
+		case "rejected":
+			text = ":x: Rejected";
+			break;
+	}
+	const epoch = Math.floor(Date.now() / 1000);
+	const timestamp = `<!date^${epoch}^{date_short_pretty} at {time}|${new Date().toISOString()}>`;
+	return [
+		{
+			text: {
+				text: `(staging) *${id}* ${confession}`,
+				type: "mrkdwn",
+			},
+			type: "section",
+		},
+		{
+			text: {
+				text: `${text} by ${reviewer} at ${timestamp}`,
+				type: "mrkdwn",
+			},
+			type: "section",
+		},
+	];
+};
+
 export const stagingMessage = (id: number, confession: string) => [
 	{
 		text: {
