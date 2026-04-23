@@ -1,8 +1,9 @@
 import { redis } from "bun";
 
-export async function hasStaged(ts: string) {
-	return !!(await redis.get(`dm-ts:${ts}`));
+export async function isCached(ts: string) {
+	return !!(await redis.get(`cache:${ts}`));
 }
-export async function setStaged(ts: string) {
-	return await redis.setex(`dm-ts:${ts}`, 20, "1");
+
+export async function cache(ts: string) {
+	return redis.setex(`cache:${ts}`, 20, "1");
 }

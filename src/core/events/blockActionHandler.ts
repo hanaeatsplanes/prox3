@@ -2,7 +2,7 @@ import { Confession } from "@/core/confession.ts";
 import { confessionChannel } from "@/models/channels.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
-import { hasStaged, setStaged } from "@/utils/db/dm.ts";
+import { cache, isCached } from "@/utils/db/dm.ts";
 import { chatDelete, chatUpdate } from "@/utils/slack/client.ts";
 
 export default async function (body: BlockActionEvent) {
@@ -11,29 +11,19 @@ export default async function (body: BlockActionEvent) {
 		throw new Error("[button] no action found in block action");
 	}
 	const { container } = body;
+	if (await isCached(container.thread_ts)) {
+		return;
+	}
 	switch (action.action_id) {
 		case "stage_confession": {
-			if (await hasStaged(container.thread_ts)) {
-				return;
-			}
-
 			const confession = await Confession.create(action.value, body.user.id);
 			await confession.stage();
 
-			try {
-				await Promise.all([
-					chatUpdate(
-						container.message_ts,
-						container.channel_id,
-						`Staged as confession ${confession.id}`
-					),
-					setStaged(container.thread_ts),
-				]);
-			} catch (error) {
-				throw new Error("[button] post-stage cleanup failed", {
-					cause: error,
-				});
-			}
+			await chatUpdate(
+				container.message_ts,
+				container.channel_id,
+				`Staged as confession ${confession.id}`
+			);
 			break;
 		}
 		case "do-not-stage": {
@@ -61,4 +51,5 @@ export default async function (body: BlockActionEvent) {
 			throw new Error(`[button] unhandled action: ${action.action_id}`);
 		}
 	}
+	await cache(container.thread_ts);
 }
