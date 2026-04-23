@@ -14,7 +14,7 @@ export const logMessage = (
 ) => [
 	{
 		text: {
-			text: `Confession *#${id}* has been *${status}*`,
+			text: `Confession *#\u2060${id}* has been *${status}*`,
 			type: "mrkdwn",
 		},
 		type: "section",
