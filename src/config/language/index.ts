@@ -51,7 +51,7 @@ export const reviewedMessage = (
 		},
 		{
 			text: {
-				text: `${text} by ${reviewer} at ${timestamp}`,
+				text: `${text} by <@${reviewer}> at ${timestamp}`,
 				type: "mrkdwn",
 			},
 			type: "section",
