@@ -70,6 +70,18 @@ services:
       timeout: 5s
       retries: 5
 
+  dbgate:
+    image: dbgate/dbgate:latest
+    container_name: dbgate
+    restart: unless-stopped
+    ports:
+      - "8080:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 volumes:
   postgres_data:
 
