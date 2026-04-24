@@ -56,6 +56,20 @@ export const reviewedMessage = (
 			},
 			type: "section",
 		},
+		{
+			elements: [
+				{
+					action_id: "undo",
+					text: {
+						emoji: true,
+						text: ":rewind: Undo",
+						type: "plain_text",
+					},
+					type: "button",
+					value: "undo",
+				},
+			],
+		},
 	];
 };
 
