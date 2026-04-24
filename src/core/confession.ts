@@ -3,6 +3,7 @@ import {
 	logMessage,
 	reviewedMessage,
 	stagingMessage,
+	undoneConfession,
 } from "@/config/language/index.ts";
 import type { ConfessionChannel } from "@/models/channels.ts";
 import { nextId, putConfession } from "@/utils/db/confession.ts";
@@ -24,6 +25,7 @@ export class Confession {
 	stagingTs?: string;
 	approvalTs?: string;
 	state: ConfessionState = "unstaged";
+	reviewer?: string;
 
 	private constructor(id: number, confession: string, hash: string) {
 		this.id = id;
@@ -44,6 +46,7 @@ export class Confession {
 		stagingTs?: string;
 		approvalTs?: string;
 		state: ConfessionState;
+		reviewer?: string;
 	}) {
 		const { id, confession, hash } = params;
 		const confessionObject = new Confession(id, confession, hash);
@@ -70,6 +73,7 @@ export class Confession {
 
 	async reject(reviewer: string) {
 		this.state = "rejected";
+		this.reviewer = reviewer;
 		if (!this.stagingTs) {
 			// this should never happen :DDDD
 			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
@@ -94,6 +98,7 @@ export class Confession {
 		]);
 		this.state = "approved";
 		this.channel = channel;
+		this.reviewer = reviewer;
 		if (!this.stagingTs) {
 			// this should never happen :DDDD
 			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
@@ -109,16 +114,44 @@ export class Confession {
 		]);
 	}
 
-	async undo() {
+	async undo(reviewer: string) {
 		if (this.state !== "approved" && this.state !== "rejected") {
 			return;
 		}
+		let promises: Promise<void>[] = [Promise.resolve()];
 		if (this.channel && this.approvalTs) {
 			const channel = this.channel;
 			const messages = await getAllMyMessages(channel, this.approvalTs);
-			await Promise.allSettled(messages.map((id) => chatDelete(id, channel)));
+			promises = messages.map((id) => chatDelete(id, channel));
 		}
+
+		if (!this.stagingTs || !this.reviewer) {
+			// this should never happen :DDDD
+			throw new Error(
+				"THIS SHOULD NEVER HAPPEN: NO STAGING TS OR REVIEWER ON UNDO"
+			);
+		}
+		const status =
+			this.state === "approved"
+				? this.channel === process.env.CONFESSIONS
+					? "approved"
+					: "meta"
+				: "rejection";
+		await Promise.all([
+			...promises,
+			chatUpdate(
+				this.stagingTs,
+				process.env.CONFESSIONS_REVIEW,
+				stagingMessage(this.id, this.confession)
+			),
+			chatPostMessage(
+				process.env.CONFESSIONS_REVIEW,
+				undoneConfession(status, this.reviewer, this.id, reviewer)
+			),
+		]);
 		this.state = "staged";
 		this.channel = undefined;
+		this.reviewer = undefined;
+		await this.updateDB();
 	}
 }

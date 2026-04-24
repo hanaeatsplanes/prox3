@@ -47,7 +47,8 @@ export async function putConfession(confession: Confession) {
           channel,
           staging_ts,
           state,
-          approval_ts
+          approval_ts,
+          reviewer
         )
         VALUES (
           ${confession.id},
@@ -56,7 +57,8 @@ export async function putConfession(confession: Confession) {
           ${confession.channel},
           ${confession.stagingTs},
           ${confession.state},
-          ${confession.approvalTs}
+          ${confession.approvalTs},
+          ${confession.reviewer}
         )
         ON CONFLICT (id) DO UPDATE SET
         hash = EXCLUDED.hash,
@@ -64,7 +66,8 @@ export async function putConfession(confession: Confession) {
         channel = EXCLUDED.channel,
         staging_ts = EXCLUDED.staging_ts,
         state = EXCLUDED.state,
-        approval_ts = EXCLUDED.approval_ts
+        approval_ts = EXCLUDED.approval_ts,
+        reviewer = EXCLUDED.reviewer
     `,
 		redis.setex(
 			`confession:staging:${confession.stagingTs}`,

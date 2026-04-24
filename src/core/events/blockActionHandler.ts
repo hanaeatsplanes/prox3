@@ -22,7 +22,7 @@ export default async function (body: BlockActionEvent) {
 			await chatUpdate(
 				container.message_ts,
 				container.channel_id,
-				`Staged as confession ${confession.id}`
+				`:true: Staged as confession ${confession.id}`
 			);
 			break;
 		}
@@ -54,6 +54,16 @@ export default async function (body: BlockActionEvent) {
 			}
 
 			await confession.reject(body.user.id);
+			break;
+		}
+		case "undo": {
+			const ts = container.message_ts;
+			const confession = await getConfessionBy("staging_ts", ts);
+
+			if (!confession) {
+				throw new Error("[button] no confession found in block action");
+			}
+			await confession.undo(body.user.id);
 			break;
 		}
 		case "approve:tw":

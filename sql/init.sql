@@ -11,5 +11,6 @@ CREATE TABLE IF NOT EXISTS confessions (
                           'unstaged'
                          )
             ),
-    approval_ts TEXT UNIQUE
+    approval_ts TEXT UNIQUE,
+    reviewer TEXT
 );

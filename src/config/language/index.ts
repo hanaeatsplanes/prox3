@@ -1,7 +1,7 @@
 export const approvalMessage = (id: number, confession: string) => [
 	{
 		text: {
-			text: `*${id}* ${confession}`,
+			text: `*${id}*: ${confession}`,
 			type: "mrkdwn",
 		},
 		type: "section",
@@ -149,3 +149,20 @@ export const confirmStagingMessage = (confession: string) => [
 		type: "actions",
 	},
 ];
+
+export const undoneConfession = (
+	status: "approved" | "meta" | "rejection",
+	reviewer: string,
+	id: number,
+	undoer: string
+) => {
+	let action: string;
+	if (status === "approved") {
+		action = "Approval";
+	} else if (status === "meta") {
+		action = "Approval for meta";
+	} else {
+		action = "Rejection";
+	}
+	return `:rewind: ${action} (by <@${reviewer}>) of confession #\u2060${id} undone by <@${undoer}>`;
+};
