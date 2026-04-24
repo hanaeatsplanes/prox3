@@ -1,6 +1,6 @@
 # Prox3
 *the next edition of confessing*
-> Inspired by [anirudhb/prox3](https://github.com/anirudhb/prox3).
+> Inspired by [anirudhb/prox2](https://github.com/anirudhb/prox2).
 
 ![](https://hackatime.hackclub.com/api/v1/badge/U081C6XT885/hanaeatsplanes/prox3)
 ![](https://pride-badges.pony.workers.dev/static/v1?label=a%20trans%20person%20made%20this&stripeWidth=6&stripeColors=5BCEFA,F5A9B8,FFFFFF,F5A9B8,5BCEFA)
