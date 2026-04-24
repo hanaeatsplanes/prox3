@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS confessions;
+-- TODO: remove in prod
 CREATE TABLE IF NOT EXISTS confessions (
     id INTEGER PRIMARY KEY,
     confession TEXT NOT NULL,
