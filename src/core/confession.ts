@@ -122,7 +122,7 @@ export class Confession {
 
 		this.approvalTs = await chatPostMessage(
 			this.channel,
-			`*${this.id}: TW: ${tw} — open thread to view`
+			`*${this.id}*: TW: ${tw} — open thread to view`
 		);
 		await Promise.all([
 			chatPostMessage(process.env.CONFESSIONS, this.confession, {
