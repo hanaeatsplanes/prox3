@@ -21,6 +21,7 @@ export type MessageIMEvent = SlackEventCallback<{
 }>;
 
 export type BlockActionEvent = {
+	trigger_id: string;
 	actions: {
 		action_id: string;
 		value: string;
