@@ -5,6 +5,8 @@ import type {
 	CommandBody,
 	MessageIMEvent,
 	SlackURLVerification,
+	ViewClosedEvent,
+	ViewSubmissionEvent,
 } from "@/models/event.ts";
 import { conversationsReplies } from "@/utils/slack/client.ts";
 
@@ -55,7 +57,10 @@ export function extractEvent(rawBody: string, contentType: string) {
 			console.error("[middleware] no payload in form-urlencoded body");
 			throw new Error("no payload in application/x-www-form-urlencoded");
 		}
-		return JSON.parse(payload) as BlockActionEvent;
+		return JSON.parse(payload) as
+			| BlockActionEvent
+			| ViewClosedEvent
+			| ViewSubmissionEvent;
 	}
 	console.error(`[middleware] unsupported content-type: ${contentType}`);
 	throw new Error("not able to parse");

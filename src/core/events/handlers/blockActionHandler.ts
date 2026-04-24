@@ -1,7 +1,13 @@
-import { twModal } from "@/config/language";
+import { twModal } from "@/config/language/index.ts";
 import { Confession } from "@/core/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
-import { cache, isCached, isUndoCached, undoCache } from "@/utils/db/cache.ts";
+import {
+	cache,
+	clearCache,
+	isCached,
+	isUndoCached,
+	undoCache,
+} from "@/utils/db/cache.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
 import { chatDelete, chatUpdate, viewsOpen } from "@/utils/slack/client.ts";
 
@@ -13,7 +19,7 @@ export default async function (body: BlockActionEvent) {
 	const { container } = body;
 	if (
 		(await isCached(container.message_ts)) &&
-		(action.action_id !== "undo" || !(await isUndoCached(container.message_ts)))
+		(action.action_id !== "undo" || (await isUndoCached(container.message_ts)))
 	) {
 		return;
 	}
@@ -75,7 +81,12 @@ export default async function (body: BlockActionEvent) {
 		}
 		case "approve:tw": {
 			const ts = container.message_ts;
-			await viewsOpen(body.trigger_id, twModal(ts));
+			try {
+				await viewsOpen(body.trigger_id, twModal(ts));
+			} catch (error) {
+				await clearCache(ts);
+				throw error;
+			}
 			break;
 		}
 		default: {

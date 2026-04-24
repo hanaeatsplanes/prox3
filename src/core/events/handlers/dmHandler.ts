@@ -1,6 +1,6 @@
 import { confirmStagingMessage } from "@/config/language/index.ts";
-import { chatPostMessage } from "@/utils/slack/client";
-import { sanitizeMessage } from "@/utils/slack/middleware";
+import { chatPostMessage } from "@/utils/slack/client.ts";
+import { sanitizeMessage } from "@/utils/slack/middleware.ts";
 
 export default async function (
 	confession: string,

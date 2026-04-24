@@ -43,3 +43,68 @@ export type CommandBody = {
 	command: string;
 	text: string;
 };
+
+type ViewStateValue = {
+	type: string;
+	value?: string;
+};
+
+export type ViewSubmissionEvent = {
+	type: "view_submission";
+	team: {
+		id: string;
+		domain: string;
+	};
+	user: {
+		id: string;
+		username: string;
+	};
+	view: {
+		id: string;
+		type: "modal";
+		title: {
+			type: "plain_text";
+			text: string;
+		};
+		blocks: unknown[];
+		private_metadata: string;
+		callback_id: string;
+		state: {
+			values: Record<string, Record<string, ViewStateValue>>;
+		};
+		hash: string;
+		response_urls?: {
+			block_id: string;
+			action_id: string;
+			channel_id: string;
+			response_url: string;
+		}[];
+	};
+	api_app_id: string;
+	trigger_id: string;
+};
+
+export type ViewClosedEvent = {
+	type: "view_closed";
+	team: {
+		id: string;
+		domain: string;
+	};
+	user: {
+		id: string;
+		name: string;
+	};
+	view: {
+		callback_id: string;
+		id: string;
+		private_metadata: string;
+		type: "modal";
+		title: {
+			type: "plain_text";
+			text: string;
+		};
+		blocks: unknown[];
+	};
+	api_app_id: string;
+	is_cleared: boolean;
+};

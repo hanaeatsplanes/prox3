@@ -89,13 +89,6 @@ export class Confession {
 	}
 
 	async approve(channel: ConfessionChannel, reviewer: string) {
-		[this.approvalTs] = await Promise.all([
-			await chatPostMessage(channel, approvalMessage(this.id, this.confession)),
-			await chatPostMessage(
-				process.env.CONFESSIONS_LOG,
-				logMessage(this.id, "approved")
-			),
-		]);
 		this.state = "approved";
 		this.channel = channel;
 		this.reviewer = reviewer;
@@ -104,11 +97,45 @@ export class Confession {
 			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
 		}
 		const status = channel === process.env.META ? "meta" : "approved";
-		await Promise.all([
+		[this.approvalTs] = await Promise.all([
+			chatPostMessage(channel, approvalMessage(this.id, this.confession)),
+			chatPostMessage(
+				process.env.CONFESSIONS_LOG,
+				logMessage(this.id, status === "meta" ? "approved for meta" : "approved")
+			),
 			chatUpdate(
 				this.stagingTs,
 				process.env.CONFESSIONS_REVIEW,
 				reviewedMessage(this.id, this.confession, status, reviewer)
+			),
+		]);
+		await this.updateDB();
+	}
+
+	async tw(reviewer: string, tw: string) {
+		this.state = "approved";
+		this.channel = process.env.CONFESSIONS;
+		this.reviewer = reviewer;
+		if (!this.stagingTs) {
+			// this should never happen :DDDD
+			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
+		}
+		this.approvalTs = await chatPostMessage(
+			this.channel,
+			`*${this.id}: TW: ${tw} — open thread to view`
+		);
+		await Promise.all([
+			chatPostMessage(process.env.CONFESSIONS, this.confession, {
+				thread_ts: this.approvalTs,
+			}),
+			chatPostMessage(
+				process.env.CONFESSIONS_LOG,
+				logMessage(this.id, "approved with TW")
+			),
+			chatUpdate(
+				this.stagingTs,
+				process.env.CONFESSIONS_REVIEW,
+				reviewedMessage(this.id, this.confession, "approved", reviewer)
 			),
 			this.updateDB(),
 		]);
@@ -146,7 +173,11 @@ export class Confession {
 			),
 			chatPostMessage(
 				process.env.CONFESSIONS_REVIEW,
-				undoneConfession(status, this.reviewer, this.id, reviewer)
+				undoneConfession(status, this.reviewer, this.id, reviewer),
+				{
+					reply_broadcast: true,
+					thread_ts: this.stagingTs,
+				}
 			),
 		]);
 		this.state = "staged";

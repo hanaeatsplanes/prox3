@@ -169,3 +169,16 @@ export async function chatPostEphemeral(
 	);
 	return response.ok;
 }
+
+export async function viewsOpen(triggerId: string, view: object) {
+	const response = await slackFetch(
+		"https://slack.com/api/views.open",
+		{
+			body: JSON.stringify({ trigger_id: triggerId, view }),
+			headers: headers,
+			method: "POST",
+		},
+		"views.open"
+	);
+	await readSlackResponse(response, "views.open");
+}

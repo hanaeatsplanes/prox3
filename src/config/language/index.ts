@@ -10,7 +10,7 @@ export const approvalMessage = (id: number, confession: string) => [
 
 export const logMessage = (
 	id: number,
-	status: "approved" | "approved for meta" | "rejected"
+	status: "approved" | "approved for meta" | "approved with TW" | "rejected"
 ) => [
 	{
 		text: {
@@ -181,3 +181,28 @@ export const undoneConfession = (
 	}
 	return `:rewind: ${action} (by <@${reviewer}>) of confession #\u2060${id} undone by <@${undoer}>`;
 };
+
+export const twModal = (stagingTs: string) => ({
+	blocks: [
+		{
+			block_id: "tw",
+			element: {
+				action_id: "approve_tw_input",
+				multiline: true,
+				type: "plain_text_input",
+			},
+			label: { emoji: true, text: "TW", type: "plain_text" },
+			type: "input",
+		},
+	],
+	callback_id: "approve:tw",
+	close: { emoji: true, text: "Cancel", type: "plain_text" },
+	notify_on_close: true,
+	private_metadata: stagingTs,
+	submit: { emoji: true, text: "Approve", type: "plain_text" },
+	title: { emoji: true, text: "Approve with TW", type: "plain_text" },
+	type: "modal",
+});
+
+export const errorMessage = (rayId: string, message: string) =>
+	`Something went wrong. :c\nPlease give <@U081C6XT885> this Ray ID: *${rayId}*.\nError: *${message}*`;
