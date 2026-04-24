@@ -4,12 +4,13 @@ WORKDIR /app
 COPY package.json bun.lock tsconfig.json ./
 RUN bun install --frozen-lockfile --production
 COPY src ./src
-RUN bun build ./src/index.ts --production --minify --drop=debugger --target=bun --outfile dist/index.js
+RUN bun run build
 
-FROM oven/bun:1-slim AS final
+FROM debian:12-slim AS final
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-COPY --from=build /app/dist/index.js ./index.js
+COPY --from=build /app/dist/prox3 ./prox3
 COPY sql ./sql
 
 EXPOSE 3000
-CMD ["bun", "run", "index.js"]
+CMD ["./prox3"]

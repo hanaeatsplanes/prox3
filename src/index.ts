@@ -1,7 +1,7 @@
 import { redis } from "bun";
 import { Elysia } from "elysia";
 import events from "@/core/events";
-import { initializeDatabase } from "@/utils/db/init";
+import { initializeDatabase, initializeRedis } from "@/utils/db/init";
 
 console.log("[startup] connecting to redis...");
 await redis.connect();
@@ -9,6 +9,9 @@ console.log("[startup] redis connected");
 
 console.log("[startup] initializing database...");
 await initializeDatabase();
+
+console.log("[startup] initializing redis...");
+await initializeRedis();
 
 new Elysia()
 	.use(events)
