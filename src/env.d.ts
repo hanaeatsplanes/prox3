@@ -3,6 +3,7 @@ declare namespace NodeJS {
 		CONFESSIONS: string;
 		CONFESSIONS_LOG: string;
 		CONFESSIONS_REVIEW: string;
+		HASH_PEPPER?: string;
 		META: string;
 		POSTGRES_DB: string;
 		POSTGRES_PASSWORD: string;
