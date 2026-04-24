@@ -14,3 +14,5 @@ pre-push:
       run: bun update --latest
     - name: migrate
       run: biome migrate --write
+    - name: build
+      run: bun run build
