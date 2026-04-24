@@ -15,7 +15,7 @@ type ApproveTwViewState = {
 
 async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 	switch (body.view.callback_id) {
-		case "approve:ts": {
+		case "approve:tw": {
 			const stagingTs = body.view.private_metadata.trim();
 			if (!stagingTs) {
 				throw new Error("[view_submission] missing staging ts");
