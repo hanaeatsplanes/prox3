@@ -69,6 +69,7 @@ export const reviewedMessage = (
 					value: "undo",
 				},
 			],
+			type: "actions",
 		},
 	];
 };
