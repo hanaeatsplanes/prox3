@@ -91,7 +91,7 @@ async function handleValidatedEvent(
 				return;
 			}
 
-			await dmHandler(event.text, event.channel, event.ts);
+			await dmHandler(event.channel, event.ts);
 			return;
 		}
 

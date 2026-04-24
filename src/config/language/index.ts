@@ -129,7 +129,7 @@ export const stagingMessage = (id: number, confession: string) => [
 	},
 ];
 
-export const confirmStagingMessage = (confession: string) => [
+export const confirmStagingMessage = [
 	{
 		text: {
 			text: "Would you like to stage this confession?",
@@ -140,14 +140,14 @@ export const confirmStagingMessage = (confession: string) => [
 	{
 		elements: [
 			{
-				action_id: "stage_confession",
+				action_id: "stage-confession",
 				style: "primary",
 				text: {
 					text: "Yes",
 					type: "plain_text",
 				},
 				type: "button",
-				value: confession,
+				value: "stage-confession",
 			},
 			{
 				action_id: "do-not-stage",

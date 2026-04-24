@@ -93,10 +93,10 @@ export class Confession {
 		this.channel = channel;
 		this.reviewer = reviewer;
 		if (!this.stagingTs) {
-			// this should never happen :DDDD
 			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
 		}
 		const status = channel === process.env.META ? "meta" : "approved";
+
 		[this.approvalTs] = await Promise.all([
 			chatPostMessage(channel, approvalMessage(this.id, this.confession)),
 			chatPostMessage(
@@ -117,9 +117,9 @@ export class Confession {
 		this.channel = process.env.CONFESSIONS;
 		this.reviewer = reviewer;
 		if (!this.stagingTs) {
-			// this should never happen :DDDD
 			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
 		}
+
 		this.approvalTs = await chatPostMessage(
 			this.channel,
 			`*${this.id}: TW: ${tw} — open thread to view`
@@ -153,19 +153,26 @@ export class Confession {
 		}
 
 		if (!this.stagingTs || !this.reviewer) {
-			// this should never happen :DDDD
 			throw new Error(
 				"THIS SHOULD NEVER HAPPEN: NO STAGING TS OR REVIEWER ON UNDO"
 			);
 		}
+
 		const status =
 			this.state === "approved"
 				? this.channel === process.env.CONFESSIONS
 					? "approved"
 					: "meta"
 				: "rejection";
+
+		const previousReviewer = this.reviewer;
+		this.state = "staged";
+		this.channel = undefined;
+		this.reviewer = undefined;
+
 		await Promise.all([
 			...promises,
+			this.updateDB(),
 			chatUpdate(
 				this.stagingTs,
 				process.env.CONFESSIONS_REVIEW,
@@ -173,16 +180,12 @@ export class Confession {
 			),
 			chatPostMessage(
 				process.env.CONFESSIONS_REVIEW,
-				undoneConfession(status, this.reviewer, this.id, reviewer),
+				undoneConfession(status, previousReviewer, this.id, reviewer),
 				{
 					reply_broadcast: true,
 					thread_ts: this.stagingTs,
 				}
 			),
 		]);
-		this.state = "staged";
-		this.channel = undefined;
-		this.reviewer = undefined;
-		await this.updateDB();
 	}
 }

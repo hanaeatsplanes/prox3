@@ -31,6 +31,10 @@ export type BlockActionEvent = {
 		channel_id: string;
 		thread_ts: string;
 	};
+	message: {
+		text: string;
+		ts: string;
+	};
 	type: "block_actions";
 	user: {
 		id: string;
