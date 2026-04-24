@@ -33,6 +33,7 @@ async function handler({ request, set }: Context) {
 			}
 			default: {
 				void handleValidatedEvent(body).catch((error) => onFail(body, error));
+				return "";
 			}
 		}
 	} catch (error) {
