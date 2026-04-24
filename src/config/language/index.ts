@@ -10,7 +10,7 @@ export const approvalMessage = (id: number, confession: string) => [
 
 export const logMessage = (
 	id: number,
-	status: "approved" | "approved for meta" | "approved with TW" | "rejected"
+	status: "approved" | "approved for meta" | "rejected"
 ) => [
 	{
 		text: {
