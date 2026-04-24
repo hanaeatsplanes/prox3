@@ -23,7 +23,9 @@ export async function getConfessionBy(
 	}
 
 	const confessionBody =
-		await sql`SELECT * FROM confessions WHERE ${column} = ${ts} `;
+		column === "staging_ts"
+			? await sql`SELECT * FROM confessions WHERE staging_ts = ${ts}`
+			: await sql`SELECT * FROM confessions WHERE approval_ts = ${ts}`;
 
 	const confession = confessionBody?.[0];
 	if (confession) {

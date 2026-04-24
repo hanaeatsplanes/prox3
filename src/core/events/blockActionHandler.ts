@@ -1,7 +1,7 @@
 import { Confession } from "@/core/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
-import { cache, isCached } from "@/utils/db/dm.ts";
+import { cache, isCached, isUndoCached, undoCache } from "@/utils/db/dm.ts";
 import { chatDelete, chatUpdate } from "@/utils/slack/client.ts";
 
 export default async function (body: BlockActionEvent) {
@@ -10,10 +10,16 @@ export default async function (body: BlockActionEvent) {
 		throw new Error("[button] no action found in block action");
 	}
 	const { container } = body;
-	if (await isCached(container.message_ts)) {
+	if (
+		(await isCached(container.message_ts)) &&
+		(action.action_id !== "undo" || (await isUndoCached(container.message_ts)))
+	) {
 		return;
 	}
-	await cache(container.message_ts);
+	void cache(container.message_ts);
+	if (action.action_id !== "undo") {
+		void undoCache(container.message_ts);
+	}
 	switch (action.action_id) {
 		case "stage_confession": {
 			const confession = await Confession.create(action.value, body.user.id);
