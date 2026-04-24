@@ -1,9 +1,8 @@
-import { approveTwModalCallbackId } from "@/config/language/index.ts";
 import type { ViewClosedEvent } from "@/models/event.ts";
 import { clearCache } from "@/utils/db/cache.ts";
 
 export default async function viewClosedHandler(body: ViewClosedEvent) {
-	if (body.view.callback_id !== approveTwModalCallbackId) {
+	if (body.view.callback_id !== "approve:tw") {
 		return;
 	}
 
