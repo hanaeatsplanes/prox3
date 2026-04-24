@@ -27,9 +27,7 @@ export default async function (body: BlockActionEvent) {
 		if (await isUndoCached(ts)) {
 			return;
 		}
-	}
-
-	if (await isCached(ts)) {
+	} else if (await isCached(ts)) {
 		return;
 	}
 

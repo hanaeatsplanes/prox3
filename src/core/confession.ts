@@ -130,7 +130,7 @@ export class Confession {
 			}),
 			chatPostMessage(
 				process.env.CONFESSIONS_LOG,
-				logMessage(this.id, "approved with TW")
+				logMessage(this.id, "approved")
 			),
 			chatUpdate(
 				this.stagingTs,
