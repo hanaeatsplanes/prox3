@@ -8,14 +8,19 @@ import {
 	isUndoCached,
 } from "@/utils/db/cache.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
-import { chatDelete, chatUpdate, viewsOpen } from "@/utils/slack/client.ts";
+import {
+	chatDelete,
+	chatUpdate,
+	conversationsReplies,
+	viewsOpen,
+} from "@/utils/slack/client.ts";
 
 export default async function (body: BlockActionEvent) {
 	const action = body.actions[0];
 	if (!action) {
 		throw new Error("[button] no action found in block action");
 	}
-	const { container, message } = body;
+	const { container } = body;
 	const ts = container.message_ts;
 
 	if (action.action_id === "undo") {
@@ -31,7 +36,15 @@ export default async function (body: BlockActionEvent) {
 	try {
 		switch (action.action_id) {
 			case "stage-confession": {
-				const confession = await Confession.create(message.text, body.user.id);
+				const thread = await conversationsReplies(
+					container.channel_id,
+					container.thread_ts
+				);
+				if (!thread.ok || !thread.messages[0]) {
+					throw new Error("[button] failed to fetch confession text from thread");
+				}
+				const confessionText = thread.messages[0].text;
+				const confession = await Confession.create(confessionText, body.user.id);
 				await confession.stage();
 
 				await chatUpdate(
