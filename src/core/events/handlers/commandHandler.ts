@@ -28,7 +28,11 @@ async function handleValidatedCommand(rawBody: string) {
 async function stageConfession(text: string, userId: string) {
 	const confession = await Confession.create(text, userId);
 	await confession.stage();
-	await chatPostMessage(userId, `Staged as confession ${confession.id}`);
+	await chatPostEphemeral(
+		userId,
+		userId,
+		`Staged as confession ${confession.id}`
+	);
 }
 
 export default new Elysia().post("/api/command", handler);
