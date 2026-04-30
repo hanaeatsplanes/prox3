@@ -4,12 +4,12 @@
 	"type": "module",
 	"main": "src/index.ts",
 	"scripts": {
-		"build": "bun build ./src/index.ts --compile --bytecode --format=esm --minify --sourcemap --outfile dist/prox3",
+		"build": "bun build . --compile --bytecode --format=esm --minify --sourcemap --outfile dist/prox3",
 		"start": "./dist/prox3",
 		"ci/cd": "biome check . --error-on-warnings",
 		"lint": "biome check . --fix && biome format . --write",
 		"lint:unsafe": "biome check . --fix --unsafe && biome format . --write",
-		"dev": "bun run --watch src/index.ts"
+		"dev": "bun run --watch ."
 	},
 	"dependencies": {
 		"elysia": "^1.4.28"

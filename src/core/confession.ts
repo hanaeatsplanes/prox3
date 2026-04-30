@@ -188,4 +188,13 @@ export class Confession {
 			),
 		]);
 	}
+
+	async reply(message: string) {
+		if (this.state !== "approved" || !this.approvalTs || !this.channel) {
+			throw new Error("State not approved or no approval timestamp");
+		}
+		await chatPostMessage(this.channel, sanitizeMessage(message), {
+			thread_ts: this.approvalTs,
+		});
+	}
 }
