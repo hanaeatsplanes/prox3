@@ -52,7 +52,7 @@ export async function getConfessionBy(
 
 export async function getStagedConfessions() {
 	const rows =
-		await sql`SELECT * FROM confessions WHERE state = "staged" ORDER BY id`;
+		await sql`SELECT * FROM confessions WHERE state = 'staged' ORDER BY id`;
 	if (!rows?.length) return [];
 	const confessions: Confession[] = [];
 	for (const row of rows) {
