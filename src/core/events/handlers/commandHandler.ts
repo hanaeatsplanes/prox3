@@ -1,7 +1,7 @@
 import { type Context, Elysia } from "elysia";
 import { Confession } from "@/core/confession.ts";
 import { getStagedConfessions } from "@/utils/db/confession.ts";
-import { chatDelete, chatPostEphemeral } from "@/utils/slack/client.ts";
+import { chatPostEphemeral } from "@/utils/slack/client.ts";
 import {
 	extractCommandBody,
 	verifySlackRequest,
