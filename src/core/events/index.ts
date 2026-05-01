@@ -3,10 +3,12 @@ import { errorMessage } from "@/config/language/index.ts";
 import blockActionHandler from "@/core/events/handlers/blockActionHandler.ts";
 import commandHandler from "@/core/events/handlers/commandHandler.ts";
 import dmHandler from "@/core/events/handlers/dmHandler.ts";
+import messageActionHandler from "@/core/events/handlers/messageActionHandler.ts";
 import viewClosedHandler from "@/core/events/handlers/viewClosedHandler.ts";
 import viewSubmissionHandler from "@/core/events/handlers/viewSubmissionHandler.ts";
 import type {
 	BlockActionEvent,
+	MessageActionEvent,
 	MessageIMEvent,
 	SlackURLVerification,
 	ViewClosedEvent,
@@ -76,7 +78,12 @@ function onFail(
 }
 
 async function handleValidatedEvent(
-	body: BlockActionEvent | MessageIMEvent | ViewSubmissionEvent | ViewClosedEvent
+	body:
+		| BlockActionEvent
+		| MessageIMEvent
+		| ViewSubmissionEvent
+		| ViewClosedEvent
+		| MessageActionEvent
 ) {
 	switch (body.type) {
 		case "event_callback": {
@@ -107,6 +114,11 @@ async function handleValidatedEvent(
 
 		case "view_closed": {
 			await viewClosedHandler(body as ViewClosedEvent);
+			return;
+		}
+
+		case "message_action": {
+			await messageActionHandler(body as MessageActionEvent);
 			return;
 		}
 

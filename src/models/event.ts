@@ -112,3 +112,29 @@ export type ViewClosedEvent = {
 	api_app_id: string;
 	is_cleared: boolean;
 };
+
+export type MessageActionEvent = {
+	token: string;
+	callback_id: string;
+	type: "message_action";
+	trigger_id: string;
+	response_url: string;
+	team: {
+		id: string;
+		domain: string;
+	};
+	channel: {
+		id: string;
+		name: string;
+	};
+	user: {
+		id: string;
+		name: string;
+	};
+	message: {
+		type: "message";
+		user: string;
+		ts: string;
+		text: string;
+	};
+};
