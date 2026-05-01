@@ -92,7 +92,9 @@ export default async function (body: BlockActionEvent) {
 				break;
 			}
 			case "approve:tw": {
+				console.log("[button] opening approve:tw modal with ts:", ts);
 				await viewsOpen(body.trigger_id, twModal(ts));
+				console.log("[button] approve:tw modal opened successfully");
 				return;
 			}
 			default: {

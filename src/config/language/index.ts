@@ -191,16 +191,28 @@ export const twModal = (stagingTs: string) => ({
 				multiline: true,
 				type: "plain_text_input",
 			},
-			label: { emoji: true, text: "TW", type: "plain_text" },
+			label: {
+				text: "TW (Trigger Warning)",
+				type: "plain_text",
+			},
 			type: "input",
 		},
 	],
 	callback_id: "approve:tw",
-	close: { emoji: true, text: "Cancel", type: "plain_text" },
+	close: {
+		text: "Cancel",
+		type: "plain_text",
+	},
 	notify_on_close: true,
 	private_metadata: stagingTs,
-	submit: { emoji: true, text: "Approve", type: "plain_text" },
-	title: { emoji: true, text: "Approve with TW", type: "plain_text" },
+	submit: {
+		text: "Approve",
+		type: "plain_text",
+	},
+	title: {
+		text: "Approve with TW",
+		type: "plain_text",
+	},
 	type: "modal",
 });
 
