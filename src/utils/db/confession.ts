@@ -27,16 +27,27 @@ export async function getConfessionBy(
 			? await sql`SELECT * FROM confessions WHERE staging_ts = ${ts}`
 			: await sql`SELECT * FROM confessions WHERE approval_ts = ${ts}`;
 
-	const confession = confessionBody?.[0];
-	if (confession) {
-		try {
-			await redis.setex(key, 60 * 10, JSON.stringify(confession));
-		} catch (error) {
-			console.error(`[db] redis setex failed for ${key}`, error);
-		}
+	const row = confessionBody?.[0] as any;
+	if (!row) return null;
+
+	const confession = {
+		approvalTs: row.approval_ts,
+		channel: row.channel,
+		confession: row.confession,
+		hash: row.hash,
+		id: row.id,
+		reviewer: row.reviewer,
+		stagingTs: row.staging_ts,
+		state: row.state,
+	};
+
+	try {
+		await redis.setex(key, 60 * 10, JSON.stringify(confession));
+	} catch (error) {
+		console.error(`[db] redis setex failed for ${key}`, error);
 	}
 
-	return confession ? Confession.from(confession) : null;
+	return Confession.from(confession);
 }
 
 export async function putConfession(confession: Confession) {
