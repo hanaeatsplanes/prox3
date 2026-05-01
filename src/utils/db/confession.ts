@@ -50,6 +50,30 @@ export async function getConfessionBy(
 	return Confession.from(confession);
 }
 
+export async function getStagedConfessions() {
+	const rows =
+		await sql`SELECT * FROM confessions WHERE state = "staged" ORDER BY id`;
+	if (!rows?.length) return [];
+	const confessions: Confession[] = [];
+	for (const row of rows) {
+		if (!row) continue;
+
+		const confessionData = {
+			approvalTs: row.approval_ts,
+			channel: row.channel,
+			confession: row.confession,
+			hash: row.hash,
+			id: row.id,
+			reviewer: row.reviewer,
+			stagingTs: row.staging_ts,
+			state: row.state,
+		};
+		const confession = Confession.from(confessionData);
+		confessions.push(confession);
+	}
+	return confessions;
+}
+
 export async function putConfession(confession: Confession) {
 	await Promise.all([
 		sql`

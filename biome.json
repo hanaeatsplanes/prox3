@@ -35,10 +35,8 @@
 		"enabled": true,
 		"rules": {
 			"nursery": {
-				"noContinue": "error",
 				"noDivRegex": "error",
-				"noDuplicateVariableNames": "error",
-				"useExplicitType": "off"
+				"noDuplicateVariableNames": "error"
 			},
 			"recommended": true,
 			"style": {

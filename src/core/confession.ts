@@ -75,12 +75,11 @@ export class Confession {
 	}
 
 	async reject(reviewer: string) {
+		if (!this.stagingTs) {
+			return;
+		}
 		this.state = "rejected";
 		this.reviewer = reviewer;
-		if (!this.stagingTs) {
-			// this should never happen :DDDD
-			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
-		}
 		await Promise.all([
 			chatUpdate(
 				this.stagingTs,
@@ -92,12 +91,12 @@ export class Confession {
 	}
 
 	async approve(channel: ConfessionChannel, reviewer: string) {
-		this.state = "approved";
-		this.channel = channel;
-		this.reviewer = reviewer;
 		if (!this.stagingTs) {
 			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
 		}
+		this.state = "approved";
+		this.channel = channel;
+		this.reviewer = reviewer;
 		const status = channel === process.env.META ? "meta" : "approved";
 
 		[this.approvalTs] = await Promise.all([
@@ -116,12 +115,12 @@ export class Confession {
 	}
 
 	async tw(reviewer: string, tw: string) {
-		this.state = "approved";
-		this.channel = process.env.CONFESSIONS;
-		this.reviewer = reviewer;
 		if (!this.stagingTs) {
 			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
 		}
+		this.state = "approved";
+		this.channel = process.env.CONFESSIONS;
+		this.reviewer = reviewer;
 
 		this.approvalTs = await chatPostMessage(
 			this.channel,
@@ -145,7 +144,12 @@ export class Confession {
 	}
 
 	async undo(reviewer: string) {
-		if (this.state !== "approved" && this.state !== "rejected") {
+		if (
+			this.state !== "approved" &&
+			this.state !== "rejected" &&
+			this.stagingTs &&
+			this.reviewer
+		) {
 			return;
 		}
 		let promises: Promise<void>[] = [Promise.resolve()];
@@ -153,12 +157,6 @@ export class Confession {
 			const channel = this.channel;
 			const messages = await getMyMessagesInThread(channel, this.approvalTs);
 			promises = messages.map((id) => chatDelete(id, channel));
-		}
-
-		if (!this.stagingTs || !this.reviewer) {
-			throw new Error(
-				"THIS SHOULD NEVER HAPPEN: NO STAGING TS OR REVIEWER ON UNDO"
-			);
 		}
 
 		const status =
@@ -194,10 +192,18 @@ export class Confession {
 
 	async reply(message: string) {
 		if (this.state !== "approved" || !this.approvalTs || !this.channel) {
-			throw new Error("State not approved or no approval timestamp");
+			return;
 		}
 		await chatPostMessage(this.channel, sanitizeMessage(message), {
 			thread_ts: this.approvalTs,
 		});
+	}
+
+	async revive() {
+		if (this.state !== "staged" || !this.stagingTs) {
+			return;
+		}
+		await chatDelete(this.stagingTs, process.env.CONFESSIONS_REVIEW);
+		await this.stage();
 	}
 }

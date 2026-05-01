@@ -1,6 +1,7 @@
 import { type Context, Elysia } from "elysia";
 import { Confession } from "@/core/confession.ts";
-import { chatPostEphemeral } from "@/utils/slack/client.ts";
+import { getStagedConfessions } from "@/utils/db/confession.ts";
+import { chatDelete, chatPostEphemeral } from "@/utils/slack/client.ts";
 import {
 	extractCommandBody,
 	verifySlackRequest,
@@ -19,9 +20,21 @@ async function handler({ request, set }: Context) {
 	});
 }
 
+async function reviveConfessions() {
+	const confessions = await getStagedConfessions();
+	for (const confession of confessions) {
+		await confession.revive();
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+	}
+}
 async function handleValidatedCommand(rawBody: string) {
-	const { text, user_id } = extractCommandBody(rawBody);
-	await stageConfession(text, user_id);
+	const { text, user_id, command } = extractCommandBody(rawBody);
+	switch (command) {
+		case "prox3":
+			return stageConfession(text, user_id);
+		case "prox3-revive":
+			return reviveConfessions();
+	}
 	// todo: check for revive
 }
 
