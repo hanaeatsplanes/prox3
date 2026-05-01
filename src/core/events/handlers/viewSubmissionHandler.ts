@@ -1,6 +1,6 @@
 import type { ViewSubmissionEvent } from "@/models/event.ts";
-import { clearCache } from "@/utils/db/cache.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
+import { clearLock } from "@/utils/db/lock.ts";
 
 type PlainTextInputValue = {
 	type: "plain_text_input";
@@ -23,7 +23,7 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 
 			const confession = await getConfessionBy("staging_ts", stagingTs);
 			if (!confession) {
-				await clearCache(stagingTs);
+				await clearLock(stagingTs);
 				throw new Error("[view_submission] no confession found for modal");
 			}
 
@@ -31,7 +31,7 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 			const input = values.tw?.approve_tw_input;
 			const tw = input?.value;
 			if (!tw) {
-				await clearCache(stagingTs);
+				await clearLock(stagingTs);
 				throw new Error("[view_submission] missing TW text");
 			}
 

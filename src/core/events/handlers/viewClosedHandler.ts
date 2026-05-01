@@ -1,5 +1,5 @@
 import type { ViewClosedEvent } from "@/models/event.ts";
-import { clearCache } from "@/utils/db/cache.ts";
+import { clearLock } from "@/utils/db/lock.ts";
 
 export default async function viewClosedHandler(body: ViewClosedEvent) {
 	switch (body.view.callback_id) {
@@ -10,7 +10,7 @@ export default async function viewClosedHandler(body: ViewClosedEvent) {
 			}
 
 			try {
-				return await clearCache(stagingTs);
+				return await clearLock(stagingTs);
 			} catch (error) {
 				console.error(
 					`[events] failed to delete action cache cache:${stagingTs}`,

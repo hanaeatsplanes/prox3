@@ -1,13 +1,13 @@
 import { twModal } from "@/config/language/index.ts";
 import { Confession } from "@/core/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
-import {
-	clearCache,
-	clearUndoCache,
-	isCached,
-	isUndoCached,
-} from "@/utils/db/cache.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
+import {
+	clearLock,
+	clearUndoLock,
+	isLocked,
+	isUndoLocked,
+} from "@/utils/db/lock.ts";
 import {
 	chatDelete,
 	chatUpdate,
@@ -23,11 +23,15 @@ export default async function (body: BlockActionEvent) {
 	const { container } = body;
 	const ts = container.message_ts;
 
-	if (action.action_id === "undo") {
-		if (await isUndoCached(ts)) {
-			return;
-		}
-	} else if (await isCached(ts)) {
+	// handling before is not that risky, low chance for accidental double click so can be lock-free
+	if (action.action_id === "approve:tw") {
+		await viewsOpen(body.trigger_id, twModal(ts));
+		return;
+	}
+
+	if (action.action_id === "undo" && (await isUndoLocked(ts))) {
+		return;
+	} else if (await isLocked(ts)) {
 		return;
 	}
 
@@ -91,22 +95,16 @@ export default async function (body: BlockActionEvent) {
 				await confession.undo(body.user.id);
 				break;
 			}
-			case "approve:tw": {
-				console.log("[button] opening approve:tw modal with ts:", ts);
-				await viewsOpen(body.trigger_id, twModal(ts));
-				console.log("[button] approve:tw modal opened successfully");
-				return;
-			}
 			default: {
 				throw new Error(`[button] unhandled action: ${action.action_id}`);
 			}
 		}
 	} catch (error) {
-		await clearCache(ts).catch((e) =>
+		await clearLock(ts).catch((e) =>
 			console.error(`[button] failed to clear cache for ${ts}`, e)
 		);
 		if (action.action_id === "undo") {
-			await clearUndoCache(ts).catch((e) =>
+			await clearUndoLock(ts).catch((e) =>
 				console.error(`[button] failed to clear undo cache for ${ts}`, e)
 			);
 		}
