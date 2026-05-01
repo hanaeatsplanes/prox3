@@ -171,8 +171,6 @@ export async function chatPostEphemeral(
 }
 
 export async function viewsOpen(triggerId: string, view: object) {
-	console.log("[slack] views.open request with trigger_id:", triggerId);
-	console.log("[slack] views.open modal payload:", JSON.stringify(view));
 	const response = await slackFetch(
 		"https://slack.com/api/views.open",
 		{
@@ -182,6 +180,5 @@ export async function viewsOpen(triggerId: string, view: object) {
 		},
 		"views.open"
 	);
-	const data = await readSlackResponse(response, "views.open");
-	console.log("[slack] views.open response:", data);
+	await readSlackResponse(response, "views.open");
 }

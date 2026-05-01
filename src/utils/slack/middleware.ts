@@ -79,7 +79,7 @@ export function sanitizeMessage(message: string) {
 		.replaceAll(/@(channel|here|everyone)\b/gi, "@redacted"); //plain text broadcasts (auto-parsed)
 }
 
-export async function getAllMyMessages(
+export async function getMyMessagesInThread(
 	channel: ConfessionChannel,
 	threadTs: string
 ) {

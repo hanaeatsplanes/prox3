@@ -13,7 +13,10 @@ import {
 	chatPostMessage,
 	chatUpdate,
 } from "@/utils/slack/client.ts";
-import { getAllMyMessages, sanitizeMessage } from "@/utils/slack/middleware.ts";
+import {
+	getMyMessagesInThread,
+	sanitizeMessage,
+} from "@/utils/slack/middleware.ts";
 
 type ConfessionState = "approved" | "rejected" | "staged" | "unstaged";
 
@@ -148,7 +151,7 @@ export class Confession {
 		let promises: Promise<void>[] = [Promise.resolve()];
 		if (this.channel && this.approvalTs) {
 			const channel = this.channel;
-			const messages = await getAllMyMessages(channel, this.approvalTs);
+			const messages = await getMyMessagesInThread(channel, this.approvalTs);
 			promises = messages.map((id) => chatDelete(id, channel));
 		}
 
