@@ -14,11 +14,11 @@ ENV NODE_ENV=production
 
 RUN bun run build
 
-FROM gcr.io/distroless/base
+FROM gcr.io/distroless/cc-debian12
 
 WORKDIR /app
 
-COPY --from=build /app/prox3 ./prox3
+COPY --from=build /app/dist/prox3 ./prox3
 COPY sql ./sql
 
 ENV NODE_ENV=production
