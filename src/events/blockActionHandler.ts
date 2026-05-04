@@ -1,5 +1,5 @@
 import { twModal } from "@/config/language";
-import { Confession } from "@/core/confession.ts";
+import { Confession } from "@/models/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
 import {

@@ -1,6 +1,6 @@
 import { redis } from "bun";
 import { Elysia } from "elysia";
-import events from "@/core/events.ts";
+import events from "@/events/events.ts";
 import { initializeDatabase, initializeRedis } from "@/utils/db/init";
 
 console.log("[startup] connecting to redis...");
