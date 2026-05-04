@@ -72,44 +72,36 @@ export async function getStagedConfessions() {
 }
 
 export async function putConfession(confession: Confession) {
-	const existing = await getConfessionBy("id", confession.id);
-
-	if (existing) {
-		await sql`
-        UPDATE confessions SET
-          hash = ${confession.hash},
-          confession = ${confession.confession},
-          channel = ${confession.channel},
-          staging_ts = ${confession.stagingTs},
-          state = ${confession.state},
-          approval_ts = ${confession.approvalTs},
-          reviewer = ${confession.reviewer}
-        WHERE id = ${confession.id}
-        `;
-	} else {
-		await sql`
-        INSERT INTO confessions (
-          id,
-          hash,
-          confession,
-          channel,
-          staging_ts,
-          state,
-          approval_ts,
-          reviewer
-        )
-        VALUES (
-          ${confession.id},
-          ${confession.hash},
-          ${confession.confession},
-          ${confession.channel},
-          ${confession.stagingTs},
-          ${confession.state},
-          ${confession.approvalTs},
-          ${confession.reviewer}
-        )
-        `;
-	}
+	await sql`
+	INSERT INTO confessions (
+		id,
+		hash,
+		confession,
+		channel,
+		staging_ts,
+		state,
+		approval_ts,
+		reviewer
+	)
+	VALUES (
+		${confession.id},
+		${confession.hash},
+		${confession.confession},
+		${confession.channel},
+		${confession.stagingTs},
+		${confession.state},
+		${confession.approvalTs},
+		${confession.reviewer}
+	)
+	ON CONFLICT (id) DO UPDATE SET
+		hash = ${confession.hash},
+		confession = ${confession.confession},
+		channel = ${confession.channel},
+		staging_ts = ${confession.stagingTs},
+		state = ${confession.state},
+		approval_ts = ${confession.approvalTs},
+		reviewer = ${confession.reviewer}
+	`;
 	await redis.setex(
 		`confession:staging_ts:${confession.stagingTs}`,
 		60 * 10,
