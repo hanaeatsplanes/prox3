@@ -130,4 +130,6 @@ async function handleValidatedEvent(
 	}
 }
 
-export default new Elysia().use(commandHandler).post("/slack/events", handler);
+export default new Elysia({ prefix: "/slack" })
+	.use(commandHandler)
+	.post("/events", handler);

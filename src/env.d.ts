@@ -1,5 +1,6 @@
 declare namespace NodeJS {
 	interface ProcessEnv {
+		API_KEY: string;
 		CONFESSIONS: string;
 		CONFESSIONS_LOG: string;
 		CONFESSIONS_REVIEW: string;

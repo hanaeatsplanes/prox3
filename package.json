@@ -12,6 +12,7 @@
 		"dev": "bun run --watch ."
 	},
 	"dependencies": {
+		"@elysia/openapi": "^1.4.15",
 		"elysia": "^1.4.28"
 	},
 	"devDependencies": {

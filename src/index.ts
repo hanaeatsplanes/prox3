@@ -1,21 +1,12 @@
-import { redis } from "bun";
-import { Elysia } from "elysia";
-import events from "@/events/events.ts";
-import { initializeDatabase, initializeRedis } from "@/utils/db/init";
+import cluster from "node:cluster";
+import os from "node:os";
+import process from "node:process";
 
-console.log("[startup] connecting to redis...");
-await redis.connect();
-console.log("[startup] redis connected");
+if (cluster.isPrimary) {
+	for (let i = 0; i < os.availableParallelism(); i++) cluster.fork();
+} else {
+	await import("./server");
+	console.log(`Worker ${process.pid} started`);
+}
 
-console.log("[startup] initializing database...");
-await initializeDatabase();
-
-console.log("[startup] initializing redis...");
-await initializeRedis();
-
-new Elysia()
-	.use(events)
-	.get("/", "Up!")
-	.listen({ hostname: "0.0.0.0", port: 3000 }, () => {
-		console.log("[startup] listening on port 3000");
-	});
+// stolen from big elysia

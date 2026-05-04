@@ -52,4 +52,4 @@ async function reviveConfessions() {
 
 async function selfDelete() {}
 
-export default new Elysia().post("/slack/command", handler);
+export default new Elysia().post("/command", handler);
