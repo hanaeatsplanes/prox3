@@ -76,7 +76,7 @@ export class Confession {
 
 	async reject(reviewer: string) {
 		if (!this.stagingTs) {
-			return;
+			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON REJECTION");
 		}
 		this.state = "rejected";
 		this.reviewer = reviewer;
@@ -144,13 +144,14 @@ export class Confession {
 	}
 
 	async undo(reviewer: string) {
-		if (
-			this.state !== "approved" &&
-			this.state !== "rejected" &&
-			this.stagingTs &&
-			this.reviewer
-		) {
+		if (this.state !== "approved" && this.state !== "rejected") {
 			return;
+		}
+
+		if (!this.stagingTs || !this.reviewer) {
+			throw new Error(
+				"THIS SHOULD NEVER HAPPEN: NO STAGING TS OR REVIEWER ON UNDO"
+			);
 		}
 		let promises: Promise<void>[] = [Promise.resolve()];
 		if (this.channel && this.approvalTs) {
@@ -203,7 +204,12 @@ export class Confession {
 		if (this.state !== "staged" || !this.stagingTs) {
 			return;
 		}
-		await chatDelete(this.stagingTs, process.env.CONFESSIONS_REVIEW);
-		await this.stage();
+		const oldTs = this.stagingTs;
+		this.stagingTs = await chatPostMessage(
+			process.env.CONFESSIONS_REVIEW,
+			stagingMessage(this.id, this.confession)
+		);
+		await this.updateDB();
+		await chatDelete(oldTs, process.env.CONFESSIONS_REVIEW);
 	}
 }

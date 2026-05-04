@@ -6,11 +6,10 @@ export async function nextId() {
 }
 
 export async function getConfessionBy(
-	column: "staging_ts" | "approval_ts",
-	ts: string
+	column: "staging_ts" | "approval_ts" | "id",
+	ts: string | number
 ) {
-	const tag = column === "staging_ts" ? "staging" : "approval";
-	const key = `confession:${tag}:${ts}`;
+	const key = `confession:${column}:${ts}`;
 
 	const redisRes = await redis.get(key);
 	if (redisRes) {
@@ -23,9 +22,7 @@ export async function getConfessionBy(
 	}
 
 	const confessionBody =
-		column === "staging_ts"
-			? await sql`SELECT * FROM confessions WHERE staging_ts = ${ts}`
-			: await sql`SELECT * FROM confessions WHERE approval_ts = ${ts}`;
+		await sql`SELECT * FROM confessions WHERE ${sql(column)} = ${ts}`;
 
 	const row = confessionBody?.[0];
 	if (!row) return null;
@@ -75,8 +72,22 @@ export async function getStagedConfessions() {
 }
 
 export async function putConfession(confession: Confession) {
-	await Promise.all([
-		sql`
+	const existing = await getConfessionBy("id", confession.id);
+
+	if (existing) {
+		await sql`
+        UPDATE confessions SET
+          hash = ${confession.hash},
+          confession = ${confession.confession},
+          channel = ${confession.channel},
+          staging_ts = ${confession.stagingTs},
+          state = ${confession.state},
+          approval_ts = ${confession.approvalTs},
+          reviewer = ${confession.reviewer}
+        WHERE id = ${confession.id}
+        `;
+	} else {
+		await sql`
         INSERT INTO confessions (
           id,
           hash,
@@ -97,29 +108,18 @@ export async function putConfession(confession: Confession) {
           ${confession.approvalTs},
           ${confession.reviewer}
         )
-        ON CONFLICT (id) DO UPDATE SET
-        hash = EXCLUDED.hash,
-        confession = EXCLUDED.confession,
-        channel = EXCLUDED.channel,
-        staging_ts = EXCLUDED.staging_ts,
-        state = EXCLUDED.state,
-        approval_ts = EXCLUDED.approval_ts,
-        reviewer = EXCLUDED.reviewer
-    `,
-		redis.setex(
-			`confession:staging:${confession.stagingTs}`,
+        `;
+	}
+	await redis.setex(
+		`confession:staging_ts:${confession.stagingTs}`,
+		60 * 10,
+		JSON.stringify(confession)
+	);
+	if (confession.approvalTs) {
+		await redis.setex(
+			`confession:approval_ts:${confession.approvalTs}`,
 			60 * 10,
 			JSON.stringify(confession)
-		),
-		(() => {
-			if (confession.approvalTs) {
-				return redis.setex(
-					`confession:approval:${confession.approvalTs}`,
-					60 * 10,
-					JSON.stringify(confession)
-				);
-			}
-			return Promise.resolve();
-		})(),
-	]);
+		);
+	}
 }

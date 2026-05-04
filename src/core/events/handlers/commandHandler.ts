@@ -20,22 +20,16 @@ async function handler({ request, set }: Context) {
 	});
 }
 
-async function reviveConfessions() {
-	const confessions = await getStagedConfessions();
-	for (const confession of confessions) {
-		await confession.revive();
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-	}
-}
 async function handleValidatedCommand(rawBody: string) {
 	const { text, user_id, command } = extractCommandBody(rawBody);
 	switch (command) {
-		case "prox3":
+		case "/prox3":
 			return stageConfession(text, user_id);
-		case "prox3-revive":
+		case "/prox3-revive":
 			return reviveConfessions();
+		case "/prox3-self-delete":
+			return selfDelete();
 	}
-	// todo: check for revive
 }
 
 async function stageConfession(text: string, userId: string) {
@@ -47,5 +41,15 @@ async function stageConfession(text: string, userId: string) {
 		`Staged as confession ${confession.id}`
 	);
 }
+
+async function reviveConfessions() {
+	const confessions = await getStagedConfessions();
+	for (const confession of confessions) {
+		await confession.revive();
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+	}
+}
+
+async function selfDelete() {}
 
 export default new Elysia().post("/api/command", handler);
