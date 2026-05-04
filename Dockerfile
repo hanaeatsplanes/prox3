@@ -14,7 +14,7 @@ ENV NODE_ENV=production
 
 RUN bun run build
 
-FROM gcr.io/distroless/cc-debian12
+FROM debian:12-slim
 
 WORKDIR /app
 
