@@ -20,49 +20,56 @@
         "name": "React Anonymously",
         "type": "message",
         "callback_id": "react_anon",
-        "description": "adds a reaction as prox3"
+        "description": "Adds a reaction as prox3"
       }
     ],
     "slash_commands": [
       {
         "command": "/prox3",
-        "url": "https://prox3.sahana.dev/api/command",
+        "url": "https://prox3.sahana.dev/slack/command",
         "description": "Confess your secrets",
         "usage_hint": "message",
         "should_escape": true
+      },
+      {
+        "command": "/prox3-revive",
+        "url": "https://prox3.sahana.dev/slack/command",
+        "description": "revive confessions",
+        "should_escape": false
+      },
+      {
+        "command": "/prox3-self-reject",
+        "url": "https://prox3.sahana.dev/slack/command",
+        "description": "Reject a confession you made",
+        "should_escape": false
       }
     ]
   },
   "oauth_config": {
     "scopes": {
       "user": [
-        "search:read.public",
-        "search:read.private",
-        "search:read.mpim",
-        "search:read.im",
-        "search:read.files",
-        "search:read.users",
-        "chat:write",
-        "channels:history",
-        "groups:history",
-        "mpim:history",
-        "im:history",
         "canvases:read",
         "canvases:write",
-        "users:read",
-        "users:read.email"
-      ],
-      "user_optional": [
-        "search:read.private",
-        "search:read.mpim",
-        "search:read.im",
-        "search:read.files",
         "chat:write",
         "groups:history",
-        "mpim:history",
         "im:history",
+        "mpim:history",
+        "search:read.files",
+        "search:read.im",
+        "search:read.mpim",
+        "search:read.private"
+      ],
+      "user_optional": [
         "canvases:read",
-        "canvases:write"
+        "canvases:write",
+        "chat:write",
+        "groups:history",
+        "im:history",
+        "mpim:history",
+        "search:read.files",
+        "search:read.im",
+        "search:read.mpim",
+        "search:read.private"
       ],
       "bot": [
         "groups:history",
@@ -80,14 +87,14 @@
   },
   "settings": {
     "event_subscriptions": {
-      "request_url": "https://prox3.sahana.dev/api/events",
+      "request_url": "https://prox3.sahana.dev/slack/events",
       "bot_events": [
         "message.im"
       ]
     },
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://prox3.sahana.dev/api/events"
+      "request_url": "https://prox3.sahana.dev/slack/events"
     },
     "org_deploy_enabled": false,
     "socket_mode_enabled": false,

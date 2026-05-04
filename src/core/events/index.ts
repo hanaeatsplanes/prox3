@@ -1,11 +1,11 @@
 import { type Context, Elysia } from "elysia";
 import { errorMessage } from "@/config/language/index.ts";
-import blockActionHandler from "@/core/events/handlers/blockActionHandler.ts";
-import commandHandler from "@/core/events/handlers/commandHandler.ts";
-import dmHandler from "@/core/events/handlers/dmHandler.ts";
-import messageActionHandler from "@/core/events/handlers/messageActionHandler.ts";
-import viewClosedHandler from "@/core/events/handlers/viewClosedHandler.ts";
-import viewSubmissionHandler from "@/core/events/handlers/viewSubmissionHandler.ts";
+import blockActionHandler from "@/events/blockActionHandler.ts";
+import commandHandler from "@/events/commandHandler.ts";
+import dmHandler from "@/events/dmHandler.ts";
+import messageActionHandler from "@/events/messageActionHandler.ts";
+import viewClosedHandler from "@/events/viewClosedHandler.ts";
+import viewSubmissionHandler from "@/events/viewSubmissionHandler.ts";
 import type {
 	BlockActionEvent,
 	MessageActionEvent,
@@ -130,4 +130,4 @@ async function handleValidatedEvent(
 	}
 }
 
-export default new Elysia().use(commandHandler).post("/api/events", handler);
+export default new Elysia().use(commandHandler).post("/slack/events", handler);

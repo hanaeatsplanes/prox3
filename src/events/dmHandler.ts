@@ -1,4 +1,4 @@
-import { confirmStagingMessage } from "@/config/language/index.ts";
+import { confirmStagingMessage } from "@/config/language";
 import { chatPostMessage } from "@/utils/slack/client.ts";
 
 export default async function (dmChannelId: string, threadTs: string) {
