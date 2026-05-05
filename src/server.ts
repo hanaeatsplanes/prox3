@@ -15,6 +15,21 @@ new Elysia()
 	.get("/", "Up!")
 	.use(
 		openapi({
+			documentation: {
+				info: {
+					contact: {
+						email: "contact@sahana.dev",
+						name: "Sahana Celestine",
+					},
+					description: "An API to interact with Prox3 confessions programmatically.",
+					license: {
+						name: "GNU General Public License v3.0 or later",
+						url: "https://spdx.org/licenses/GPL-3.0-or-later.html",
+					},
+					title: "Prox3",
+					version: "1.0.0",
+				},
+			},
 			exclude: {
 				paths: ["/slack/command", "/", "/slack/events"],
 			},

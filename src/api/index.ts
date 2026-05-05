@@ -7,13 +7,13 @@ const app = new Elysia({
 })
 	.guard({
 		headers: t.Object({
-			authorization: t.String({
+			Authorization: t.String({
 				description: "API Key - DM @hna for one! Only for CRT.",
 			}),
 		}),
 	})
 	.onBeforeHandle(({ headers, status }) => {
-		const auth = headers.authorization;
+		const auth = headers.Authorization;
 		if (auth !== `Bearer ${process.env.API_KEY}`) {
 			status(401);
 			return { error: "Unauthorized" };
@@ -28,7 +28,6 @@ app.post("/approve", approveHandler, {
 		}),
 		reviewer: t.String({
 			description: "Slack ID of the reviewer approving the confession.",
-			format: "regex",
 			pattern: "^U[A-Z0-9]{8,}$",
 		}),
 	}),

@@ -135,6 +135,7 @@ export type MessageActionEvent = {
 		type: "message";
 		user: string;
 		ts: string;
+		thread_ts?: string;
 		text: string;
 		bot_profile?: {
 			id: string;
