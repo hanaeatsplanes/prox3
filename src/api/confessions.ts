@@ -1,13 +1,18 @@
 import { sql } from "bun";
 import type { Context } from "elysia";
 
-export default async function ({ query }: Context) {
-	const count = query["count"] ? parseInt(query["count"]) : 10;
-	const status = query["status"];
-	if (count < 0) throw new RangeError("count must be greater than 0");
+export default async function ({
+	query: { count, state },
+}: Omit<Context, "query"> & {
+	query: {
+		count?: number;
+		state?: "approved" | "rejected" | "staged";
+	};
+}) {
+	if (count && count < 0) count = 10;
 	const result = await sql`
         SELECT * FROM confessions 
-        ${status ? sql`WHERE state = ${status}` : sql``} 
+        ${state ? sql`WHERE state = ${state}` : sql``} 
         ORDER BY id DESC 
         LIMIT ${count}
     `;

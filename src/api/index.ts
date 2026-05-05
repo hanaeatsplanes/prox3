@@ -3,7 +3,7 @@ import { Elysia, t } from "elysia";
 import approveHandler from "./approve";
 import confessionsHandler from "./confessions";
 
-const app = new Elysia({
+const protectedApi = new Elysia({
 	prefix: "/api",
 })
 	.guard({
@@ -17,12 +17,24 @@ const app = new Elysia({
 			status(401);
 			return { error: "Unauthorized" };
 		}
-	})
+	});
+
+protectedApi.post("/approve", approveHandler);
+protectedApi.get("/confessions", confessionsHandler, {
+	query: t.Object({
+		count: t.Optional(t.Number()),
+		state: t.Optional(
+			t.Union([t.Literal("approved"), t.Literal("rejected"), t.Literal("staged")])
+		),
+	}),
+});
+
+const app = new Elysia()
 	.use(
 		openapi({
 			references: fromTypes(),
 		})
-	);
-app.post("/approve", approveHandler);
-app.get("/confessions", confessionsHandler);
+	)
+	.use(protectedApi);
+
 export default app;
