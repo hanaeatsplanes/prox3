@@ -50,11 +50,7 @@ async function handler({ request, set }: Context) {
 }
 
 function onFail(
-	body:
-		| MessageIMEvent
-		| BlockActionEvent
-		| ViewSubmissionEvent
-		| ViewClosedEvent,
+	body: MessageIMEvent | BlockActionEvent | ViewSubmissionEvent | ViewClosedEvent,
 	error: Error
 ) {
 	const rayId = Math.random().toString(36).slice(2, 10);
@@ -68,11 +64,7 @@ function onFail(
 	const isBlock = body.type === "block_actions";
 	const channel = isBlock ? body.container.channel_id : body.event.channel;
 	const user = isBlock ? body.user.id : body.event.user;
-	void chatPostEphemeral(
-		channel,
-		user,
-		errorMessage(rayId, error.message)
-	).catch((error) =>
+	void chatPostEphemeral(channel, user, errorMessage(rayId, error.message)).catch((error) =>
 		console.error(`[failure]: Ray ID ${rayId} sending failed: `, error)
 	);
 }
@@ -123,13 +115,9 @@ async function handleValidatedEvent(
 		}
 
 		default: {
-			console.warn(
-				`[events] unhandled event type: ${(body as { type: unknown }).type}`
-			);
+			console.warn(`[events] unhandled event type: ${(body as { type: unknown }).type}`);
 		}
 	}
 }
 
-export default new Elysia({ prefix: "/slack" })
-	.use(commandHandler)
-	.post("/events", handler);
+export default new Elysia({ prefix: "/slack" }).use(commandHandler).post("/events", handler);

@@ -57,10 +57,7 @@ export function extractEvent(rawBody: string, contentType: string) {
 			console.error("[middleware] no payload in form-urlencoded body");
 			throw new Error("no payload in application/x-www-form-urlencoded");
 		}
-		return JSON.parse(payload) as
-			| BlockActionEvent
-			| ViewClosedEvent
-			| ViewSubmissionEvent;
+		return JSON.parse(payload) as BlockActionEvent | ViewClosedEvent | ViewSubmissionEvent;
 	}
 	console.error(`[middleware] unsupported content-type: ${contentType}`);
 	throw new Error("not able to parse");
@@ -79,28 +76,19 @@ export function sanitizeMessage(message: string) {
 		.replaceAll(/@(channel|here|everyone)\b/gi, "@redacted"); //plain text broadcasts (auto-parsed)
 }
 
-export async function getMyMessagesInThread(
-	channel: ConfessionChannel,
-	threadTs: string
-) {
+export async function getMyMessagesInThread(channel: ConfessionChannel, threadTs: string) {
 	let response = await conversationsReplies(channel, threadTs);
 	if (!response.ok) {
-		throw new Error(
-			`getAllMyMessages failed: conversations.replies call failed: ${response.error}`
-		);
+		throw new Error(`getAllMyMessages failed: conversations.replies call failed: ${response.error}`);
 	}
 	const messages = response.messages;
 	while (response.has_more) {
 		const cursor = response.response_metadata?.next_cursor;
 		response = await conversationsReplies(channel, threadTs, cursor);
 		if (!response.ok) {
-			throw new Error(
-				`getAllMyMessages failed: conversations.replies call failed: ${response.error}`
-			);
+			throw new Error(`getAllMyMessages failed: conversations.replies call failed: ${response.error}`);
 		}
 		messages.push(...response.messages);
 	}
-	return messages
-		.filter(({ bot_id }) => bot_id === process.env.SLACK_BOT_ID)
-		.map(({ ts }) => ts);
+	return messages.filter(({ bot_id }) => bot_id === process.env.SLACK_BOT_ID).map(({ ts }) => ts);
 }

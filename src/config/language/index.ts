@@ -8,10 +8,7 @@ export const approvalMessage = (id: number, confession: string) => [
 	},
 ];
 
-export const logMessage = (
-	id: number,
-	status: "approved" | "approved for meta" | "rejected"
-) => [
+export const logMessage = (id: number, status: "approved" | "approved for meta" | "rejected") => [
 	{
 		text: {
 			text: `Confession *#\u2060${id}* has been *${status}*`,

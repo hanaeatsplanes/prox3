@@ -21,8 +21,7 @@ export async function getConfessionBy(
 		return Confession.from(JSON.parse(redisRes));
 	}
 
-	const confessionBody =
-		await sql`SELECT * FROM confessions WHERE ${sql(column)} = ${ts}`;
+	const confessionBody = await sql`SELECT * FROM confessions WHERE ${sql(column)} = ${ts}`;
 
 	const row = confessionBody?.[0];
 	if (!row) return null;
@@ -48,8 +47,7 @@ export async function getConfessionBy(
 }
 
 export async function getStagedConfessions() {
-	const rows =
-		await sql`SELECT * FROM confessions WHERE state = 'staged' ORDER BY id`;
+	const rows = await sql`SELECT * FROM confessions WHERE state = 'staged' ORDER BY id`;
 	if (!rows?.length) return [];
 	const confessions: Confession[] = [];
 	for (const row of rows) {

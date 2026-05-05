@@ -39,9 +39,7 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 			return;
 		}
 		default: {
-			console.warn(
-				`[view_submission] unhandled callback_id: ${body.view.callback_id}`
-			);
+			console.warn(`[view_submission] unhandled callback_id: ${body.view.callback_id}`);
 		}
 	}
 }

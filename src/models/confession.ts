@@ -8,15 +8,8 @@ import {
 import type { ConfessionChannel } from "@/models/channels.ts";
 import { nextId, putConfession } from "@/utils/db/confession.ts";
 import { hash, verify } from "@/utils/hash";
-import {
-	chatDelete,
-	chatPostMessage,
-	chatUpdate,
-} from "@/utils/slack/client.ts";
-import {
-	getMyMessagesInThread,
-	sanitizeMessage,
-} from "@/utils/slack/middleware.ts";
+import { chatDelete, chatPostMessage, chatUpdate } from "@/utils/slack/client.ts";
+import { getMyMessagesInThread, sanitizeMessage } from "@/utils/slack/middleware.ts";
 
 type ConfessionState = "approved" | "rejected" | "staged" | "unstaged";
 
@@ -130,10 +123,7 @@ export class Confession {
 			chatPostMessage(process.env.CONFESSIONS, this.confession, {
 				thread_ts: this.approvalTs,
 			}),
-			chatPostMessage(
-				process.env.CONFESSIONS_LOG,
-				logMessage(this.id, "approved")
-			),
+			chatPostMessage(process.env.CONFESSIONS_LOG, logMessage(this.id, "approved")),
 			chatUpdate(
 				this.stagingTs,
 				process.env.CONFESSIONS_REVIEW,
@@ -149,9 +139,7 @@ export class Confession {
 		}
 
 		if (!this.stagingTs || !this.reviewer) {
-			throw new Error(
-				"THIS SHOULD NEVER HAPPEN: NO STAGING TS OR REVIEWER ON UNDO"
-			);
+			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS OR REVIEWER ON UNDO");
 		}
 		let promises: Promise<void>[] = [Promise.resolve()];
 		if (this.channel && this.approvalTs) {

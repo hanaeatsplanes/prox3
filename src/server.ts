@@ -8,8 +8,4 @@ await redis.connect();
 await initializeDatabase();
 await initializeRedis();
 
-new Elysia()
-	.use(events)
-	.use(api)
-	.get("/", "Up!")
-	.listen({ hostname: "0.0.0.0", port: 3000 });
+new Elysia().use(events).use(api).get("/", "Up!").listen({ hostname: "0.0.0.0", port: 3000 });

@@ -3,5 +3,4 @@ export const confessionChannel = {
 	meta: process.env.META,
 } as const;
 
-export type ConfessionChannel =
-	(typeof confessionChannel)[keyof typeof confessionChannel];
+export type ConfessionChannel = (typeof confessionChannel)[keyof typeof confessionChannel];

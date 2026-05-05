@@ -2,10 +2,7 @@ import { type Context, Elysia } from "elysia";
 import { Confession } from "@/models/confession.ts";
 import { getStagedConfessions } from "@/utils/db/confession.ts";
 import { chatPostEphemeral } from "@/utils/slack/client.ts";
-import {
-	extractCommandBody,
-	verifySlackRequest,
-} from "@/utils/slack/middleware.ts";
+import { extractCommandBody, verifySlackRequest } from "@/utils/slack/middleware.ts";
 
 async function handler({ request, set }: Context) {
 	const rawBody = await request.text();
@@ -35,11 +32,7 @@ async function handleValidatedCommand(rawBody: string) {
 async function stageConfession(text: string, userId: string) {
 	const confession = await Confession.create(text, userId);
 	await confession.stage();
-	await chatPostEphemeral(
-		userId,
-		userId,
-		`Staged as confession ${confession.id}`
-	);
+	await chatPostEphemeral(userId, userId, `Staged as confession ${confession.id}`);
 }
 
 async function reviveConfessions() {

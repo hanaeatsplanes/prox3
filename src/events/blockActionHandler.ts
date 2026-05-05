@@ -2,18 +2,8 @@ import { twModal } from "@/config/language";
 import { Confession } from "@/models/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
-import {
-	clearLock,
-	clearUndoLock,
-	isLocked,
-	isUndoLocked,
-} from "@/utils/db/lock.ts";
-import {
-	chatDelete,
-	chatUpdate,
-	conversationsReplies,
-	viewsOpen,
-} from "@/utils/slack/client.ts";
+import { clearLock, clearUndoLock, isLocked, isUndoLocked } from "@/utils/db/lock.ts";
+import { chatDelete, chatUpdate, conversationsReplies, viewsOpen } from "@/utils/slack/client.ts";
 
 export default async function (body: BlockActionEvent) {
 	const action = body.actions[0];
@@ -38,10 +28,7 @@ export default async function (body: BlockActionEvent) {
 	try {
 		switch (action.action_id) {
 			case "stage-confession": {
-				const thread = await conversationsReplies(
-					container.channel_id,
-					container.thread_ts
-				);
+				const thread = await conversationsReplies(container.channel_id, container.thread_ts);
 				if (!thread.ok || !thread.messages[0]) {
 					throw new Error("[button] failed to fetch confession text from thread");
 				}
@@ -49,11 +36,7 @@ export default async function (body: BlockActionEvent) {
 				const confession = await Confession.create(confessionText, body.user.id);
 				await confession.stage();
 
-				await chatUpdate(
-					ts,
-					container.channel_id,
-					`:true: Staged as confession ${confession.id}`
-				);
+				await chatUpdate(ts, container.channel_id, `:true: Staged as confession ${confession.id}`);
 				break;
 			}
 			case "do-not-stage": {
@@ -68,10 +51,7 @@ export default async function (body: BlockActionEvent) {
 					throw new Error("[button] no confession found in block action");
 				}
 
-				const channel =
-					action.action_id === "approve"
-						? process.env.CONFESSIONS
-						: process.env.META;
+				const channel = action.action_id === "approve" ? process.env.CONFESSIONS : process.env.META;
 
 				await confession.approve(channel, body.user.id);
 				break;
@@ -100,9 +80,7 @@ export default async function (body: BlockActionEvent) {
 			}
 		}
 	} catch (error) {
-		await clearLock(ts).catch((e) =>
-			console.error(`[button] failed to clear cache for ${ts}`, e)
-		);
+		await clearLock(ts).catch((e) => console.error(`[button] failed to clear cache for ${ts}`, e));
 		if (action.action_id === "undo") {
 			await clearUndoLock(ts).catch((e) =>
 				console.error(`[button] failed to clear undo cache for ${ts}`, e)
