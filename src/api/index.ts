@@ -1,9 +1,8 @@
-import { fromTypes, openapi } from "@elysia/openapi";
 import { Elysia, t } from "elysia";
 import approveHandler from "./approve";
 import confessionsHandler from "./confessions";
 
-const protectedApi = new Elysia({
+const app = new Elysia({
 	prefix: "/api",
 })
 	.guard({
@@ -19,23 +18,12 @@ const protectedApi = new Elysia({
 		}
 	});
 
-protectedApi.post("/approve", approveHandler);
-protectedApi.get("/confessions", confessionsHandler, {
+app.post("/approve", approveHandler);
+app.get("/confessions", confessionsHandler, {
 	query: t.Object({
 		count: t.Optional(t.Number()),
 		state: t.Optional(t.Union([t.Literal("approved"), t.Literal("rejected"), t.Literal("staged")])),
 	}),
 });
-
-const app = new Elysia()
-	.use(
-		openapi({
-			exclude: {
-				paths: ["/slack/command", "/", "/slack/events"],
-			},
-			references: fromTypes(),
-		})
-	)
-	.use(protectedApi);
 
 export default app;
