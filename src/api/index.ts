@@ -22,11 +22,12 @@ app.post("/approve", approveHandler, {
 	body: t.Object({
 		confessionId: t.Number({
 			description: "ID of the confession to approve",
+			minimum: 1,
 		}),
 		reviewer: t.String({
 			description: "Slack ID of the reviewer approving the confession.",
 			format: "regex",
-			pattern: /^U[A-Z0-9]{8,}$/,
+			pattern: "^U[A-Z0-9]{8,}$",
 		}),
 	}),
 	detail: {
