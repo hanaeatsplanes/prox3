@@ -213,5 +213,39 @@ export const twModal = (stagingTs: string) => ({
 	type: "modal",
 });
 
+export const replyModal = (stagingTs: string) => ({
+	blocks: [
+		{
+			block_id: "reply",
+			element: {
+				action_id: "reply_input",
+				multiline: true,
+				type: "plain_text_input",
+			},
+			label: {
+				text: "Reply Message",
+				type: "plain_text",
+			},
+			type: "input",
+		},
+	],
+	callback_id: "reply",
+	close: {
+		text: "Cancel",
+		type: "plain_text",
+	},
+	notify_on_close: true,
+	private_metadata: stagingTs,
+	submit: {
+		text: "Reply",
+		type: "plain_text",
+	},
+	title: {
+		text: "Reply Anonymously",
+		type: "plain_text",
+	},
+	type: "modal",
+});
+
 export const errorMessage = (rayId: string, message: string) =>
 	`Something went wrong. :c\nPlease give <@U081C6XT885> this Ray ID: *${rayId}*.\nError: *${message}*`;
