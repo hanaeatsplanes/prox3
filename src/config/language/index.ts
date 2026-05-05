@@ -234,7 +234,7 @@ export const replyModal = (stagingTs: string) => ({
 		text: "Cancel",
 		type: "plain_text",
 	},
-	notify_on_close: true,
+	notify_on_close: false,
 	private_metadata: stagingTs,
 	submit: {
 		text: "Reply",
