@@ -7,7 +7,7 @@ export async function nextId() {
 
 export async function getConfessionBy(
 	column: "staging_ts" | "approval_ts" | "id",
-	ts: string | number
+	id: string | number
 ) {
 	const key = `confession:${column}:${ts}`;
 
