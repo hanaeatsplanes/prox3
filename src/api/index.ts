@@ -31,7 +31,7 @@ const app = new Elysia()
 	.use(
 		openapi({
 			exclude: {
-				paths: [/^(?!\/api).*/],
+				paths: ["/slack/command", "/", "/slack/events"],
 			},
 			references: fromTypes(),
 		})
