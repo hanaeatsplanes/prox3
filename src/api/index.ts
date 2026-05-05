@@ -7,7 +7,9 @@ const app = new Elysia({
 })
 	.guard({
 		headers: t.Object({
-			authorization: t.String(),
+			authorization: t.String({
+				description: "API Key - DM @hna for one! Only for CRT.",
+			}),
 		}),
 	})
 	.onBeforeHandle(({ headers, status }) => {
