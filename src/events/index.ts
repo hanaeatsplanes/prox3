@@ -1,5 +1,5 @@
 import { type Context, Elysia } from "elysia";
-import { errorMessage } from "@/config/language";
+import { errorMessage } from "@/config/language.ts";
 import blockActionHandler from "@/events/blockActionHandler.ts";
 import commandHandler from "@/events/commandHandler.ts";
 import dmHandler from "@/events/dmHandler.ts";

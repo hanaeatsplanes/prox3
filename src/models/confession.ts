@@ -4,7 +4,7 @@ import {
 	reviewedMessage,
 	stagingMessage,
 	undoneConfession,
-} from "@/config/language";
+} from "@/config/language.ts";
 import type { ConfessionChannel } from "@/models/channels.ts";
 import { nextId, putConfession } from "@/utils/db/confession.ts";
 import { hash, verify } from "@/utils/hash";

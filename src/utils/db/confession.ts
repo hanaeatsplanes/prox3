@@ -9,7 +9,7 @@ export async function getConfessionBy(
 	column: "staging_ts" | "approval_ts" | "id",
 	id: string | number
 ) {
-	const key = `confession:${column}:${ts}`;
+	const key = `confession:${column}:${id}`;
 
 	const redisRes = await redis.get(key);
 	if (redisRes) {
@@ -21,7 +21,7 @@ export async function getConfessionBy(
 		return Confession.from(JSON.parse(redisRes));
 	}
 
-	const confessionBody = await sql`SELECT * FROM confessions WHERE ${sql(column)} = ${ts}`;
+	const confessionBody = await sql`SELECT * FROM confessions WHERE ${sql(column)} = ${id}`;
 
 	const row = confessionBody?.[0];
 	if (!row) return null;

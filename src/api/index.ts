@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import approveHandler from "./approve";
 import confessionsHandler from "./confessions";
+import reviewHandler from "./review.ts";
 
 const app = new Elysia({
 	prefix: "/api",
@@ -20,9 +20,10 @@ const app = new Elysia({
 		}
 	});
 
-app.post("/approve", approveHandler, {
+app.post("/review", reviewHandler, {
 	body: t.Object({
-		confessionId: t.Number({
+		decision: t.UnionEnum(["approve", "reject", "approve:meta", "approve:tw"]),
+		id: t.Number({
 			description: "ID of the confession to approve",
 			minimum: 1,
 		}),
@@ -30,6 +31,7 @@ app.post("/approve", approveHandler, {
 			description: "Slack ID of the reviewer approving the confession.",
 			pattern: "^U[A-Z0-9]{8,}$",
 		}),
+		tw: t.Optional(t.String()),
 	}),
 	detail: {
 		description: "Approve a staged confession",
@@ -48,7 +50,7 @@ app.get("/confessions", confessionsHandler, {
 			})
 		),
 		state: t.Optional(
-			t.Union([t.Literal("approved"), t.Literal("rejected"), t.Literal("staged")], {
+			t.UnionEnum(["approved", "rejected", "staged"], {
 				description: "Filter confessions by approval state",
 			})
 		),
