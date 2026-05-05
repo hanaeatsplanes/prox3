@@ -18,11 +18,38 @@ const app = new Elysia({
 		}
 	});
 
-app.post("/approve", approveHandler);
+app.post("/approve", approveHandler, {
+	body: t.Object({
+		confessionId: t.Number({
+			description: "ID of the confession to approve",
+		}),
+		reviewer: t.String({
+			description: "Slack ID of the reviewer approving the confession.",
+			format: "regex",
+			pattern: /^U[A-Z0-9]{8,}$/,
+		}),
+	}),
+	detail: {
+		description: "Approve a staged confession",
+		tags: ["confessions"],
+	},
+});
 app.get("/confessions", confessionsHandler, {
+	detail: {
+		description: "Retrieve confessions by state",
+		tags: ["confessions"],
+	},
 	query: t.Object({
-		count: t.Optional(t.Number()),
-		state: t.Optional(t.Union([t.Literal("approved"), t.Literal("rejected"), t.Literal("staged")])),
+		count: t.Optional(
+			t.Number({
+				description: "Maximum number of confessions to return",
+			})
+		),
+		state: t.Optional(
+			t.Union([t.Literal("approved"), t.Literal("rejected"), t.Literal("staged")], {
+				description: "Filter confessions by approval state",
+			})
+		),
 	}),
 });
 
