@@ -23,15 +23,16 @@ protectedApi.post("/approve", approveHandler);
 protectedApi.get("/confessions", confessionsHandler, {
 	query: t.Object({
 		count: t.Optional(t.Number()),
-		state: t.Optional(
-			t.Union([t.Literal("approved"), t.Literal("rejected"), t.Literal("staged")])
-		),
+		state: t.Optional(t.Union([t.Literal("approved"), t.Literal("rejected"), t.Literal("staged")])),
 	}),
 });
 
 const app = new Elysia()
 	.use(
 		openapi({
+			exclude: {
+				paths: [/^(?!\/api).*/],
+			},
 			references: fromTypes(),
 		})
 	)

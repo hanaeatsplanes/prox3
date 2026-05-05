@@ -17,17 +17,10 @@ export default async function ({
         LIMIT ${count}
     `;
 	if (!result?.length) return [];
-	return result.map(
-		(row: {
-			confession: string;
-			id: string;
-			reviewer: string;
-			state: string;
-		}) => ({
-			confession: row.confession,
-			id: row.id,
-			reviewer: row.reviewer,
-			state: row.state,
-		})
-	);
+	return result.map((row: { confession: string; id: string; reviewer: string; state: string }) => ({
+		confession: row.confession,
+		id: row.id,
+		reviewer: row.reviewer,
+		state: row.state,
+	}));
 }
