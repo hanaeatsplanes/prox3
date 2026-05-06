@@ -229,7 +229,7 @@ export const replyModal = (approvalTs: string) => ({
 			type: "input",
 		},
 	],
-	callback_id: "reply",
+	callback_id: "reply_anon",
 	close: {
 		text: "Cancel",
 		type: "plain_text",
@@ -263,7 +263,7 @@ export const reactModal = (approvalTs: string) => ({
 			type: "input",
 		},
 	],
-	callback_id: "react",
+	callback_id: "react_anon",
 	close: {
 		text: "Cancel",
 		type: "plain_text",

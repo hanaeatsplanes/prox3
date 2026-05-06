@@ -1,4 +1,4 @@
-import { replyModal } from "@/config/language.ts";
+import { reactModal, replyModal } from "@/config/language.ts";
 import { confessionChannel } from "@/models/channels.ts";
 import type { MessageActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
@@ -81,11 +81,10 @@ export default async function messageActionHandler({
 	}
 	switch (callback_id) {
 		case "react_anon":
-
+			await viewsOpen(trigger_id, reactModal(rootMessageId));
+			return;
 		case "reply_anon":
-			console.log(`[message_action] opening reply modal for ${callback_id}, trigger_id=${trigger_id}`);
 			await viewsOpen(trigger_id, replyModal(rootMessageId));
-			console.log(`[message_action] modal opened successfully`);
 			return;
 	}
 }

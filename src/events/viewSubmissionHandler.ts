@@ -13,6 +13,12 @@ type ApproveTwViewState = {
 	};
 };
 
+type ReplyViewState = {
+	reply?: {
+		reply_input?: PlainTextInputValue;
+	};
+};
+
 async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 	switch (body.view.callback_id) {
 		case "approve:tw": {
@@ -36,6 +42,28 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 			}
 
 			await confession.tw(body.user.id, tw.trim() || tw);
+			return;
+		}
+		case "reply_anon": {
+			const approvalTs = body.view.private_metadata.trim();
+			if (!approvalTs) {
+				throw new Error("[view_submission] missing approval ts");
+			}
+			const confession = await getConfessionBy("approval_ts", approvalTs);
+			if (!confession) {
+				await clearLock(approvalTs);
+				throw new Error("[view_submission] no confession found for modal");
+			}
+
+			const values = body.view.state.values as ReplyViewState;
+			const input = values.reply?.reply_input;
+			const message = input?.value;
+			if (!message) {
+				await clearLock(approvalTs);
+				throw new Error("[view_submission] missing TW text");
+			}
+
+			await confession.reply(message);
 			return;
 		}
 		default: {

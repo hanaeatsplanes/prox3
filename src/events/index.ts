@@ -106,34 +106,22 @@ async function handleValidatedEvent(
 		}
 
 		case "block_actions": {
-			console.log(`[events] handling block_actions: ${body.actions[0]?.action_id || "unknown"}`);
 			await blockActionHandler(body as BlockActionEvent);
 			return;
 		}
 
 		case "view_submission": {
-			console.log(
-				`[events] handling view_submission: ${(body as ViewSubmissionEvent).view.callback_id}`
-			);
 			await viewSubmissionHandler(body as ViewSubmissionEvent);
 			return;
 		}
 
 		case "view_closed": {
-			console.log(`[events] handling view_closed: ${(body as ViewClosedEvent).view.callback_id}`);
 			await viewClosedHandler(body as ViewClosedEvent);
 			return;
 		}
 
 		case "message_action": {
-			console.log(`[events] handling message_action: ${body.callback_id}`);
-			try {
-				await messageActionHandler(body as MessageActionEvent);
-				console.log(`[events] message_action completed`);
-			} catch (error) {
-				console.error(`[events] message_action threw:`, error);
-				throw error;
-			}
+			await messageActionHandler(body as MessageActionEvent);
 			return;
 		}
 
