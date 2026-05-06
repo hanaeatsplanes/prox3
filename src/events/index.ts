@@ -127,7 +127,13 @@ async function handleValidatedEvent(
 
 		case "message_action": {
 			console.log(`[events] handling message_action: ${body.callback_id}`);
-			await messageActionHandler(body as MessageActionEvent);
+			try {
+				await messageActionHandler(body as MessageActionEvent);
+				console.log(`[events] message_action completed`);
+			} catch (error) {
+				console.error(`[events] message_action threw:`, error);
+				throw error;
+			}
 			return;
 		}
 
