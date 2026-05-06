@@ -58,11 +58,10 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 			const values = body.view.state.values as ReplyViewState;
 			const input = values.reply?.reply_input;
 			const message = input?.value;
-			if (!message) {
+			if (message === undefined) {
 				await clearLock(approvalTs);
-				throw new Error("[view_submission] missing TW text");
+				throw new Error("[view_submission] no message in modal");
 			}
-
 			await confession.reply(message);
 			return;
 		}
