@@ -154,7 +154,7 @@ export async function chatPostEphemeral(channel: string, user: string, text: str
 }
 
 export async function viewsOpen(triggerId: string, view: object) {
-	const callbackId = (view as Record<string, unknown>).callback_id;
+	const callbackId = (view as Record<string, unknown>)["callback_id"];
 	console.log(
 		`[slack] views.open triggered. trigger_id=${triggerId}, view.callback_id=${callbackId}`
 	);
@@ -176,4 +176,38 @@ export async function viewsOpen(triggerId: string, view: object) {
 		console.error(`[slack] trigger_id was: ${triggerId}`);
 		throw error;
 	}
+}
+
+export async function reactionsAdd(channel: string, name: string, timestamp: string) {
+	const response = await slackFetch(
+		"https://slack.com/api/reactions.add",
+		{
+			body: JSON.stringify({
+				channel,
+				name,
+				timestamp,
+			}),
+			headers: headers,
+			method: "POST",
+		},
+		"reactions.add"
+	);
+	return readSlackResponse(response, "reactions.add");
+}
+
+export async function reactionsRemove(channel: string, name: string, timestamp: string) {
+	const response = await slackFetch(
+		"https://slack.com/api/reactions.remove",
+		{
+			body: JSON.stringify({
+				channel,
+				name,
+				timestamp,
+			}),
+			headers: headers,
+			method: "POST",
+		},
+		"reactions.remove"
+	);
+	return readSlackResponse(response, "reactions.add");
 }

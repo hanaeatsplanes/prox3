@@ -8,7 +8,7 @@ import type {
 	ViewClosedEvent,
 	ViewSubmissionEvent,
 } from "@/models/event.ts";
-import { conversationsReplies } from "@/utils/slack/client.ts";
+import { conversationsReplies, reactionsAdd, reactionsRemove } from "@/utils/slack/client.ts";
 
 export async function verifySlackRequest(request: Request, rawBody: string) {
 	const timestamp = request.headers.get("X-Slack-Request-Timestamp");
@@ -91,4 +91,11 @@ export async function getMyMessagesInThread(channel: ConfessionChannel, threadTs
 		messages.push(...response.messages);
 	}
 	return messages.filter(({ bot_id }) => bot_id === process.env.SLACK_BOT_ID).map(({ ts }) => ts);
+}
+
+export async function toggleReaction(channel: string, name: string, timestamp: string) {
+	const response = await reactionsAdd(channel, name, timestamp);
+	if (!response.ok && response.error === "already_reacted") {
+		await reactionsRemove(channel, name, timestamp);
+	}
 }
