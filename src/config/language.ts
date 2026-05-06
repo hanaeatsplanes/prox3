@@ -257,7 +257,7 @@ export const reactModal = (approvalTs: string) => ({
 				type: "plain_text_input",
 			},
 			label: {
-				text: "Reply Message",
+				text: "React to Message",
 				type: "plain_text",
 			},
 			type: "input",
