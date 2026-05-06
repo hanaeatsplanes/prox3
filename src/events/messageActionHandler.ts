@@ -1,13 +1,16 @@
+import { replyModal } from "@/config/language.ts";
 import { confessionChannel } from "@/models/channels.ts";
 import type { MessageActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
-import { conversationsReplies } from "@/utils/slack/client.ts";
+import { conversationsReplies, viewsOpen } from "@/utils/slack/client.ts";
 
 export default async function messageActionHandler({
 	response_url,
 	message,
 	channel,
 	user,
+	callback_id,
+	trigger_id,
 }: MessageActionEvent) {
 	if (!(channel.id in confessionChannel)) {
 		return;
@@ -63,5 +66,11 @@ export default async function messageActionHandler({
 		});
 		return;
 	}
-	// todo: implement
+	switch (callback_id) {
+		case "react_anon":
+
+		case "reply_anon":
+			await viewsOpen(trigger_id, replyModal(rootMessageId));
+			return;
+	}
 }

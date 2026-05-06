@@ -115,7 +115,7 @@ export type ViewClosedEvent = {
 
 export type MessageActionEvent = {
 	token: string;
-	callback_id: string;
+	callback_id: "reply_anon" | "react_anon";
 	type: "message_action";
 	trigger_id: string;
 	response_url: string;

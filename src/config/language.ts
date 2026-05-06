@@ -213,7 +213,7 @@ export const twModal = (stagingTs: string) => ({
 	type: "modal",
 });
 
-export const replyModal = (stagingTs: string) => ({
+export const replyModal = (approvalTs: string) => ({
 	blocks: [
 		{
 			block_id: "reply",
@@ -235,13 +235,47 @@ export const replyModal = (stagingTs: string) => ({
 		type: "plain_text",
 	},
 	notify_on_close: false,
-	private_metadata: stagingTs,
+	private_metadata: approvalTs,
 	submit: {
 		text: "Reply",
 		type: "plain_text",
 	},
 	title: {
 		text: "Reply Anonymously",
+		type: "plain_text",
+	},
+	type: "modal",
+});
+
+export const reactModal = (approvalTs: string) => ({
+	blocks: [
+		{
+			block_id: "react",
+			element: {
+				action_id: "react_input",
+				multiline: true,
+				type: "plain_text_input",
+			},
+			label: {
+				text: "Reply Message",
+				type: "plain_text",
+			},
+			type: "input",
+		},
+	],
+	callback_id: "react",
+	close: {
+		text: "Cancel",
+		type: "plain_text",
+	},
+	notify_on_close: false,
+	private_metadata: approvalTs,
+	submit: {
+		text: "React",
+		type: "plain_text",
+	},
+	title: {
+		text: "React Anonymously",
 		type: "plain_text",
 	},
 	type: "modal",
