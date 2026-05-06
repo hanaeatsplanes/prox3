@@ -154,6 +154,10 @@ export async function chatPostEphemeral(channel: string, user: string, text: str
 }
 
 export async function viewsOpen(triggerId: string, view: object) {
+	const callbackId = (view as Record<string, unknown>).callback_id;
+	console.log(
+		`[slack] views.open triggered. trigger_id=${triggerId}, view.callback_id=${callbackId}`
+	);
 	const response = await slackFetch(
 		"https://slack.com/api/views.open",
 		{
@@ -163,5 +167,13 @@ export async function viewsOpen(triggerId: string, view: object) {
 		},
 		"views.open"
 	);
-	await readSlackResponse(response, "views.open");
+	try {
+		const result = await readSlackResponse(response, "views.open");
+		console.log(`[slack] views.open success`);
+		return result;
+	} catch (error) {
+		console.error(`[slack] views.open failed:`, error);
+		console.error(`[slack] trigger_id was: ${triggerId}`);
+		throw error;
+	}
 }

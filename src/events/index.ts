@@ -50,14 +50,25 @@ async function handler({ request, set }: Context) {
 }
 
 function onFail(
-	body: MessageIMEvent | BlockActionEvent | ViewSubmissionEvent | ViewClosedEvent,
+	body:
+		| MessageIMEvent
+		| BlockActionEvent
+		| ViewSubmissionEvent
+		| ViewClosedEvent
+		| MessageActionEvent,
 	error: Error
 ) {
 	const rayId = Math.random().toString(36).slice(2, 10);
-	console.error(`${rayId}: event failed:`, error);
+	console.error(`[${rayId}] event failed (${body.type}):`, error.message);
+	console.error(`[${rayId}] stack:`, error.stack);
 
 	if (body.type === "view_submission" || body.type === "view_closed") {
-		console.error(`[failure]: Ray ID ${rayId} for view event`);
+		console.error(`[${rayId}] modal event failed, no ephemeral response`);
+		return;
+	}
+
+	if (body.type === "message_action") {
+		console.error(`[${rayId}] message_action failed: ${body.callback_id}`);
 		return;
 	}
 
@@ -65,7 +76,7 @@ function onFail(
 	const channel = isBlock ? body.container.channel_id : body.event.channel;
 	const user = isBlock ? body.user.id : body.event.user;
 	void chatPostEphemeral(channel, user, errorMessage(rayId, error.message)).catch((error) =>
-		console.error(`[failure]: Ray ID ${rayId} sending failed: `, error)
+		console.error(`[${rayId}] sending error response failed:`, error)
 	);
 }
 
@@ -95,21 +106,27 @@ async function handleValidatedEvent(
 		}
 
 		case "block_actions": {
+			console.log(`[events] handling block_actions: ${body.actions[0]?.action_id || "unknown"}`);
 			await blockActionHandler(body as BlockActionEvent);
 			return;
 		}
 
 		case "view_submission": {
+			console.log(
+				`[events] handling view_submission: ${(body as ViewSubmissionEvent).view.callback_id}`
+			);
 			await viewSubmissionHandler(body as ViewSubmissionEvent);
 			return;
 		}
 
 		case "view_closed": {
+			console.log(`[events] handling view_closed: ${(body as ViewClosedEvent).view.callback_id}`);
 			await viewClosedHandler(body as ViewClosedEvent);
 			return;
 		}
 
 		case "message_action": {
+			console.log(`[events] handling message_action: ${body.callback_id}`);
 			await messageActionHandler(body as MessageActionEvent);
 			return;
 		}

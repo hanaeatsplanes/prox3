@@ -70,7 +70,9 @@ export default async function messageActionHandler({
 		case "react_anon":
 
 		case "reply_anon":
+			console.log(`[message_action] opening reply modal for ${callback_id}, trigger_id=${trigger_id}`);
 			await viewsOpen(trigger_id, replyModal(rootMessageId));
+			console.log(`[message_action] modal opened successfully`);
 			return;
 	}
 }
