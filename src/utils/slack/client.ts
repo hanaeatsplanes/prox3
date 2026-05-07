@@ -154,7 +154,7 @@ export async function chatPostEphemeral(channel: string, user: string, text: str
 }
 
 export async function viewsOpen(triggerId: string, view: object) {
-	const callbackId = (view as Record<string, unknown>)["callback_id"];
+	const callbackId = (view as Record<string, unknown>).callback_id;
 	console.log(
 		`[slack] views.open triggered. trigger_id=${triggerId}, view.callback_id=${callbackId}`
 	);
