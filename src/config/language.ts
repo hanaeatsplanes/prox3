@@ -247,7 +247,7 @@ export const replyModal = (approvalTs: string) => ({
 	type: "modal",
 });
 
-export const reactModal = (approvalTs: string) => ({
+export const reactModal = (approvalTs: string, reactionTs: string, channel: string) => ({
 	blocks: [
 		{
 			block_id: "react",
@@ -269,7 +269,7 @@ export const reactModal = (approvalTs: string) => ({
 		type: "plain_text",
 	},
 	notify_on_close: false,
-	private_metadata: approvalTs,
+	private_metadata: btoa(JSON.stringify({ approvalTs, channel, reactionTs })),
 	submit: {
 		text: "React",
 		type: "plain_text",

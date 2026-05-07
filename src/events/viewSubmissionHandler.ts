@@ -1,6 +1,6 @@
 import type { ViewSubmissionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
-import { clearLock } from "@/utils/db/lock.ts";
+import { toggleReaction } from "@/utils/slack/middleware.ts";
 
 type PlainTextInputValue = {
 	type: "plain_text_input";
@@ -19,6 +19,12 @@ type ReplyViewState = {
 	};
 };
 
+type ReactViewState = {
+	react?: {
+		react_input?: PlainTextInputValue;
+	};
+};
+
 async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 	switch (body.view.callback_id) {
 		case "approve:tw": {
@@ -29,7 +35,6 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 
 			const confession = await getConfessionBy("staging_ts", stagingTs);
 			if (!confession) {
-				await clearLock(stagingTs);
 				throw new Error("[view_submission] no confession found for modal");
 			}
 
@@ -37,7 +42,6 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 			const input = values.tw?.approve_tw_input;
 			const tw = input?.value;
 			if (!tw) {
-				await clearLock(stagingTs);
 				throw new Error("[view_submission] missing TW text");
 			}
 
@@ -51,7 +55,6 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 			}
 			const confession = await getConfessionBy("approval_ts", approvalTs);
 			if (!confession) {
-				await clearLock(approvalTs);
 				throw new Error("[view_submission] no confession found for modal");
 			}
 
@@ -59,10 +62,27 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 			const input = values.reply?.reply_input;
 			const message = input?.value;
 			if (message === undefined) {
-				await clearLock(approvalTs);
 				throw new Error("[view_submission] no message in modal");
 			}
 			await confession.reply(message);
+			return;
+		}
+		case "react_anon": {
+			const { approvalTs, channel, reactionTs } = JSON.parse(atob(body.view.private_metadata.trim()));
+			if (!approvalTs) {
+				throw new Error("[view_submission] missing approval ts");
+			}
+			const confession = await getConfessionBy("approval_ts", approvalTs);
+			if (!confession) {
+				throw new Error("[view_submission] no confession found for modal");
+			}
+			const values = body.view.state.values as ReactViewState;
+			const input = values.react?.react_input;
+			const emoji = input?.value;
+			if (!emoji) {
+				throw new Error("[view_submission] no message in modal");
+			}
+			await toggleReaction(channel, emoji, reactionTs);
 			return;
 		}
 		default: {

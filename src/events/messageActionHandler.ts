@@ -2,7 +2,7 @@ import { reactModal, replyModal } from "@/config/language.ts";
 import { confessionChannel } from "@/models/channels.ts";
 import type { MessageActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
-import { conversationsReplies, viewsOpen } from "@/utils/slack/client.ts";
+import { viewsOpen } from "@/utils/slack/client.ts";
 
 export default async function messageActionHandler({
 	response_url,
@@ -20,47 +20,13 @@ export default async function messageActionHandler({
 		);
 		return;
 	}
-	const rootMessageId = message.thread_ts ? message.thread_ts : message.ts;
-	console.log(`[message_action] fetching root message: ${rootMessageId}`);
-	const response = await conversationsReplies(channel.id, rootMessageId);
-	if (!response.ok || response.messages.length === 0) {
-		throw new Error("[slack] error on fetching message");
-	}
-	const rootMessage = response.messages[0];
-	if (!rootMessage) {
-		console.log(`[message_action] no root message found`);
-		await fetch(response_url, {
-			body: JSON.stringify({
-				replace_original: false,
-				text: "Looks like there's no root message... maybe you made a mistake?",
-				thread_ts: message.ts,
-			}),
-			method: "POST",
-		});
-		return;
-	}
-	if (rootMessage?.bot_id !== process.env.SLACK_BOT_ID) {
-		console.log(
-			`[message_action] root message not from bot. bot_id=${rootMessage.bot_id}, expected=${process.env.SLACK_BOT_ID}`
-		);
-		await fetch(response_url, {
-			body: JSON.stringify({
-				replace_original: false,
-				text: "Looks like this isn't a Prox3 confession!",
-				thread_ts: message.ts,
-			}),
-			method: "POST",
-		});
-		return;
-	}
-	console.log(`[message_action] looking up confession by approval_ts=${rootMessage.ts}`);
-	const confession = await getConfessionBy("approval_ts", rootMessage.ts);
+	const rootMessageTs = message.thread_ts ? message.thread_ts : message.ts;
+	const confession = await getConfessionBy("approval_ts", rootMessageTs);
 	if (!confession) {
-		console.log(`[message_action] confession not found for ts=${rootMessage.ts}`);
 		await fetch(response_url, {
 			body: JSON.stringify({
 				replace_original: false,
-				text: "This confession is NOT in the database, perhaps the DB was wiped??",
+				text: "This confession is NOT in the database, perhaps this isn't a bot confession?",
 				thread_ts: message.ts,
 			}),
 			method: "POST",
@@ -81,10 +47,10 @@ export default async function messageActionHandler({
 	}
 	switch (callback_id) {
 		case "react_anon":
-			await viewsOpen(trigger_id, reactModal(rootMessageId));
+			await viewsOpen(trigger_id, reactModal(rootMessageTs, message.ts, confession.channel!));
 			return;
 		case "reply_anon":
-			await viewsOpen(trigger_id, replyModal(rootMessageId));
+			await viewsOpen(trigger_id, replyModal(rootMessageTs));
 			return;
 	}
 }

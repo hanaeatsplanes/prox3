@@ -72,7 +72,7 @@ export type ViewSubmissionEvent = {
 		};
 		blocks: unknown[];
 		private_metadata: string;
-		callback_id: string;
+		callback_id: "approve:tw" | "reply_anon" | "react_anon";
 		state: {
 			values: Record<string, Record<string, ViewStateValue>>;
 		};
