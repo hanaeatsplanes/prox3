@@ -1,3 +1,4 @@
+import type { status as typeStatus } from "elysia";
 import { getConfessionBy } from "@/utils/db/confession.ts";
 
 export default async function ({
@@ -10,12 +11,11 @@ export default async function ({
 		decision: "approve" | "approve:meta" | "approve:tw" | "reject";
 		tw?: string;
 	};
-	status: (arg0: number, arg1?: string) => unknown;
+	status: typeof typeStatus;
 }) {
 	const confession = await getConfessionBy("id", id);
 	if (!confession) {
-		status(400);
-		return { error: `Confession with ID ${id} not found`, status: "error" };
+		return status(400, { error: `Confession with ID ${id} not found`, status: "error" });
 	}
 	switch (decision) {
 		case "approve":
@@ -34,10 +34,10 @@ export default async function ({
 			};
 		case "approve:tw":
 			if (!tw) {
-				return {
+				return status(400, {
 					error: "tw needed if approving with tw",
 					status: "error",
-				};
+				});
 			}
 			await confession.tw(reviewer, tw);
 			return {

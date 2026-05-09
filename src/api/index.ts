@@ -15,8 +15,7 @@ const app = new Elysia({
 	.onBeforeHandle(({ headers, status }) => {
 		const auth = headers.authorization;
 		if (auth !== `Bearer ${process.env.API_KEY}`) {
-			status(401);
-			return { error: "Unauthorized" };
+			return status(401, { error: "unauthorized" });
 		}
 	});
 
