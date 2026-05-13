@@ -100,7 +100,9 @@ export default new Elysia({
 			return status(401, { error: "not signed", status: "error" });
 		}
 	})
-	.onError(({ body, error }) => onFail(body as SlackInboundRequest, error as Error))
+	.onError(({ body, error }) => {
+		console.log({ body, error });
+	})
 	.post(
 		"/events",
 		async ({ body }) => {
