@@ -104,13 +104,10 @@ export default new Elysia({
 			return status(401, { error: "not signed", status: "error" });
 		}
 	})
-	.onError(({ body, error }) => {
-		return onFail(body as SlackInboundRequest, error as Error);
-	})
 	.post(
 		"/events",
 		({ body }) => {
-			return eventHandler(body);
+			eventHandler(body).catch((error) => onFail(body as SlackInboundRequest, error as Error));
 		},
 		{
 			allowUnknown: true,
@@ -120,7 +117,7 @@ export default new Elysia({
 	.post(
 		"/command",
 		({ body }) => {
-			return commandHandler(body);
+			commandHandler(body).catch((error) => onFail(body as SlackInboundRequest, error as Error));
 		},
 		{
 			allowUnknown: true,
