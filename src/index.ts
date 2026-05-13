@@ -2,9 +2,8 @@ import cluster from "node:cluster";
 import os from "node:os";
 import process from "node:process";
 
-console.log(`it is ${new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York" })}`);
-
 if (cluster.isPrimary) {
+	console.log(`it is ${new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York" })}`);
 	console.log(
 		`Available cores: ${os.availableParallelism()}. Creating ${os.availableParallelism()} cores :D`
 	);
