@@ -56,6 +56,7 @@ app.get("/confessions", confessionsHandler, {
 		),
 		state: t.Optional(
 			t.UnionEnum(["approved", "rejected", "staged"], {
+				default: "undefined",
 				description: "Filter confessions by approval state",
 			})
 		),
