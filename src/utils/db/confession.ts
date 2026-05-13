@@ -104,10 +104,6 @@ export async function putConfession(confession: Confession) {
 	await redis.setex(`confession:id:${confession.id}`, 60 * 10, s);
 	await redis.setex(`confession:staging_ts:${confession.stagingTs}`, 60 * 10, s);
 	if (confession.approvalTs) {
-		await redis.setex(
-			`confession:approval_ts:${confession.approvalTs}`,
-			60 * 10,
-			JSON.stringify(confession)
-		);
+		await redis.setex(`confession:approval_ts:${confession.approvalTs}`, 60 * 10, s);
 	}
 }
