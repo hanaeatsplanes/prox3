@@ -2,9 +2,7 @@ import cluster from "node:cluster";
 import os from "node:os";
 import process from "node:process";
 
-if (!process.env.API_KEY) {
-	throw new Error("Missing API_KEY!! This is a not good!!!");
-}
+console.log(`it is ${new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York" })}`);
 
 if (cluster.isPrimary) {
 	console.log(
