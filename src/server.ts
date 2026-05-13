@@ -12,9 +12,6 @@ await initializeRedis();
 
 new Elysia()
 	.use(cors())
-	.use(events)
-	.use(api)
-	.get("/", "Up!")
 	.use(
 		openapi({
 			documentation: {
@@ -38,4 +35,7 @@ new Elysia()
 			path: "/docs",
 		})
 	)
+	.use(events)
+	.use(api)
+	.get("/", "Up!")
 	.listen({ hostname: "0.0.0.0", port: 3000 });
