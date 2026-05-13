@@ -94,6 +94,7 @@ export default new Elysia({
 			return eventHandler(body);
 		},
 		{
+			allowUnknown: true,
 			body: SlackEventBody,
 		}
 	)
@@ -103,6 +104,7 @@ export default new Elysia({
 			return commandHandler(body);
 		},
 		{
+			allowUnknown: true,
 			body: CommandBody,
 		}
 	);

@@ -72,14 +72,27 @@ const viewStateValue = t.Object({
 
 export const ViewSubmissionEvent = t.Object({
 	api_app_id: t.String(),
+	enterprise: t.Optional(
+		t.Object({
+			id: t.String(),
+			name: t.String(),
+		})
+	),
+	is_enterprise_install: t.Boolean(),
+	response_urls: t.Array(t.Unknown()),
 	team: t.Object({
 		domain: t.String(),
+		enterprise_id: t.Optional(t.String()),
+		enterprise_name: t.Optional(t.String()),
 		id: t.String(),
 	}),
+	token: t.String(),
 	trigger_id: t.String(),
 	type: t.Literal("view_submission"),
 	user: t.Object({
 		id: t.String(),
+		name: t.Optional(t.String()),
+		team_id: t.Optional(t.String()),
 		username: t.String(),
 	}),
 	view: t.Object({
@@ -88,16 +101,7 @@ export const ViewSubmissionEvent = t.Object({
 		hash: t.String(),
 		id: t.String(),
 		private_metadata: t.String(),
-		response_urls: t.Optional(
-			t.Array(
-				t.Object({
-					action_id: t.String(),
-					block_id: t.String(),
-					channel_id: t.String(),
-					response_url: t.String(),
-				})
-			)
-		),
+		response_urls: t.Array(t.Unknown()),
 		state: t.Object({
 			values: t.Record(t.String(), t.Record(t.String(), viewStateValue)),
 		}),
