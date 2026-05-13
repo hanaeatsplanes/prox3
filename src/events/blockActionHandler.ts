@@ -20,9 +20,7 @@ export default async function (body: BlockActionEvent) {
 
 		// handling before is not that risky, low chance for accidental double click so can be lock-free
 		if (action.action_id === "approve:tw") {
-			console.log(`[button] opening tw modal, trigger_id=${body.trigger_id}`);
 			await viewsOpen(body.trigger_id, twModal(ts));
-			console.log(`[button] tw modal opened successfully`);
 			return;
 		}
 
