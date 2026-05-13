@@ -12,5 +12,3 @@ if (cluster.isPrimary) {
 	await import("./server");
 	console.log(`Worker ${process.pid} started`);
 }
-
-// stolen from big elysia
