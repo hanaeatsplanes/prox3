@@ -17,6 +17,9 @@ export default async function ({
 	if (!confession) {
 		return status(400, { error: `Confession with ID ${id} not found`, status: "error" });
 	}
+	if (confession.state !== "staged") {
+		return status(409, { error: `Confession with ID ${id} is ${confession.state}`, status: "error" });
+	}
 	switch (decision) {
 		case "approve":
 			await confession.approve(process.env.CONFESSIONS, reviewer);
