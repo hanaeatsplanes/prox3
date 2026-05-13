@@ -9,17 +9,13 @@ import { extractEvent, verifySlackRequest } from "@/utils/slack/middleware.ts";
 function extractErrorReason(error: Error): string {
 	const message = error.message;
 
-	try {
-		const parsed = JSON.parse(message);
-		if (parsed.type === "validation") {
-			const issue = parsed.on || "unknown";
-			return `validation error on ${issue}`;
-		}
-		if (parsed.error) {
-			return parsed.error;
-		}
-	} catch {
-		// not JSON, return as-is
+	const parsed = JSON.parse(message);
+	if (parsed.type === "validation") {
+		const issue = parsed.on || "unknown";
+		return `validation error on ${issue}`;
+	}
+	if (parsed.error) {
+		return parsed.error;
 	}
 
 	return message;
@@ -106,8 +102,14 @@ export default new Elysia({
 	})
 	.post(
 		"/events",
-		({ body }) => {
-			eventHandler(body).catch((error) => onFail(body as SlackInboundRequest, error as Error));
+		async ({ body }) => {
+			try {
+				await eventHandler(body);
+				return {};
+			} catch (error) {
+				onFail(body as SlackInboundRequest, error as Error);
+				return {};
+			}
 		},
 		{
 			allowUnknown: true,

@@ -30,18 +30,22 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 		switch (body.view.callback_id) {
 			case "approve:tw": {
 				const stagingTs = body.view.private_metadata.trim();
+				console.log(`[view_submission] approve:tw: stagingTs=${stagingTs}`);
 				if (!stagingTs) {
 					throw new Error("missing staging timestamp");
 				}
 
 				const confession = await getConfessionBy("staging_ts", stagingTs);
+				console.log(`[view_submission] approve:tw: confession found=${!!confession}`);
 				if (!confession) {
 					throw new Error("confession not found");
 				}
 
 				const values = body.view.state.values as ApproveTwViewState;
+				console.log(`[view_submission] approve:tw: values=${JSON.stringify(values)}`);
 				const input = values.tw?.approve_tw_input;
 				const tw = input?.value;
+				console.log(`[view_submission] approve:tw: tw=${tw}`);
 				if (!tw) {
 					throw new Error("trigger warning text not provided");
 				}
