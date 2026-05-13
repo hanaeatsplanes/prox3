@@ -103,6 +103,7 @@ export default new Elysia({
 	.post(
 		"/events",
 		async ({ body }) => {
+			console.log(`[events] received ${body.type || "unknown"}`);
 			try {
 				await eventHandler(body);
 				return {};
