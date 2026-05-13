@@ -53,5 +53,10 @@ export default async function ({
 			return {
 				status: "success",
 			};
+		case "undo":
+			await confession.undo("reviewer");
+			return {
+				status: "success",
+			};
 	}
 }
