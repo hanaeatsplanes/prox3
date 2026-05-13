@@ -130,6 +130,11 @@ export const ViewClosedEvent = t.Object({
 		callback_id: t.String(),
 		id: t.String(),
 		private_metadata: t.String(),
+		state: t.Optional(
+			t.Object({
+				values: t.Record(t.String(), t.Record(t.String(), viewStateValue)),
+			})
+		),
 		title: t.Object({
 			text: t.String(),
 			type: t.Literal("plain_text"),
