@@ -21,7 +21,7 @@ const app = new Elysia({
 
 app.post("/review", reviewHandler, {
 	body: t.Object({
-		decision: t.UnionEnum(["approve", "reject", "approve:meta", "approve:tw"]),
+		decision: t.UnionEnum(["approve", "reject", "meta", "tw", "undo"]),
 		id: t.Number({
 			description: "ID of the confession to approve",
 			minimum: 1,

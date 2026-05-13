@@ -8,7 +8,7 @@ export default async function ({
 	body: {
 		id: number;
 		reviewer: string;
-		decision: "approve" | "approve:meta" | "approve:tw" | "reject";
+		decision: "approve" | "meta" | "tw" | "reject" | "undo";
 		tw?: string;
 	};
 	status: typeof typeStatus;
@@ -28,14 +28,14 @@ export default async function ({
 				channel: confession.channel,
 				status: "success",
 			};
-		case "approve:meta":
+		case "meta":
 			await confession.approve(process.env.META, reviewer);
 			return {
 				approvalTs: confession.approvalTs,
 				channel: confession.channel,
 				status: "success",
 			};
-		case "approve:tw":
+		case "tw":
 			if (!tw) {
 				return status(400, {
 					error: "tw needed if approving with tw",
