@@ -62,12 +62,13 @@ function onFail(body: SlackInboundRequest, error: Error) {
 export default new Elysia({
 	prefix: "/slack",
 })
-	.parser("slack-event", async ({ request, contentType }) => {
-		const rawBody = await request.clone().text();
+	.state("rawBody", "")
+	.onParse(async ({ request, contentType, store }) => {
+		const rawBody = await request.text();
+		store.rawBody = rawBody;
 		return extractEvent(rawBody, contentType);
 	})
-	.derive(async ({ request, headers }) => {
-		const rawBody = await request.text();
+	.derive(async ({ headers, store }) => {
 		const timestamp = headers["x-slack-request-timestamp"];
 		const slackSignature = headers["x-slack-signature"];
 		if (!timestamp || !slackSignature) {
@@ -76,7 +77,7 @@ export default new Elysia({
 			};
 		}
 		return {
-			verified: await verifySlackRequest(timestamp, slackSignature, rawBody),
+			verified: await verifySlackRequest(timestamp, slackSignature, store.rawBody),
 		};
 	})
 	.onBeforeHandle(({ verified, status }) => {
