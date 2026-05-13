@@ -26,68 +26,73 @@ type ReactViewState = {
 };
 
 async function viewSubmissionHandler(body: ViewSubmissionEvent) {
-	switch (body.view.callback_id) {
-		case "approve:tw": {
-			const stagingTs = body.view.private_metadata.trim();
-			if (!stagingTs) {
-				throw new Error("[view_submission] missing staging ts");
-			}
+	try {
+		switch (body.view.callback_id) {
+			case "approve:tw": {
+				const stagingTs = body.view.private_metadata.trim();
+				if (!stagingTs) {
+					throw new Error("missing staging timestamp");
+				}
 
-			const confession = await getConfessionBy("staging_ts", stagingTs);
-			if (!confession) {
-				throw new Error("[view_submission] no confession found for modal");
-			}
+				const confession = await getConfessionBy("staging_ts", stagingTs);
+				if (!confession) {
+					throw new Error("confession not found");
+				}
 
-			const values = body.view.state.values as ApproveTwViewState;
-			const input = values.tw?.approve_tw_input;
-			const tw = input?.value;
-			if (!tw) {
-				throw new Error("[view_submission] missing TW text");
-			}
+				const values = body.view.state.values as ApproveTwViewState;
+				const input = values.tw?.approve_tw_input;
+				const tw = input?.value;
+				if (!tw) {
+					throw new Error("trigger warning text not provided");
+				}
 
-			await confession.tw(body.user.id, tw.trim() || tw);
-			return;
-		}
-		case "reply_anon": {
-			const approvalTs = body.view.private_metadata.trim();
-			if (!approvalTs) {
-				throw new Error("[view_submission] missing approval ts");
+				await confession.tw(body.user.id, tw.trim() || tw);
+				return;
 			}
-			const confession = await getConfessionBy("approval_ts", approvalTs);
-			if (!confession) {
-				throw new Error("[view_submission] no confession found for modal");
-			}
+			case "reply_anon": {
+				const approvalTs = body.view.private_metadata.trim();
+				if (!approvalTs) {
+					throw new Error("missing approval timestamp");
+				}
+				const confession = await getConfessionBy("approval_ts", approvalTs);
+				if (!confession) {
+					throw new Error("confession not found");
+				}
 
-			const values = body.view.state.values as ReplyViewState;
-			const input = values.reply?.reply_input;
-			const message = input?.value;
-			if (message === undefined) {
-				throw new Error("[view_submission] no message in modal");
+				const values = body.view.state.values as ReplyViewState;
+				const input = values.reply?.reply_input;
+				const message = input?.value;
+				if (message === undefined) {
+					throw new Error("reply message not provided");
+				}
+				await confession.reply(message);
+				return;
 			}
-			await confession.reply(message);
-			return;
+			case "react_anon": {
+				const { approvalTs, channel, reactionTs } = JSON.parse(atob(body.view.private_metadata.trim()));
+				if (!approvalTs) {
+					throw new Error("missing approval timestamp");
+				}
+				const confession = await getConfessionBy("approval_ts", approvalTs);
+				if (!confession) {
+					throw new Error("confession not found");
+				}
+				const values = body.view.state.values as ReactViewState;
+				const input = values.react?.react_input;
+				const emoji = input?.value;
+				if (!emoji) {
+					throw new Error("emoji not provided");
+				}
+				await toggleReaction(channel, emoji, reactionTs);
+				return;
+			}
+			default: {
+				console.warn(`[view_submission] unhandled callback_id: ${body.view.callback_id}`);
+			}
 		}
-		case "react_anon": {
-			const { approvalTs, channel, reactionTs } = JSON.parse(atob(body.view.private_metadata.trim()));
-			if (!approvalTs) {
-				throw new Error("[view_submission] missing approval ts");
-			}
-			const confession = await getConfessionBy("approval_ts", approvalTs);
-			if (!confession) {
-				throw new Error("[view_submission] no confession found for modal");
-			}
-			const values = body.view.state.values as ReactViewState;
-			const input = values.react?.react_input;
-			const emoji = input?.value;
-			if (!emoji) {
-				throw new Error("[view_submission] no message in modal");
-			}
-			await toggleReaction(channel, emoji, reactionTs);
-			return;
-		}
-		default: {
-			console.warn(`[view_submission] unhandled callback_id: ${body.view.callback_id}`);
-		}
+	} catch (err) {
+		const message = err instanceof Error ? err.message : "unknown error";
+		throw new Error(`approve modal failed: ${message}`);
 	}
 }
 

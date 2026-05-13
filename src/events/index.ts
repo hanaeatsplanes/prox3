@@ -6,11 +6,30 @@ import { CommandBody, SlackEventBody, type SlackInboundRequest } from "@/models/
 import { chatPostEphemeral, chatPostMessage } from "@/utils/slack/client.ts";
 import { extractEvent, verifySlackRequest } from "@/utils/slack/middleware.ts";
 
+function extractErrorReason(error: Error): string {
+	const message = error.message;
+
+	try {
+		const parsed = JSON.parse(message);
+		if (parsed.type === "validation") {
+			const issue = parsed.on || "unknown";
+			return `validation error on ${issue}`;
+		}
+		if (parsed.error) {
+			return parsed.error;
+		}
+	} catch {
+		// not JSON, return as-is
+	}
+
+	return message;
+}
+
 function onFail(body: SlackInboundRequest, error: Error) {
 	const rayId = Math.random().toString(36).slice(2, 10);
 	const type = "type" in body ? body.type : "command";
-	const message = error.message;
-	console.error(`[events] [${rayId}] ${type} failed: ${message}`);
+	const message = extractErrorReason(error);
+	console.error(`[events] [${rayId}] ${type} failed: ${error.message}`);
 	console.error(`[events] [${rayId}] stack:`, error.stack);
 
 	if ("command" in body) {

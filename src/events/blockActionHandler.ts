@@ -6,37 +6,37 @@ import { clearLock, clearUndoLock, isLocked, isUndoLocked } from "@/utils/db/loc
 import { chatDelete, chatUpdate, conversationsReplies, viewsOpen } from "@/utils/slack/client.ts";
 
 export default async function (body: BlockActionEvent) {
-	const action = body.actions[0];
-	if (!action) {
-		throw new Error("[button] no action found in block action");
-	}
-	const { container } = body;
-	const ts = container.message_ts;
-	const channelId = container.channel_id;
-	if (!channelId) {
-		throw new Error(`[button] no channel found in block action: ${action.action_id}`);
-	}
-
-	// handling before is not that risky, low chance for accidental double click so can be lock-free
-	if (action.action_id === "approve:tw") {
-		console.log(`[button] opening tw modal, trigger_id=${body.trigger_id}`);
-		await viewsOpen(body.trigger_id, twModal(ts));
-		console.log(`[button] tw modal opened successfully`);
-		return;
-	}
-
-	if (action.action_id === "undo" && (await isUndoLocked(ts))) {
-		return;
-	} else if (await isLocked(ts)) {
-		return;
-	}
-
 	try {
+		const action = body.actions[0];
+		if (!action) {
+			throw new Error("no action found");
+		}
+		const { container } = body;
+		const ts = container.message_ts;
+		const channelId = container.channel_id;
+		if (!channelId) {
+			throw new Error(`missing channel for action: ${action.action_id}`);
+		}
+
+		// handling before is not that risky, low chance for accidental double click so can be lock-free
+		if (action.action_id === "approve:tw") {
+			console.log(`[button] opening tw modal, trigger_id=${body.trigger_id}`);
+			await viewsOpen(body.trigger_id, twModal(ts));
+			console.log(`[button] tw modal opened successfully`);
+			return;
+		}
+
+		if (action.action_id === "undo" && (await isUndoLocked(ts))) {
+			return;
+		} else if (await isLocked(ts)) {
+			return;
+		}
+
 		switch (action.action_id) {
 			case "stage-confession": {
 				const thread = await conversationsReplies(channelId, container.thread_ts);
 				if (!thread.ok || !thread.messages[0]) {
-					throw new Error("[button] failed to fetch confession text from thread");
+					throw new Error("failed to fetch confession text");
 				}
 				const confessionText = thread.messages[0].text;
 				const confession = await Confession.create(confessionText, body.user.id);
@@ -54,7 +54,7 @@ export default async function (body: BlockActionEvent) {
 				const confession = await getConfessionBy("staging_ts", ts);
 
 				if (!confession) {
-					throw new Error("[button] no confession found in block action");
+					throw new Error("confession not found");
 				}
 
 				const channel = action.action_id === "approve" ? process.env.CONFESSIONS : process.env.META;
@@ -66,7 +66,7 @@ export default async function (body: BlockActionEvent) {
 				const confession = await getConfessionBy("staging_ts", ts);
 
 				if (!confession) {
-					throw new Error("[button] no confession found in block action");
+					throw new Error("confession not found");
 				}
 
 				await confession.reject(body.user.id);
@@ -76,20 +76,23 @@ export default async function (body: BlockActionEvent) {
 				const confession = await getConfessionBy("staging_ts", ts);
 
 				if (!confession) {
-					throw new Error("[button] no confession found in block action");
+					throw new Error("confession not found");
 				}
 				await confession.undo(body.user.id);
 				break;
 			}
 			default: {
-				throw new Error(`[button] unhandled action: ${action.action_id}`);
+				throw new Error(`unknown action: ${action.action_id}`);
 			}
 		}
-	} finally {
-		if (action.action_id === "undo") {
+
+		if (body.actions[0]?.action_id === "undo") {
 			await clearUndoLock(ts);
 		} else {
 			await clearLock(ts);
 		}
+	} catch (err) {
+		const message = err instanceof Error ? err.message : "unknown error";
+		throw new Error(`button click failed: ${message}`);
 	}
 }
