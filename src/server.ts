@@ -1,4 +1,4 @@
-import { fromTypes, openapi } from "@elysia/openapi";
+import { openapi } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
 import { redis } from "bun";
 import { Elysia } from "elysia";
@@ -36,7 +36,6 @@ new Elysia()
 				paths: ["/slack/command", "/", "/slack/events"],
 			},
 			path: "/docs",
-			references: fromTypes(),
 		})
 	)
 	.listen({ hostname: "0.0.0.0", port: 3000 });
