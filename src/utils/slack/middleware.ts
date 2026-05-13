@@ -3,19 +3,21 @@ import type { ConfessionChannel } from "@/models/channels.ts";
 import type {
 	BlockActionEvent,
 	CommandBody,
+	MessageActionEvent,
 	MessageIMEvent,
+	SlackEventBody,
 	SlackURLVerification,
 	ViewClosedEvent,
 	ViewSubmissionEvent,
 } from "@/models/event.ts";
 import { conversationsReplies, reactionsAdd, reactionsRemove } from "@/utils/slack/client.ts";
 
-export async function verifySlackRequest(request: Request, rawBody: string) {
-	const timestamp = request.headers.get("X-Slack-Request-Timestamp");
-	const slackSignature = request.headers.get("X-Slack-Signature");
-	const signingSecret = process.env.SLACK_SIGNING_SECRET;
-
-	if (!timestamp || !slackSignature || !signingSecret) {
+export async function verifySlackRequest(
+	timestamp: string,
+	slackSignature: string,
+	rawBody: string
+) {
+	if (!timestamp || !slackSignature || !process.env.SLACK_SIGNING_SECRET) {
 		console.error("[middleware] missing timestamp or signature headers");
 		return false;
 	}
@@ -33,7 +35,7 @@ export async function verifySlackRequest(request: Request, rawBody: string) {
 
 	const baseString = `v0:${timestamp}:${rawBody}`;
 
-	const hasher = new CryptoHasher("sha256", signingSecret);
+	const hasher = new CryptoHasher("sha256", process.env.SLACK_SIGNING_SECRET);
 
 	hasher.update(baseString);
 
@@ -47,25 +49,33 @@ export async function verifySlackRequest(request: Request, rawBody: string) {
 	return crypto.timingSafeEqual(actualSignature, expectedSignature);
 }
 
-export function extractEvent(rawBody: string, contentType: string) {
+export function extractEvent(
+	rawBody: string,
+	contentType: string,
+	command?: boolean
+): SlackEventBody {
 	if (contentType?.includes("application/json")) {
 		return JSON.parse(rawBody) as MessageIMEvent | SlackURLVerification;
 	} else if (contentType?.includes("application/x-www-form-urlencoded")) {
+		if (command) {
+			const params = new URLSearchParams(rawBody);
+			return Object.fromEntries(params.entries()) as CommandBody;
+		}
 		const params = new URLSearchParams(rawBody);
 		const payload = params.get("payload");
 		if (!payload) {
 			console.error("[middleware] no payload in form-urlencoded body");
 			throw new Error("no payload in application/x-www-form-urlencoded");
 		}
-		return JSON.parse(payload) as BlockActionEvent | ViewClosedEvent | ViewSubmissionEvent;
+		return JSON.parse(payload) as
+			| BlockActionEvent
+			| ViewClosedEvent
+			| ViewSubmissionEvent
+			| MessageIMEvent
+			| MessageActionEvent;
 	}
 	console.error(`[middleware] unsupported content-type: ${contentType}`);
 	throw new Error("not able to parse");
-}
-
-export function extractCommandBody(rawBody: string) {
-	const params = new URLSearchParams(rawBody);
-	return Object.fromEntries(params.entries()) as CommandBody;
 }
 
 export function sanitizeMessage(message: string) {
@@ -94,8 +104,13 @@ export async function getMyMessagesInThread(channel: ConfessionChannel, threadTs
 }
 
 export async function toggleReaction(channel: string, name: string, timestamp: string) {
-	const response = await reactionsAdd(channel, name, timestamp);
-	if (!response.ok && response.error === "already_reacted") {
-		await reactionsRemove(channel, name, timestamp);
+	try {
+		await reactionsAdd(channel, name, timestamp);
+	} catch (error) {
+		if (error instanceof Error && error.message.includes("already_reacted")) {
+			await reactionsRemove(channel, name, timestamp);
+		} else {
+			throw error;
+		}
 	}
 }

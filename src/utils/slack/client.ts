@@ -153,8 +153,8 @@ export async function chatPostEphemeral(channel: string, user: string, text: str
 	return response.ok;
 }
 
-export async function viewsOpen(triggerId: string, view: object) {
-	const callbackId = (view as Record<string, unknown>).callback_id;
+export async function viewsOpen(triggerId: string, view: { callback_id: string }) {
+	const callbackId = view.callback_id;
 	console.log(
 		`[slack] views.open triggered. trigger_id=${triggerId}, view.callback_id=${callbackId}`
 	);
@@ -209,5 +209,5 @@ export async function reactionsRemove(channel: string, name: string, timestamp: 
 		},
 		"reactions.remove"
 	);
-	return readSlackResponse(response, "reactions.add");
+	return readSlackResponse(response, "reactions.remove");
 }
