@@ -52,7 +52,7 @@
 					"options": {
 						"conventions": [
 							{
-								"formats": ["camelCase"],
+								"formats": ["camelCase", "PascalCase"],
 								"selector": { "kind": "variable" }
 							},
 							{

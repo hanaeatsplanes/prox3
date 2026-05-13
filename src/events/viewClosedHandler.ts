@@ -9,11 +9,7 @@ export default async function viewClosedHandler(body: ViewClosedEvent) {
 				return;
 			}
 
-			try {
-				return await clearLock(stagingTs);
-			} catch (error) {
-				console.error(`[events] failed to delete action cache cache:${stagingTs}`, error);
-			}
+			return await clearLock(stagingTs);
 		}
 	}
 }

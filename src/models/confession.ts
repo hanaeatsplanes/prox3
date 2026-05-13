@@ -30,6 +30,9 @@ export class Confession {
 	}
 
 	static async create(confession: string, slackId: string) {
+		if (!confession?.trim()) {
+			throw new Error("[confession] text is empty");
+		}
 		const id = await nextId();
 		return new Confession(id, confession, hash(slackId));
 	}

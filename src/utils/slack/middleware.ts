@@ -5,7 +5,7 @@ import type {
 	CommandBody,
 	MessageActionEvent,
 	MessageIMEvent,
-	SlackEventBody,
+	SlackInboundRequest,
 	SlackURLVerification,
 	ViewClosedEvent,
 	ViewSubmissionEvent,
@@ -53,19 +53,14 @@ export function extractEvent(
 	rawBody: string,
 	contentType: string,
 	command?: boolean
-): SlackEventBody {
+): SlackInboundRequest {
 	if (contentType?.includes("application/json")) {
 		return JSON.parse(rawBody) as MessageIMEvent | SlackURLVerification;
 	} else if (contentType?.includes("application/x-www-form-urlencoded")) {
-		if (command) {
-			const params = new URLSearchParams(rawBody);
-			return Object.fromEntries(params.entries()) as CommandBody;
-		}
 		const params = new URLSearchParams(rawBody);
 		const payload = params.get("payload");
-		if (!payload) {
-			console.error("[middleware] no payload in form-urlencoded body");
-			throw new Error("no payload in application/x-www-form-urlencoded");
+		if (command || !payload) {
+			return Object.fromEntries(params.entries()) as CommandBody;
 		}
 		return JSON.parse(payload) as
 			| BlockActionEvent
@@ -110,7 +105,13 @@ export async function toggleReaction(channel: string, name: string, timestamp: s
 		if (error instanceof Error && error.message.includes("already_reacted")) {
 			await reactionsRemove(channel, name, timestamp);
 		} else {
-			throw error;
+			const message = error instanceof Error ? error.message : String(error);
+			throw new Error(
+				`[slack] failed to toggle reaction ${name} in ${channel} at ${timestamp}: ${message}`,
+				{
+					cause: error,
+				}
+			);
 		}
 	}
 }

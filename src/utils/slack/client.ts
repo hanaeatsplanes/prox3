@@ -167,15 +167,9 @@ export async function viewsOpen(triggerId: string, view: { callback_id: string }
 		},
 		"views.open"
 	);
-	try {
-		const result = await readSlackResponse(response, "views.open");
-		console.log(`[slack] views.open success`);
-		return result;
-	} catch (error) {
-		console.error(`[slack] views.open failed:`, error);
-		console.error(`[slack] trigger_id was: ${triggerId}`);
-		throw error;
-	}
+	const result = await readSlackResponse(response, "views.open");
+	console.log(`[slack] views.open success`);
+	return result;
 }
 
 export async function reactionsAdd(channel: string, name: string, timestamp: string) {

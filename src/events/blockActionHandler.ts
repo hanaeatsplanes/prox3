@@ -1,4 +1,4 @@
-import { twModal } from "@/config/language";
+import { twModal } from "@/config/language.ts";
 import { Confession } from "@/models/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
@@ -12,6 +12,10 @@ export default async function (body: BlockActionEvent) {
 	}
 	const { container } = body;
 	const ts = container.message_ts;
+	const channelId = container.channel_id;
+	if (!channelId) {
+		throw new Error(`[button] no channel found in block action: ${action.action_id}`);
+	}
 
 	// handling before is not that risky, low chance for accidental double click so can be lock-free
 	if (action.action_id === "approve:tw") {
@@ -30,7 +34,7 @@ export default async function (body: BlockActionEvent) {
 	try {
 		switch (action.action_id) {
 			case "stage-confession": {
-				const thread = await conversationsReplies(container.channel_id, container.thread_ts);
+				const thread = await conversationsReplies(channelId, container.thread_ts);
 				if (!thread.ok || !thread.messages[0]) {
 					throw new Error("[button] failed to fetch confession text from thread");
 				}
@@ -38,11 +42,11 @@ export default async function (body: BlockActionEvent) {
 				const confession = await Confession.create(confessionText, body.user.id);
 				await confession.stage();
 
-				await chatUpdate(ts, container.channel_id, `:true: Staged as confession ${confession.id}`);
+				await chatUpdate(ts, channelId, `:true: Staged as confession ${confession.id}`);
 				break;
 			}
 			case "do-not-stage": {
-				await chatDelete(ts, container.channel_id);
+				await chatDelete(ts, channelId);
 				break;
 			}
 			case "approve":
@@ -81,13 +85,11 @@ export default async function (body: BlockActionEvent) {
 				throw new Error(`[button] unhandled action: ${action.action_id}`);
 			}
 		}
-	} catch (error) {
-		await clearLock(ts).catch((e) => console.error(`[button] failed to clear cache for ${ts}`, e));
+	} finally {
 		if (action.action_id === "undo") {
-			await clearUndoLock(ts).catch((e) =>
-				console.error(`[button] failed to clear undo cache for ${ts}`, e)
-			);
+			await clearUndoLock(ts);
+		} else {
+			await clearLock(ts);
 		}
-		throw error;
 	}
 }

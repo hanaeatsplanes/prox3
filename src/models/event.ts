@@ -1,144 +1,178 @@
-export type SlackURLVerification = {
-	challenge: string;
-	type: "url_verification";
-};
+import { t } from "elysia";
 
-type SlackEventCallback<E> = {
-	event: E;
-	type: "event_callback";
-};
+export type SlackURLVerification = typeof SlackURLVerification.static;
+export type MessageIMEvent = typeof MessageIMEvent.static;
+export type BlockActionEvent = typeof BlockActionEvent.static;
+export type CommandBody = typeof CommandBody.static;
+export type ViewSubmissionEvent = typeof ViewSubmissionEvent.static;
+export type ViewClosedEvent = typeof ViewClosedEvent.static;
+export type MessageActionEvent = typeof MessageActionEvent.static;
+export type SlackEventBody = typeof SlackEventBody.static;
+export type SlackInboundRequest = typeof SlackInboundRequest.static;
 
-export type MessageIMEvent = SlackEventCallback<{
-	type: "message";
-	subtype?: string;
-	channel_type: "im";
-	bot_id?: string;
-	text: string;
-	ts: string;
-	channel: string;
-	thread_ts?: string;
-	user: string;
-}>;
+export const SlackURLVerification = t.Object({
+	challenge: t.String(),
+	type: t.Literal("url_verification"),
+});
 
-export type BlockActionEvent = {
-	trigger_id: string;
-	actions: {
-		action_id: string;
-		value: string;
-	}[];
-	container: {
-		message_ts: string;
-		channel_id: string;
-		thread_ts: string;
-	};
-	message: {
-		text: string;
-		ts: string;
-	};
-	type: "block_actions";
-	user: {
-		id: string;
-	};
-};
+export const MessageIMEvent = t.Object({
+	event: t.Object({
+		bot_id: t.Optional(t.String()),
+		channel: t.String(),
+		channel_type: t.Literal("im"),
+		subtype: t.Optional(t.String()),
+		text: t.String(),
+		thread_ts: t.Optional(t.String()),
+		ts: t.String(),
+		type: t.Literal("message"),
+		user: t.String(),
+	}),
+	type: t.Literal("event_callback"),
+});
 
-export type CommandBody = {
-	user_id: string;
-	channel_id: string;
-	command: string;
-	text: string;
-};
+export const BlockActionEvent = t.Object({
+	actions: t.Array(
+		t.Object({
+			action_id: t.String(),
+			value: t.String(),
+		})
+	),
+	channel: t.Optional(
+		t.Object({
+			id: t.String(),
+		})
+	),
+	container: t.Object({
+		channel_id: t.Optional(t.String()),
+		message_ts: t.String(),
+		thread_ts: t.String(),
+	}),
+	message: t.Object({
+		text: t.String(),
+		ts: t.String(),
+	}),
+	trigger_id: t.String(),
+	type: t.Literal("block_actions"),
+	user: t.Object({
+		id: t.String(),
+	}),
+});
 
-type ViewStateValue = {
-	type: string;
-	value?: string;
-};
+export const CommandBody = t.Object({
+	channel_id: t.String(),
+	command: t.String(),
+	text: t.String(),
+	user_id: t.String(),
+});
 
-export type ViewSubmissionEvent = {
-	type: "view_submission";
-	team: {
-		id: string;
-		domain: string;
-	};
-	user: {
-		id: string;
-		username: string;
-	};
-	view: {
-		id: string;
-		type: "modal";
-		title: {
-			type: "plain_text";
-			text: string;
-		};
-		blocks: unknown[];
-		private_metadata: string;
-		callback_id: "approve:tw" | "reply_anon" | "react_anon";
-		state: {
-			values: Record<string, Record<string, ViewStateValue>>;
-		};
-		hash: string;
-		response_urls?: {
-			block_id: string;
-			action_id: string;
-			channel_id: string;
-			response_url: string;
-		}[];
-	};
-	api_app_id: string;
-	trigger_id: string;
-};
+const viewStateValue = t.Object({
+	type: t.String(),
+	value: t.Optional(t.String()),
+});
 
-export type ViewClosedEvent = {
-	type: "view_closed";
-	team: {
-		id: string;
-		domain: string;
-	};
-	user: {
-		id: string;
-		name: string;
-	};
-	view: {
-		callback_id: string;
-		id: string;
-		private_metadata: string;
-		type: "modal";
-		title: {
-			type: "plain_text";
-			text: string;
-		};
-		blocks: unknown[];
-	};
-	api_app_id: string;
-	is_cleared: boolean;
-};
+export const ViewSubmissionEvent = t.Object({
+	api_app_id: t.String(),
+	team: t.Object({
+		domain: t.String(),
+		id: t.String(),
+	}),
+	trigger_id: t.String(),
+	type: t.Literal("view_submission"),
+	user: t.Object({
+		id: t.String(),
+		username: t.String(),
+	}),
+	view: t.Object({
+		blocks: t.Array(t.Unknown()),
+		callback_id: t.Union([t.Literal("approve:tw"), t.Literal("reply_anon"), t.Literal("react_anon")]),
+		hash: t.String(),
+		id: t.String(),
+		private_metadata: t.String(),
+		response_urls: t.Optional(
+			t.Array(
+				t.Object({
+					action_id: t.String(),
+					block_id: t.String(),
+					channel_id: t.String(),
+					response_url: t.String(),
+				})
+			)
+		),
+		state: t.Object({
+			values: t.Record(t.String(), t.Record(t.String(), viewStateValue)),
+		}),
+		title: t.Object({
+			text: t.String(),
+			type: t.Literal("plain_text"),
+		}),
+		type: t.Literal("modal"),
+	}),
+});
 
-export type MessageActionEvent = {
-	token: string;
-	callback_id: "reply_anon" | "react_anon";
-	type: "message_action";
-	trigger_id: string;
-	response_url: string;
-	team: {
-		id: string;
-		domain: string;
-	};
-	channel: {
-		id: string;
-		name: string;
-	};
-	user: {
-		id: string;
-		name: string;
-	};
-	message: {
-		type: "message";
-		user: string;
-		ts: string;
-		thread_ts?: string;
-		text: string;
-		bot_profile?: {
-			id: string;
-		};
-	};
-};
+export const ViewClosedEvent = t.Object({
+	api_app_id: t.String(),
+	is_cleared: t.Boolean(),
+	team: t.Object({
+		domain: t.String(),
+		id: t.String(),
+	}),
+	type: t.Literal("view_closed"),
+	user: t.Object({
+		id: t.String(),
+		name: t.String(),
+	}),
+	view: t.Object({
+		blocks: t.Array(t.Unknown()),
+		callback_id: t.String(),
+		id: t.String(),
+		private_metadata: t.String(),
+		title: t.Object({
+			text: t.String(),
+			type: t.Literal("plain_text"),
+		}),
+		type: t.Literal("modal"),
+	}),
+});
+
+export const MessageActionEvent = t.Object({
+	callback_id: t.Union([t.Literal("reply_anon"), t.Literal("react_anon")]),
+	channel: t.Object({
+		id: t.String(),
+		name: t.String(),
+	}),
+	message: t.Object({
+		bot_profile: t.Optional(
+			t.Object({
+				id: t.String(),
+			})
+		),
+		text: t.String(),
+		thread_ts: t.Optional(t.String()),
+		ts: t.String(),
+		type: t.Literal("message"),
+		user: t.String(),
+	}),
+	response_url: t.String(),
+	team: t.Object({
+		domain: t.String(),
+		id: t.String(),
+	}),
+	token: t.String(),
+	trigger_id: t.String(),
+	type: t.Literal("message_action"),
+	user: t.Object({
+		id: t.String(),
+		name: t.String(),
+	}),
+});
+
+export const SlackEventBody = t.Union([
+	SlackURLVerification,
+	MessageIMEvent,
+	BlockActionEvent,
+	ViewClosedEvent,
+	ViewSubmissionEvent,
+	MessageActionEvent,
+]);
+
+export const SlackInboundRequest = t.Union([SlackEventBody, CommandBody]);

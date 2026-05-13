@@ -1,134 +1,107 @@
-import { type Context, Elysia } from "elysia";
+import { Elysia } from "elysia";
 import { errorMessage } from "@/config/language.ts";
-import blockActionHandler from "@/events/blockActionHandler.ts";
 import commandHandler from "@/events/commandHandler.ts";
-import dmHandler from "@/events/dmHandler.ts";
-import messageActionHandler from "@/events/messageActionHandler.ts";
-import viewClosedHandler from "@/events/viewClosedHandler.ts";
-import viewSubmissionHandler from "@/events/viewSubmissionHandler.ts";
-import type {
-	BlockActionEvent,
-	MessageActionEvent,
-	MessageIMEvent,
-	SlackURLVerification,
-	ViewClosedEvent,
-	ViewSubmissionEvent,
-} from "@/models/event.ts";
-import { chatPostEphemeral } from "@/utils/slack/client.ts";
+import eventHandler from "@/events/eventHandler.ts";
+import { CommandBody, SlackEventBody, type SlackInboundRequest } from "@/models/event.ts";
+import { chatPostEphemeral, chatPostMessage } from "@/utils/slack/client.ts";
 import { extractEvent, verifySlackRequest } from "@/utils/slack/middleware.ts";
 
-async function handler({ request, set }: Context) {
-	try {
-		const contentType = request.headers.get("content-type");
-		const rawBody = await request.text();
-		if (!contentType || !rawBody) {
-			console.error("[events] missing body or content-type");
-			set.status = 503;
-			return;
-		}
-
-		if (!(await verifySlackRequest(request, rawBody))) {
-			console.error("[events] failed slack request verification");
-			set.status = 503;
-			return;
-		}
-
-		const body = extractEvent(rawBody, contentType);
-		switch (body.type) {
-			case "url_verification": {
-				return (body as SlackURLVerification).challenge;
-			}
-			default: {
-				void handleValidatedEvent(body).catch((error) => onFail(body, error));
-				return "";
-			}
-		}
-	} catch (error) {
-		console.error("[events] unhandled error:", error);
-		set.status = 503;
-	}
-}
-
-function onFail(
-	body:
-		| MessageIMEvent
-		| BlockActionEvent
-		| ViewSubmissionEvent
-		| ViewClosedEvent
-		| MessageActionEvent,
-	error: Error
-) {
+function onFail(body: SlackInboundRequest, error: Error) {
 	const rayId = Math.random().toString(36).slice(2, 10);
-	console.error(`[${rayId}] event failed (${body.type}):`, error.message);
-	console.error(`[${rayId}] stack:`, error.stack);
+	const type = "type" in body ? body.type : "command";
+	const message = error.message;
+	console.error(`[events] [${rayId}] ${type} failed: ${message}`);
+	console.error(`[events] [${rayId}] stack:`, error.stack);
 
-	if (body.type === "view_submission" || body.type === "view_closed") {
-		console.error(`[${rayId}] modal event failed, no ephemeral response`);
+	if ("command" in body) {
+		void chatPostEphemeral(body.channel_id, body.user_id, errorMessage(rayId, message)).catch((err) =>
+			console.error(`[${rayId}] ephemeral failed:`, err)
+		);
 		return;
 	}
 
-	if (body.type === "message_action") {
-		console.error(`[${rayId}] message_action failed: ${body.callback_id}`);
-		return;
-	}
-
-	const isBlock = body.type === "block_actions";
-	const channel = isBlock ? body.container.channel_id : body.event.channel;
-	const user = isBlock ? body.user.id : body.event.user;
-	void chatPostEphemeral(channel, user, errorMessage(rayId, error.message)).catch((error) =>
-		console.error(`[${rayId}] sending error response failed:`, error)
-	);
-}
-
-async function handleValidatedEvent(
-	body:
-		| BlockActionEvent
-		| MessageIMEvent
-		| ViewSubmissionEvent
-		| ViewClosedEvent
-		| MessageActionEvent
-) {
 	switch (body.type) {
 		case "event_callback": {
-			const { event } = body;
-			if (
-				event.type !== "message" ||
-				event.channel_type !== "im" ||
-				event.subtype ||
-				event.bot_id ||
-				event.thread_ts
-			) {
+			if (body.event.type === "message") {
+				void chatPostEphemeral(body.event.channel, body.event.user, errorMessage(rayId, message)).catch(
+					(err) => console.error(`[${rayId}] ephemeral failed:`, err)
+				);
+			}
+			return;
+		}
+		case "block_actions": {
+			const channel = body.container.channel_id || body.channel?.id;
+			if (!channel) {
+				console.error(`[events] [${rayId}] block action missing channel`);
 				return;
 			}
-
-			await dmHandler(event.channel, event.ts);
+			void chatPostEphemeral(channel, body.user.id, errorMessage(rayId, message)).catch((err) =>
+				console.error(`[${rayId}] ephemeral failed:`, err)
+			);
 			return;
 		}
-
-		case "block_actions": {
-			await blockActionHandler(body as BlockActionEvent);
-			return;
-		}
-
-		case "view_submission": {
-			await viewSubmissionHandler(body as ViewSubmissionEvent);
-			return;
-		}
-
-		case "view_closed": {
-			await viewClosedHandler(body as ViewClosedEvent);
-			return;
-		}
-
 		case "message_action": {
-			await messageActionHandler(body as MessageActionEvent);
+			void chatPostEphemeral(body.channel.id, body.user.id, errorMessage(rayId, message)).catch(
+				(err) => console.error(`[${rayId}] ephemeral failed:`, err)
+			);
 			return;
 		}
-
+		case "view_closed":
+		case "view_submission": {
+			void chatPostMessage(body.user.id, errorMessage(rayId, message)).catch((err) =>
+				console.error(`[${rayId}] ephemeral failed:`, err)
+			);
+			return;
+		}
 		default: {
-			console.warn(`[events] unhandled event type: ${(body as { type: unknown }).type}`);
+			return;
 		}
 	}
 }
 
-export default new Elysia({ prefix: "/slack" }).use(commandHandler).post("/events", handler);
+export default new Elysia({
+	prefix: "/slack",
+})
+	.parser("slack-event", async ({ request, contentType }) => {
+		const rawBody = await request.clone().text();
+		return extractEvent(rawBody, contentType);
+	})
+	.derive(async ({ request, headers }) => {
+		const rawBody = await request.text();
+		const timestamp = headers["x-slack-request-timestamp"];
+		const slackSignature = headers["x-slack-signature"];
+		if (!timestamp || !slackSignature) {
+			return {
+				verified: false,
+			};
+		}
+		return {
+			verified: await verifySlackRequest(timestamp, slackSignature, rawBody),
+		};
+	})
+	.onBeforeHandle(({ verified, status }) => {
+		if (!verified) {
+			return status(401, { error: "not signed", status: "error" });
+		}
+	})
+	.onError(({ body, error }) => {
+		return onFail(body as SlackInboundRequest, error as Error);
+	})
+	.post(
+		"/events",
+		({ body }) => {
+			return eventHandler(body);
+		},
+		{
+			body: SlackEventBody,
+		}
+	)
+	.post(
+		"/command",
+		({ body }) => {
+			return commandHandler(body);
+		},
+		{
+			body: CommandBody,
+		}
+	);
