@@ -34,6 +34,9 @@ export default async function (body: BlockActionEvent) {
 
 		switch (action.action_id) {
 			case "stage-confession": {
+				if (!container.thread_ts) {
+					throw new Error("stage-confession triggered on root message");
+				}
 				const thread = await conversationsReplies(channelId, container.thread_ts);
 				if (!thread.ok || !thread.messages[0]) {
 					throw new Error("failed to fetch confession text");
