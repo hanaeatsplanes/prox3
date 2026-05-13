@@ -96,15 +96,26 @@ export const ViewSubmissionEvent = t.Object({
 		username: t.String(),
 	}),
 	view: t.Object({
+		app_id: t.Optional(t.String()),
+		app_installed_team_id: t.Optional(t.String()),
 		blocks: t.Array(t.Unknown()),
+		bot_id: t.Optional(t.String()),
 		callback_id: t.Union([t.Literal("approve:tw"), t.Literal("reply_anon"), t.Literal("react_anon")]),
+		clear_on_close: t.Optional(t.Boolean()),
+		close: t.Optional(t.Unknown()),
+		external_id: t.Optional(t.String()),
 		hash: t.String(),
 		id: t.String(),
+		notify_on_close: t.Optional(t.Boolean()),
+		previous_view_id: t.Optional(t.String()),
 		private_metadata: t.String(),
 		response_urls: t.Array(t.Unknown()),
+		root_view_id: t.Optional(t.String()),
 		state: t.Object({
 			values: t.Record(t.String(), t.Record(t.String(), viewStateValue)),
 		}),
+		submit: t.Optional(t.Unknown()),
+		team_id: t.Optional(t.String()),
 		title: t.Object({
 			text: t.String(),
 			type: t.Literal("plain_text"),
@@ -115,26 +126,50 @@ export const ViewSubmissionEvent = t.Object({
 
 export const ViewClosedEvent = t.Object({
 	api_app_id: t.String(),
+	enterprise: t.Optional(
+		t.Object({
+			id: t.String(),
+			name: t.String(),
+		})
+	),
 	is_cleared: t.Boolean(),
+	is_enterprise_install: t.Boolean(),
 	team: t.Object({
 		domain: t.String(),
+		enterprise_id: t.Optional(t.String()),
+		enterprise_name: t.Optional(t.String()),
 		id: t.String(),
 	}),
+	token: t.String(),
 	type: t.Literal("view_closed"),
 	user: t.Object({
 		id: t.String(),
-		name: t.String(),
+		name: t.Optional(t.String()),
+		team_id: t.Optional(t.String()),
+		username: t.String(),
 	}),
 	view: t.Object({
+		app_id: t.Optional(t.String()),
+		app_installed_team_id: t.Optional(t.String()),
 		blocks: t.Array(t.Unknown()),
+		bot_id: t.Optional(t.String()),
 		callback_id: t.String(),
+		clear_on_close: t.Optional(t.Boolean()),
+		close: t.Optional(t.Unknown()),
+		external_id: t.Optional(t.String()),
 		id: t.String(),
+		notify_on_close: t.Optional(t.Boolean()),
+		previous_view_id: t.Optional(t.String()),
 		private_metadata: t.String(),
+		response_urls: t.Optional(t.Array(t.Unknown())),
+		root_view_id: t.Optional(t.String()),
 		state: t.Optional(
 			t.Object({
 				values: t.Record(t.String(), t.Record(t.String(), viewStateValue)),
 			})
 		),
+		submit: t.Optional(t.Unknown()),
+		team_id: t.Optional(t.String()),
 		title: t.Object({
 			text: t.String(),
 			type: t.Literal("plain_text"),

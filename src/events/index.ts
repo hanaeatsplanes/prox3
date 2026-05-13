@@ -100,8 +100,8 @@ export default new Elysia({
 			return status(401, { error: "not signed", status: "error" });
 		}
 	})
-	.onError(({ body, error }) => {
-		console.log({ body, error });
+	.onError(({ error }) => {
+		console.error({ error });
 	})
 	.post(
 		"/events",
