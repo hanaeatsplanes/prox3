@@ -109,7 +109,6 @@ export default new Elysia({
 			eventHandler(body).catch((error) => onFail(body as SlackInboundRequest, error as Error));
 		},
 		{
-			allowUnknown: true,
 			body: SlackEventBody,
 		}
 	)
@@ -119,7 +118,6 @@ export default new Elysia({
 			commandHandler(body).catch((error) => onFail(body as SlackInboundRequest, error as Error));
 		},
 		{
-			allowUnknown: true,
 			body: CommandBody,
 		}
 	);
