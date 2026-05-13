@@ -1,4 +1,5 @@
 import { fromTypes, openapi } from "@elysia/openapi";
+import { cors } from "@elysiajs/cors";
 import { redis } from "bun";
 import { Elysia } from "elysia";
 import api from "@/api";
@@ -10,6 +11,7 @@ await initializeDatabase();
 await initializeRedis();
 
 new Elysia()
+	.use(cors())
 	.use(events)
 	.use(api)
 	.get("/", "Up!")
