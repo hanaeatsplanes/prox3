@@ -100,17 +100,11 @@ export default new Elysia({
 			return status(401, { error: "not signed", status: "error" });
 		}
 	})
+	.onError(({ body, error }) => onFail(body as SlackInboundRequest, error as Error))
 	.post(
 		"/events",
 		async ({ body }) => {
-			console.log(`[events] received ${body.type || "unknown"}`);
-			try {
-				await eventHandler(body);
-				return {};
-			} catch (error) {
-				onFail(body as SlackInboundRequest, error as Error);
-				return {};
-			}
+			eventHandler(body).catch((error) => onFail(body as SlackInboundRequest, error as Error));
 		},
 		{
 			allowUnknown: true,
