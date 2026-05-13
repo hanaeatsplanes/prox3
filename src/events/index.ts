@@ -101,7 +101,7 @@ export default new Elysia({
 		}
 	})
 	.onError(({ error }) => {
-		if (!("type" in error) || error.type !== "validation") {
+		if (!("code" in error) || error.code !== "VALIDATION") {
 			console.error(error);
 		}
 	})
