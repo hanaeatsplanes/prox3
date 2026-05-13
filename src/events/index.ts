@@ -101,7 +101,9 @@ export default new Elysia({
 		}
 	})
 	.onError(({ error }) => {
-		console.error({ error });
+		if (!("type" in error) || error.type !== "validation") {
+			console.error(error);
+		}
 	})
 	.post(
 		"/events",
