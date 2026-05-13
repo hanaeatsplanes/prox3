@@ -21,19 +21,25 @@ const app = new Elysia({
 
 app.post("/review", reviewHandler, {
 	body: t.Object({
-		decision: t.UnionEnum(["approve", "reject", "meta", "tw", "undo"]),
+		decision: t.UnionEnum(["approve", "reject", "meta", "tw", "undo"], {
+			description:
+				"Review action to take: `approve` posts to #confessions, `meta` posts to #meta, `tw` approves with a trigger warning, `reject` rejects a staged confession, and `undo` reverts a previously approved/rejected confession back to staged.",
+		}),
 		id: t.Number({
-			description: "ID of the confession to approve",
+			description: "ID of the confession to review (approve/reject/tw/meta/undo)",
 			minimum: 1,
 		}),
 		reviewer: t.String({
-			description: "Slack ID of the reviewer approving the confession.",
+			description: "Slack ID of the reviewer performing the action.",
 			pattern: "^U[A-Z0-9]{8,}$",
 		}),
-		tw: t.Optional(t.String()),
+		tw: t.Optional(
+			t.String({ description: "Trigger warning text, required when decision is `tw`." })
+		),
 	}),
 	detail: {
-		description: "Approve a staged confession",
+		description:
+			"Review a confession: approve, reject, approve with trigger warning, post to meta, or undo a prior decision.",
 		tags: ["confessions"],
 	},
 });

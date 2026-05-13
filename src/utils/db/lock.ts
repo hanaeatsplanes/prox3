@@ -10,6 +10,11 @@ export async function isUndoLocked(ts: string): Promise<boolean> {
 	return result !== "OK";
 }
 
+export async function isTwLocked(ts: string): Promise<boolean> {
+	const result = await redis.send("SET", [`tw-lock:${ts}`, "1", "NX", "EX", "10"]);
+	return result !== "OK";
+}
+
 export async function clearLock(ts: string) {
 	return redis.del(`lock:${ts}`);
 }

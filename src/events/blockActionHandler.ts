@@ -2,7 +2,7 @@ import { twModal } from "@/config/language.ts";
 import { Confession } from "@/models/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
-import { clearLock, clearUndoLock, isLocked, isUndoLocked } from "@/utils/db/lock.ts";
+import { clearLock, clearUndoLock, isLocked, isTwLocked, isUndoLocked } from "@/utils/db/lock.ts";
 import { chatDelete, chatUpdate, conversationsReplies, viewsOpen } from "@/utils/slack/client.ts";
 
 export default async function (body: BlockActionEvent) {
@@ -18,14 +18,18 @@ export default async function (body: BlockActionEvent) {
 			throw new Error(`missing channel for action: ${action.action_id}`);
 		}
 
-		// handling before is not that risky, low chance for accidental double click so can be lock-free
 		if (action.action_id === "approve:tw") {
+			if (await isTwLocked(ts)) {
+				return;
+			}
 			await viewsOpen(body.trigger_id, twModal(ts));
 			return;
 		}
 
-		if (action.action_id === "undo" && (await isUndoLocked(ts))) {
-			return;
+		if (action.action_id === "undo") {
+			if (await isUndoLocked(ts)) {
+				return;
+			}
 		} else if (await isLocked(ts)) {
 			return;
 		}
