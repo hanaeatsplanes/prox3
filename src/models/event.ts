@@ -45,7 +45,7 @@ export const BlockActionEvent = t.Object({
 	container: t.Object({
 		channel_id: t.Optional(t.String()),
 		message_ts: t.String(),
-		thread_ts: t.String(),
+		thread_ts: t.Optional(t.String()),
 	}),
 	message: t.Object({
 		text: t.String(),
