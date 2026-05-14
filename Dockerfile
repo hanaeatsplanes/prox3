@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/dist/prox3 ./prox3
 COPY sql ./sql
+COPY public ./public
 
 ENV NODE_ENV=production
 
