@@ -23,7 +23,6 @@ export const MessageIMEvent = t.Object(
 				channel: t.String(),
 				channel_type: t.Literal("im"),
 				subtype: t.Optional(t.String()),
-				text: t.String(),
 				thread_ts: t.Optional(t.String()),
 				ts: t.String(),
 				type: t.Literal("message"),
@@ -42,7 +41,6 @@ export const BlockActionEvent = t.Object(
 			t.Object(
 				{
 					action_id: t.String(),
-					value: t.String(),
 				},
 				{ additionalProperties: true }
 			)
@@ -60,13 +58,6 @@ export const BlockActionEvent = t.Object(
 				channel_id: t.String(),
 				message_ts: t.String(),
 				thread_ts: t.Optional(t.String()),
-			},
-			{ additionalProperties: true }
-		),
-		message: t.Object(
-			{
-				text: t.String(),
-				ts: t.String(),
 			},
 			{ additionalProperties: true }
 		),
@@ -99,76 +90,22 @@ const viewStateValue = t.Object(
 
 export const ViewSubmissionEvent = t.Object(
 	{
-		api_app_id: t.String(),
-		enterprise: t.Optional(
-			t.Object(
-				{
-					id: t.String(),
-					name: t.String(),
-				},
-				{ additionalProperties: true }
-			)
-		),
-		is_enterprise_install: t.Boolean(),
-		response_urls: t.Array(t.Unknown()),
-		team: t.Object(
-			{
-				domain: t.String(),
-				enterprise_id: t.Optional(t.String()),
-				enterprise_name: t.Optional(t.String()),
-				id: t.String(),
-			},
-			{ additionalProperties: true }
-		),
-		token: t.String(),
-		trigger_id: t.String(),
 		type: t.Literal("view_submission"),
-		user: t.Object(
-			{
-				id: t.String(),
-				name: t.Optional(t.String()),
-				team_id: t.Optional(t.String()),
-				username: t.String(),
-			},
-			{ additionalProperties: true }
-		),
+		user: t.Object({ id: t.String() }, { additionalProperties: true }),
 		view: t.Object(
 			{
-				app_id: t.Optional(t.String()),
-				app_installed_team_id: t.Optional(t.String()),
-				blocks: t.Array(t.Unknown()),
-				bot_id: t.Optional(t.String()),
 				callback_id: t.Union([
 					t.Literal("approve:tw"),
 					t.Literal("reply_anon"),
 					t.Literal("react_anon"),
 				]),
-				clear_on_close: t.Optional(t.Boolean()),
-				close: t.Optional(t.Unknown()),
-				external_id: t.Optional(t.String()),
-				hash: t.String(),
-				id: t.String(),
-				notify_on_close: t.Optional(t.Boolean()),
-				previous_view_id: t.Optional(t.String()),
 				private_metadata: t.String(),
-				response_urls: t.Array(t.Unknown()),
-				root_view_id: t.Optional(t.String()),
 				state: t.Object(
 					{
 						values: t.Record(t.String(), t.Record(t.String(), viewStateValue)),
 					},
 					{ additionalProperties: true }
 				),
-				submit: t.Optional(t.Unknown()),
-				team_id: t.Optional(t.String()),
-				title: t.Object(
-					{
-						text: t.String(),
-						type: t.Literal("plain_text"),
-					},
-					{ additionalProperties: true }
-				),
-				type: t.Literal("modal"),
 			},
 			{ additionalProperties: true }
 		),
@@ -178,72 +115,17 @@ export const ViewSubmissionEvent = t.Object(
 
 export const ViewClosedEvent = t.Object(
 	{
-		api_app_id: t.String(),
-		enterprise: t.Optional(
-			t.Object(
-				{
-					id: t.String(),
-					name: t.String(),
-				},
-				{ additionalProperties: true }
-			)
-		),
-		is_cleared: t.Boolean(),
-		is_enterprise_install: t.Boolean(),
-		team: t.Object(
-			{
-				domain: t.String(),
-				enterprise_id: t.Optional(t.String()),
-				enterprise_name: t.Optional(t.String()),
-				id: t.String(),
-			},
-			{ additionalProperties: true }
-		),
-		token: t.String(),
 		type: t.Literal("view_closed"),
 		user: t.Object(
 			{
 				id: t.String(),
-				name: t.Optional(t.String()),
-				team_id: t.Optional(t.String()),
-				username: t.String(),
 			},
 			{ additionalProperties: true }
 		),
 		view: t.Object(
 			{
-				app_id: t.Optional(t.String()),
-				app_installed_team_id: t.Optional(t.String()),
-				blocks: t.Array(t.Unknown()),
-				bot_id: t.Optional(t.String()),
 				callback_id: t.String(),
-				clear_on_close: t.Optional(t.Boolean()),
-				close: t.Optional(t.Unknown()),
-				external_id: t.Optional(t.String()),
-				id: t.String(),
-				notify_on_close: t.Optional(t.Boolean()),
-				previous_view_id: t.Optional(t.String()),
 				private_metadata: t.String(),
-				response_urls: t.Optional(t.Array(t.Unknown())),
-				root_view_id: t.Optional(t.String()),
-				state: t.Optional(
-					t.Object(
-						{
-							values: t.Record(t.String(), t.Record(t.String(), viewStateValue)),
-						},
-						{ additionalProperties: true }
-					)
-				),
-				submit: t.Optional(t.Unknown()),
-				team_id: t.Optional(t.String()),
-				title: t.Object(
-					{
-						text: t.String(),
-						type: t.Literal("plain_text"),
-					},
-					{ additionalProperties: true }
-				),
-				type: t.Literal("modal"),
 			},
 			{ additionalProperties: true }
 		),
@@ -257,43 +139,22 @@ export const MessageActionEvent = t.Object(
 		channel: t.Object(
 			{
 				id: t.String(),
-				name: t.String(),
 			},
 			{ additionalProperties: true }
 		),
 		message: t.Object(
 			{
-				bot_profile: t.Optional(
-					t.Object(
-						{
-							id: t.String(),
-						},
-						{ additionalProperties: true }
-					)
-				),
-				text: t.String(),
 				thread_ts: t.Optional(t.String()),
 				ts: t.String(),
-				type: t.Literal("message"),
-				user: t.String(),
 			},
 			{ additionalProperties: true }
 		),
 		response_url: t.String(),
-		team: t.Object(
-			{
-				domain: t.String(),
-				id: t.String(),
-			},
-			{ additionalProperties: true }
-		),
-		token: t.String(),
 		trigger_id: t.String(),
 		type: t.Literal("message_action"),
 		user: t.Object(
 			{
 				id: t.String(),
-				name: t.String(),
 			},
 			{ additionalProperties: true }
 		),
