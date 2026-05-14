@@ -1,4 +1,5 @@
 import { openapi } from "@elysia/openapi";
+import serverTiming from "@elysia/server-timing";
 import { cors } from "@elysiajs/cors";
 import { redis } from "bun";
 import { Elysia, file } from "elysia";
@@ -44,6 +45,7 @@ new Elysia()
 			path: "/docs",
 		})
 	)
+	.use(serverTiming())
 	.use(events)
 	.use(api)
 	.get("/favicon.ico", file("public/favicon.ico"))
