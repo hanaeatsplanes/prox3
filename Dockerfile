@@ -5,7 +5,7 @@ WORKDIR /app
 # Cache packages installation
 COPY package.json bun.lock ./
 
-RUN bun install
+RUN bun install --frozen-lockfile
 
 COPY tsconfig.json ./
 COPY ./src ./src

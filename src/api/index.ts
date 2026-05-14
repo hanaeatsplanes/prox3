@@ -2,19 +2,25 @@ import { Elysia, t } from "elysia";
 import confessionsHandler from "./confessions";
 import reviewHandler from "./review.ts";
 
+const apiKey = process.env.API_KEY;
 const app = new Elysia({
 	prefix: "/api",
 })
 	.guard({
-		headers: t.Object({
-			authorization: t.String({
-				description: "API Key - DM @hna for one! Only for CRT.",
-			}),
-		}),
+		detail: {
+			security: [{ apiAuth: [] }],
+		},
 	})
 	.onBeforeHandle(({ headers, status }) => {
-		const auth = headers.authorization;
-		if (auth !== `Bearer ${process.env.API_KEY}`) {
+		const header = headers["authorization"]?.split(" ");
+		if (!header) {
+			return status(401, { error: "unauthorized" });
+		}
+		const auth = header[1]?.trim();
+		if (!auth || auth.length !== apiKey.length) {
+			return status(401, { error: "unauthorized" });
+		}
+		if (!crypto.timingSafeEqual(Buffer.from(apiKey), Buffer.from(auth))) {
 			return status(401, { error: "unauthorized" });
 		}
 	});

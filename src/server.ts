@@ -15,6 +15,15 @@ new Elysia()
 	.use(
 		openapi({
 			documentation: {
+				components: {
+					securitySchemes: {
+						apiAuth: {
+							bearerFormat: "API Key",
+							scheme: "bearer",
+							type: "http",
+						},
+					},
+				},
 				info: {
 					contact: {
 						email: "contact@sahana.dev",

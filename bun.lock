@@ -12,7 +12,6 @@
       "devDependencies": {
         "@biomejs/biome": "latest",
         "@types/bun": "latest",
-        "typescript": "latest",
       },
     },
   },
