@@ -1,7 +1,7 @@
 import { openapi } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
 import { redis } from "bun";
-import { Elysia } from "elysia";
+import { Elysia, file } from "elysia";
 import api from "@/api";
 import events from "@/events";
 import { initializeDatabase, initializeRedis } from "@/utils/db/init";
@@ -46,5 +46,6 @@ new Elysia()
 	)
 	.use(events)
 	.use(api)
-	.get("/", "Up!")
+	.get("/favicon.ico", file("public/favicon.ico"))
+	.get("/", ({ redirect }) => redirect("/docs"))
 	.listen({ hostname: "0.0.0.0", port: 3000 });
