@@ -47,6 +47,7 @@ const app = new Elysia({
 				"Review a confession: approve, reject, approve with trigger warning, post to meta, or undo a prior decision.",
 			tags: ["confessions"],
 		},
+		parse: "json",
 	})
 	.get("/confessions", confessionsHandler, {
 		detail: {
