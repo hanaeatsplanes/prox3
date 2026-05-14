@@ -100,10 +100,16 @@ export default new Elysia({
 			return status(401, { error: "not signed", status: "error" });
 		}
 	})
-	.onError(({ error }) => {
-		if (!("code" in error) || error.code !== "VALIDATION") {
-			console.error(error);
+	.onError(({ error, path }) => {
+		if ("code" in error && error.code === "VALIDATION") {
+			const validation = error as Error & { all?: unknown };
+			console.error(`[events] VALIDATION error on ${path}:`, validation.message);
+			if (validation.all) {
+				console.error(`[events] VALIDATION details:`, JSON.stringify(validation.all, null, 2));
+			}
+			return;
 		}
+		console.error(`[events] error on ${path}:`, error);
 	})
 	.post(
 		"/events",

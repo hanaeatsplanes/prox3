@@ -89,10 +89,13 @@ export const CommandBody = t.Object({
 	user_id: t.String(),
 });
 
-const viewStateValue = t.Object({
-	type: t.String(),
-	value: t.Optional(t.String()),
-});
+const viewStateValue = t.Object(
+	{
+		type: t.String(),
+		value: t.Optional(t.Union([t.String(), t.Null()])),
+	},
+	{ additionalProperties: true }
+);
 
 export const ViewSubmissionEvent = t.Object(
 	{
