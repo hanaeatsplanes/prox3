@@ -8,7 +8,6 @@ export default async function ({
 		state?: "approved" | "rejected" | "staged";
 	};
 }) {
-	console.log({ count, state });
 	if (!count || count < 0) count = 10;
 	const result = state
 		? await sql`
