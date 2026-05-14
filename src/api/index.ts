@@ -24,7 +24,7 @@ const app = new Elysia({
 			return status(401, { error: "unauthorized" });
 		}
 	})
-	.post("/review", ({ body, status }) => reviewHandler({ body, status }), {
+	.post("/review", reviewHandler, {
 		body: t.Object({
 			decision: t.UnionEnum(["approve", "reject", "meta", "tw", "undo"], {
 				description:
@@ -48,7 +48,7 @@ const app = new Elysia({
 			tags: ["confessions"],
 		},
 	})
-	.get("/confessions", ({ query }) => confessionsHandler({ query }), {
+	.get("/confessions", confessionsHandler, {
 		detail: {
 			description: "Retrieve confessions by state",
 			tags: ["confessions"],
@@ -60,7 +60,7 @@ const app = new Elysia({
 				})
 			),
 			state: t.Optional(
-				t.UnionEnum(["approved", "rejected", "staged"], {
+				t.Union([t.Literal("approved"), t.Literal("rejected"), t.Literal("staged")], {
 					description: "Filter confessions by approval state",
 				})
 			),
