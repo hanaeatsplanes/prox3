@@ -2,7 +2,7 @@ import { openapi } from "@elysia/openapi";
 import serverTiming from "@elysia/server-timing";
 import { cors } from "@elysiajs/cors";
 import { redis } from "bun";
-import { Elysia, file } from "elysia";
+import { Elysia } from "elysia";
 import api from "@/api";
 import events from "@/events";
 import { initializeDatabase, initializeRedis } from "@/utils/db/init";
@@ -48,6 +48,6 @@ new Elysia()
 	.use(serverTiming())
 	.use(events)
 	.use(api)
-	.get("/favicon.ico", file("public/favicon.ico"))
+	.get("/favicon.ico", () => )
 	.get("/", ({ redirect }) => redirect("/docs"))
 	.listen({ hostname: "0.0.0.0", port: 3000 });

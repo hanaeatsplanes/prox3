@@ -1,6 +1,5 @@
 import type { ViewSubmissionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
-import { toggleReaction } from "@/utils/slack/middleware.ts";
 
 type PlainTextInputValue = {
 	type: "plain_text_input";
@@ -73,21 +72,21 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 				return;
 			}
 			case "react_anon": {
-				const { approvalTs, channel, reactionTs } = JSON.parse(atob(body.view.private_metadata.trim()));
-				if (!approvalTs) {
-					throw new Error("missing approval timestamp");
-				}
-				const confession = await getConfessionBy("approval_ts", approvalTs);
-				if (!confession) {
-					throw new Error("confession not found");
-				}
-				const values = body.view.state.values as ReactViewState;
-				const input = values.react?.react_input;
-				const emoji = input?.value;
-				if (!emoji) {
-					throw new Error("emoji not provided");
-				}
-				await toggleReaction(channel, emoji, reactionTs);
+				// const { approvalTs, channel, reactionTs } = JSON.parse(atob(body.view.private_metadata.trim()));
+				// if (!approvalTs) {
+				// 	throw new Error("missing approval timestamp");
+				// }
+				// const confession = await getConfessionBy("approval_ts", approvalTs);
+				// if (!confession) {
+				// 	throw new Error("confession not found");
+				// }
+				// const values = body.view.state.values as ReactViewState;
+				// const input = values.react?.react_input;
+				// const emoji = input?.value;
+				// if (!emoji) {
+				// 	throw new Error("emoji not provided");
+				// }
+				// await toggleReaction(channel, emoji, reactionTs);
 				return;
 			}
 			default: {
