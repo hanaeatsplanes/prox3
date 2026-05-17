@@ -90,7 +90,6 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 				if (!emoji) {
 					throw new Error("emoji.ts not provided");
 				}
-				console.log(`[view_submission] react_anon: emoji=${emoji} channel=${channel} ts=${reactionTs}`);
 				await toggleReaction(channel, emoji, reactionTs);
 				return;
 			}
