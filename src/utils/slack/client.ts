@@ -200,3 +200,15 @@ export async function reactionsRemove(channel: string, name: string, timestamp: 
 	);
 	return readSlackResponse(response, "reactions.remove");
 }
+
+export async function emojiList() {
+	const response = await slackFetch(
+		"https://slack.com/api/emoji.list",
+		{
+			headers: headers,
+			method: "GET",
+		},
+		"emoji.list"
+	);
+	return readSlackResponse(response, "emoji.list");
+}
