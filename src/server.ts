@@ -59,6 +59,7 @@ new Elysia()
 						text: "i am gay",
 						type: "plain_text",
 					},
+					value: "nfsdkfjamail",
 				},
 			],
 		};

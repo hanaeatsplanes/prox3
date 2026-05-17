@@ -20,7 +20,13 @@ type ReplyViewState = {
 
 type ReactViewState = {
 	react?: {
-		react_input?: PlainTextInputValue;
+		emoji_select?: {
+			type: "external_select";
+			selected_option: {
+				text: { type: "plain_text"; text: string };
+				value: string;
+			} | null;
+		};
 	};
 };
 
@@ -72,20 +78,21 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 				return;
 			}
 			case "react_anon": {
-				// const { approvalTs, channel, reactionTs } = JSON.parse(atob(body.view.private_metadata.trim()));
-				// if (!approvalTs) {
-				// 	throw new Error("missing approval timestamp");
-				// }
-				// const confession = await getConfessionBy("approval_ts", approvalTs);
-				// if (!confession) {
-				// 	throw new Error("confession not found");
-				// }
-				// const values = body.view.state.values as ReactViewState;
-				// const input = values.react?.react_input;
-				// const emoji = input?.value;
-				// if (!emoji) {
-				// 	throw new Error("emoji not provided");
-				// }
+				const { approvalTs, channel, reactionTs } = JSON.parse(atob(body.view.private_metadata.trim()));
+				if (!approvalTs) {
+					throw new Error("missing approval timestamp");
+				}
+				const values = body.view.state.values as ReactViewState;
+				const emoji = values.react?.emoji_select?.selected_option?.value;
+				if (!emoji) {
+					throw new Error("emoji not provided");
+				}
+				console.log({
+					approvalTs,
+					channel,
+					emoji,
+					reactionTs,
+				});
 				// await toggleReaction(channel, emoji, reactionTs);
 				return;
 			}

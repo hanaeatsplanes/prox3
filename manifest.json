@@ -94,7 +94,8 @@
     },
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://prox3.sahana.dev/slack/events"
+      "request_url": "https://prox3.sahana.dev/slack/events",
+      "message_menu_options_url": "https://prox3.sahana.dev/slack/emoji"
     },
     "org_deploy_enabled": false,
     "socket_mode_enabled": false,
