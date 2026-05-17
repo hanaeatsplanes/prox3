@@ -1,4 +1,4 @@
-import { Elysia } from "elysia";
+import { Elysia, type status as TypeStatus } from "elysia";
 import { errorMessage } from "@/config/language.ts";
 import commandHandler from "@/events/commandHandler.ts";
 import eventHandler from "@/events/eventHandler.ts";
@@ -36,9 +36,6 @@ function onFail(body: SlackInboundRequest, error: Error) {
 	}
 
 	switch (body.type) {
-		case "url_verification": {
-			return { challenge: body.challenge };
-		}
 		case "event_callback": {
 			if (body.event.type === "message") {
 				void chatPostEphemeral(body.event.channel, body.event.user, errorMessage(rayId, message)).catch(
@@ -98,11 +95,24 @@ export default new Elysia({
 			verified: await verifySlackRequest(timestamp, slackSignature, store.rawBody),
 		};
 	})
-	.onBeforeHandle(({ verified, status }) => {
-		if (!verified) {
-			return status(401, { error: "not signed", status: "error" });
+	.onBeforeHandle(
+		({ verified, status, body }: { verified: boolean; status: typeof TypeStatus; body: unknown }) => {
+			if (!verified) {
+				return status(401, { error: "not signed", status: "error" });
+			}
+			if (
+				typeof body === "object" &&
+				body !== null &&
+				"type" in body &&
+				body.type === "url_verification" &&
+				"challenge" in body
+			) {
+				return {
+					challenge: body.challenge ?? "",
+				};
+			}
 		}
-	})
+	)
 	.onError(({ error, path }) => {
 		if ("code" in error && error.code === "VALIDATION") {
 			return;
