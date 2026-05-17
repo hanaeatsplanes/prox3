@@ -15,11 +15,10 @@ async function slackFetch(url: string, options: RequestInit, endpoint: string): 
 		if (response.status === 429) {
 			const retryAfter = parseInt(response.headers.get("Retry-After") || "1", 10);
 			if (attempt < maxRetries) {
-				const backoffMs = (retryAfter + 2 ** attempt) * 1000;
 				console.warn(
-					`[slack] ${endpoint} rate limited, retrying after ${backoffMs / 1000}s (attempt ${attempt + 1}/${maxRetries})`
+					`[slack] ${endpoint} rate limited, retrying after ${retryAfter / 1000}s (attempt ${attempt + 1}/${maxRetries})`
 				);
-				await new Promise((resolve) => setTimeout(resolve, backoffMs));
+				await new Promise((resolve) => setTimeout(resolve, retryAfter));
 				attempt++;
 			} else {
 				return response;
@@ -163,8 +162,8 @@ export async function viewsOpen(triggerId: string, view: { callback_id: string }
 		},
 		"views.open"
 	);
-	const result = await readSlackResponse(response, "views.open");
-	return result;
+
+	return await readSlackResponse(response, "views.open");
 }
 
 export async function reactionsAdd(channel: string, name: string, timestamp: string) {
@@ -210,5 +209,7 @@ export async function emojiList() {
 		},
 		"emoji.list"
 	);
-	return readSlackResponse(response, "emoji.list");
+	const data = await readSlackResponse(response, "emoji.list");
+	if (!data.ok || data.emoji === undefined) return {};
+	return data.emoji;
 }

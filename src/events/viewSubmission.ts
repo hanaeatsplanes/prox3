@@ -88,7 +88,7 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 				const values = body.view.state.values as ReactViewState;
 				const emoji = values.react?.emoji_select?.selected_option?.value;
 				if (!emoji) {
-					throw new Error("emoji not provided");
+					throw new Error("emoji.ts not provided");
 				}
 				console.log(`[view_submission] react_anon: emoji=${emoji} channel=${channel} ts=${reactionTs}`);
 				await toggleReaction(channel, emoji, reactionTs);

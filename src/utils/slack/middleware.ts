@@ -3,6 +3,7 @@ import type { ConfessionChannel } from "@/models/channels.ts";
 import type {
 	BlockActionEvent,
 	CommandBody,
+	EmojiSuggestPayload,
 	MessageActionEvent,
 	MessageIMEvent,
 	SlackInboundRequest,
@@ -10,7 +11,13 @@ import type {
 	ViewClosedEvent,
 	ViewSubmissionEvent,
 } from "@/models/event.ts";
-import { conversationsReplies, reactionsAdd, reactionsRemove } from "@/utils/slack/client.ts";
+import { cacheEmojiList, getCachedEmojiList } from "@/utils/db/emoji.ts";
+import {
+	conversationsReplies,
+	emojiList,
+	reactionsAdd,
+	reactionsRemove,
+} from "@/utils/slack/client.ts";
 
 export async function verifySlackRequest(
 	timestamp: string,
@@ -67,7 +74,8 @@ export function extractEvent(
 			| ViewClosedEvent
 			| ViewSubmissionEvent
 			| MessageIMEvent
-			| MessageActionEvent;
+			| MessageActionEvent
+			| EmojiSuggestPayload;
 	}
 	console.error(`[middleware] unsupported content-type: ${contentType}`);
 	throw new Error("not able to parse");
@@ -141,5 +149,6 @@ export async function getEmojiList(): Promise<
 	const api = await emojiList();
 	if (!api) return [];
 	const names = Object.keys(api);
+	await cacheEmojiList(names);
 	return names.map(stringToOption);
 }

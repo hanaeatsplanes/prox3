@@ -5,7 +5,6 @@ import { redis } from "bun";
 import { Elysia } from "elysia";
 import api from "@/api";
 import events from "@/events";
-import emojiSuggest from "@/events/emojiSuggest.ts";
 import { initializeDatabase, initializeRedis } from "@/utils/db/init";
 
 await redis.connect();
@@ -48,7 +47,6 @@ new Elysia()
 	)
 	.use(serverTiming())
 	.use(events)
-	.use(emojiSuggest)
 	.use(api)
 	.get("/", ({ redirect }) => redirect("/docs"))
 	.listen({ hostname: "0.0.0.0", port: 3000 });

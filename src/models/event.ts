@@ -9,6 +9,7 @@ export type ViewClosedEvent = typeof ViewClosedEvent.static;
 export type MessageActionEvent = typeof MessageActionEvent.static;
 export type SlackEventBody = typeof SlackEventBody.static;
 export type SlackInboundRequest = typeof SlackInboundRequest.static;
+export type EmojiSuggestPayload = typeof EmojiSuggestPayload.static;
 
 export const SlackURLVerification = t.Object({
 	challenge: t.String(),
@@ -80,14 +81,6 @@ export const CommandBody = t.Object({
 	user_id: t.String(),
 });
 
-const viewStateValue = t.Object(
-	{
-		type: t.String(),
-		value: t.Optional(t.Union([t.String(), t.Null()])),
-	},
-	{ additionalProperties: true }
-);
-
 export const ViewSubmissionEvent = t.Object(
 	{
 		type: t.Literal("view_submission"),
@@ -102,7 +95,19 @@ export const ViewSubmissionEvent = t.Object(
 				private_metadata: t.String(),
 				state: t.Object(
 					{
-						values: t.Record(t.String(), t.Record(t.String(), viewStateValue)),
+						values: t.Record(
+							t.String(),
+							t.Record(
+								t.String(),
+								t.Object(
+									{
+										type: t.String(),
+										value: t.Optional(t.Union([t.String(), t.Null()])),
+									},
+									{ additionalProperties: true }
+								)
+							)
+						),
 					},
 					{ additionalProperties: true }
 				),
@@ -171,4 +176,12 @@ export const SlackEventBody = t.Union([
 	MessageActionEvent,
 ]);
 
-export const SlackInboundRequest = t.Union([SlackEventBody, CommandBody]);
+export const EmojiSuggestPayload = t.Object(
+	{
+		type: t.Literal("external_select"),
+		value: t.String(),
+	},
+	{ additionalProperties: true }
+);
+
+export const SlackInboundRequest = t.Union([SlackEventBody, CommandBody, EmojiSuggestPayload]);

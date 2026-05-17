@@ -47,40 +47,18 @@
   },
   "oauth_config": {
     "scopes": {
-      "user": [
-        "canvases:read",
-        "canvases:write",
-        "chat:write",
-        "groups:history",
-        "im:history",
-        "mpim:history",
-        "search:read.files",
-        "search:read.im",
-        "search:read.mpim",
-        "search:read.private"
-      ],
-      "user_optional": [
-        "canvases:read",
-        "canvases:write",
-        "chat:write",
-        "groups:history",
-        "im:history",
-        "mpim:history",
-        "search:read.files",
-        "search:read.im",
-        "search:read.mpim",
-        "search:read.private"
-      ],
       "bot": [
-        "groups:history",
+        "reactions:read",
+        "channels:history",
+        "channels:join",
         "chat:write",
         "commands",
+        "groups:history",
         "im:history",
         "im:read",
         "im:write",
         "reactions:write",
-        "channels:history",
-        "channels:join"
+        "emoji:read"
       ]
     },
     "pkce_enabled": false

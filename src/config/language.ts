@@ -255,7 +255,7 @@ export const reactModal = (approvalTs: string, reactionTs: string, channel: stri
 				action_id: "emoji_select",
 				min_query_length: 2,
 				placeholder: {
-					text: "Pick an emoji",
+					text: "Pick an emoji.ts",
 					type: "plain_text",
 				},
 				type: "external_select",

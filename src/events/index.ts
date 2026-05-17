@@ -1,8 +1,14 @@
 import { Elysia, type status as TypeStatus } from "elysia";
 import { errorMessage } from "@/config/language.ts";
 import commandHandler from "@/events/command.ts";
+import emojiSuggest from "@/events/emojiSuggest.ts";
 import eventHandler from "@/events/event.ts";
-import { CommandBody, SlackEventBody, type SlackInboundRequest } from "@/models/event.ts";
+import {
+	CommandBody,
+	EmojiSuggestPayload,
+	SlackEventBody,
+	type SlackInboundRequest,
+} from "@/models/event.ts";
 import { chatPostEphemeral, chatPostMessage } from "@/utils/slack/client.ts";
 import { extractEvent, verifySlackRequest } from "@/utils/slack/middleware.ts";
 
@@ -135,5 +141,14 @@ export default new Elysia({
 		},
 		{
 			body: CommandBody,
+		}
+	)
+	.post(
+		"/emoji",
+		async ({ body }) => {
+			return await emojiSuggest(body.value);
+		},
+		{
+			body: EmojiSuggestPayload,
 		}
 	);
