@@ -178,7 +178,7 @@ export const SlackEventBody = t.Union([
 
 export const EmojiSuggestPayload = t.Object(
 	{
-		type: t.Literal("external_select"),
+		type: t.Literal("block_suggestion"),
 		value: t.String(),
 	},
 	{ additionalProperties: true }
