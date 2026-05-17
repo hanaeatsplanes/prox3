@@ -115,3 +115,31 @@ export async function toggleReaction(channel: string, name: string, timestamp: s
 		}
 	}
 }
+
+const stringToOption = (val: string) => {
+	return {
+		text: {
+			text: `:${val}: ${val}`,
+			type: "plain_text" as const,
+		},
+		value: val,
+	};
+};
+export async function getEmojiList(): Promise<
+	{
+		text: {
+			type: "plain_text";
+			text: string;
+		};
+		value: string;
+	}[]
+> {
+	const cache = await getCachedEmojiList();
+	if (cache.length !== 0) {
+		return cache.map(stringToOption);
+	}
+	const api = await emojiList();
+	if (!api) return [];
+	const names = Object.keys(api);
+	return names.map(stringToOption);
+}
