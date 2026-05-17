@@ -2,6 +2,7 @@ export type SlackApiResponse = {
 	ok: boolean;
 	error?: string;
 	ts?: string;
+	emoji?: Record<string, string>;
 };
 
 export type ConversationRepliesResponse =
