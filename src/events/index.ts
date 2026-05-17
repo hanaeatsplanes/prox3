@@ -36,6 +36,9 @@ function onFail(body: SlackInboundRequest, error: Error) {
 	}
 
 	switch (body.type) {
+		case "url_verification": {
+			return { challenge: body.challenge };
+		}
 		case "event_callback": {
 			if (body.event.type === "message") {
 				void chatPostEphemeral(body.event.channel, body.event.user, errorMessage(rayId, message)).catch(

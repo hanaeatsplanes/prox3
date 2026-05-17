@@ -48,6 +48,5 @@ new Elysia()
 	.use(serverTiming())
 	.use(events)
 	.use(api)
-	.get("/favicon.ico", () => )
 	.get("/", ({ redirect }) => redirect("/docs"))
 	.listen({ hostname: "0.0.0.0", port: 3000 });
