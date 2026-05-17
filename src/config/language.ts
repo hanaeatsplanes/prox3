@@ -252,9 +252,13 @@ export const reactModal = (approvalTs: string, reactionTs: string, channel: stri
 		{
 			block_id: "react",
 			element: {
-				action_id: "react_input",
-				multiline: true,
-				type: "plain_text_input",
+				action_id: "emoji_select",
+				min_query_length: 2,
+				placeholder: {
+					text: "Pick an emoji",
+					type: "plain_text",
+				},
+				type: "external_select",
 			},
 			label: {
 				text: "React to Message",

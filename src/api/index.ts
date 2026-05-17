@@ -13,7 +13,7 @@ const app = new Elysia({
 	})
 	.onBeforeHandle(({ headers, status }) => {
 		const header = headers["authorization"]?.split(" ");
-		if (!header) {
+		if (!header || header[0] !== "Bearer") {
 			return status(401, { error: "unauthorized" });
 		}
 		const auth = header[1]?.trim();

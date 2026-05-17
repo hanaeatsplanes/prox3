@@ -1,8 +1,8 @@
-import blockActionHandler from "@/events/blockActionHandler.ts";
-import dmHandler from "@/events/dmHandler.ts";
-import messageActionHandler from "@/events/messageActionHandler.ts";
-import viewClosedHandler from "@/events/viewClosedHandler.ts";
-import viewSubmissionHandler from "@/events/viewSubmissionHandler.ts";
+import blockActionHandler from "@/events/blockAction.ts";
+import dmHandler from "@/events/dm.ts";
+import messageActionHandler from "@/events/messageAction.ts";
+import viewClosedHandler from "@/events/viewClosed.ts";
+import viewSubmissionHandler from "@/events/viewSubmission.ts";
 import type {
 	BlockActionEvent,
 	MessageActionEvent,

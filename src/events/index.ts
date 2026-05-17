@@ -1,7 +1,7 @@
 import { Elysia, type status as TypeStatus } from "elysia";
 import { errorMessage } from "@/config/language.ts";
-import commandHandler from "@/events/commandHandler.ts";
-import eventHandler from "@/events/eventHandler.ts";
+import commandHandler from "@/events/command.ts";
+import eventHandler from "@/events/event.ts";
 import { CommandBody, SlackEventBody, type SlackInboundRequest } from "@/models/event.ts";
 import { chatPostEphemeral, chatPostMessage } from "@/utils/slack/client.ts";
 import { extractEvent, verifySlackRequest } from "@/utils/slack/middleware.ts";
