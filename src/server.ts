@@ -49,4 +49,18 @@ new Elysia()
 	.use(events)
 	.use(api)
 	.get("/", ({ redirect }) => redirect("/docs"))
+	.post("/slack/emoji", ({ body }) => {
+		console.log("recieved emoji pick");
+		console.log(body);
+		return {
+			options: [
+				{
+					text: {
+						text: "i am gay",
+						type: "plain_text",
+					},
+				},
+			],
+		};
+	})
 	.listen({ hostname: "0.0.0.0", port: 3000 });
