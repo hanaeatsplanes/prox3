@@ -146,7 +146,9 @@ export default new Elysia({
 	.post(
 		"/emoji",
 		async ({ body }) => {
-			return await emojiSuggest(body.value);
+			const response = await emojiSuggest(body.value);
+			console.log(response);
+			return response;
 		},
 		{
 			body: EmojiSuggestPayload,
