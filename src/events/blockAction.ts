@@ -2,38 +2,36 @@ import { twModal } from "@/config/language.ts";
 import { Confession } from "@/models/confession.ts";
 import type { BlockActionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
-import { clearLock, clearUndoLock, isLocked, isTwLocked, isUndoLocked } from "@/utils/db/lock.ts";
+import { acquireLock, releaseLock } from "@/utils/db/lock.ts";
 import { chatDelete, chatUpdate, conversationsReplies, viewsOpen } from "@/utils/slack/client.ts";
 
 export default async function (body: BlockActionEvent) {
-	try {
-		const action = body.actions[0];
-		if (!action) {
-			throw new Error("no action found");
-		}
-		const { container } = body;
-		const ts = container.message_ts;
-		const channelId = container.channel_id;
-		if (!channelId) {
-			throw new Error(`missing channel for action: ${action.action_id}`);
-		}
+	const action = body.actions[0];
+	if (!action) {
+		throw new Error("no action found");
+	}
+	const { container } = body;
+	const ts = container.message_ts;
+	const channelId = container.channel_id;
+	if (!channelId) {
+		throw new Error(`missing channel for action: ${action.action_id}`);
+	}
 
-		if (action.action_id === "approve:tw") {
-			if (await isTwLocked(ts)) {
-				return;
-			}
+	if (!(await acquireLock(ts))) {
+		return;
+	}
+
+	if (action.action_id === "approve:tw") {
+		try {
 			await viewsOpen(body.trigger_id, twModal(ts));
-			return;
+		} catch (err) {
+			await releaseLock(ts);
+			throw new Error(`button click failed: ${err instanceof Error ? err.message : `${err}`}`);
 		}
+		return;
+	}
 
-		if (action.action_id === "undo") {
-			if (await isUndoLocked(ts)) {
-				return;
-			}
-		} else if (await isLocked(ts)) {
-			return;
-		}
-
+	try {
 		switch (action.action_id) {
 			case "stage-confession": {
 				if (!container.thread_ts) {
@@ -90,14 +88,9 @@ export default async function (body: BlockActionEvent) {
 				throw new Error(`unknown action: ${action.action_id}`);
 			}
 		}
-
-		if (body.actions[0]?.action_id === "undo") {
-			await clearUndoLock(ts);
-		} else {
-			await clearLock(ts);
-		}
 	} catch (err) {
-		const message = err instanceof Error ? err.message : "unknown error";
-		throw new Error(`button click failed: ${message}`);
+		throw new Error(`button click failed: ${err instanceof Error ? err.message : `${err}`}`);
+	} finally {
+		await releaseLock(ts);
 	}
 }

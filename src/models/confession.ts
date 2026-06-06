@@ -2,6 +2,7 @@ import {
 	approvalMessage,
 	logMessage,
 	reviewedMessage,
+	selfReviewedMessage,
 	stagingMessage,
 	undoneConfession,
 } from "@/config/language.ts";
@@ -70,9 +71,31 @@ export class Confession {
 		await this.updateDB();
 	}
 
+	async selfReject() {
+		if (!this.stagingTs) {
+			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON REJECTION");
+		}
+		if (this.state !== "staged") {
+			await this.undo(process.env.SLACK_USER_ID);
+		}
+		this.state = "rejected";
+		this.reviewer = process.env.SLACK_USER_ID;
+		await Promise.all([
+			chatUpdate(
+				this.stagingTs,
+				process.env.CONFESSIONS_REVIEW,
+				selfReviewedMessage(this.id, this.confession)
+			),
+			this.updateDB(),
+		]);
+	}
+
 	async reject(reviewer: string) {
 		if (!this.stagingTs) {
 			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON REJECTION");
+		}
+		if (this.state !== "staged") {
+			return;
 		}
 		this.state = "rejected";
 		this.reviewer = reviewer;
@@ -89,6 +112,9 @@ export class Confession {
 	async approve(channel: ConfessionChannel, reviewer: string) {
 		if (!this.stagingTs) {
 			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
+		}
+		if (this.state !== "staged") {
+			return;
 		}
 		this.state = "approved";
 		this.channel = channel;
@@ -113,6 +139,9 @@ export class Confession {
 	async tw(reviewer: string, tw: string) {
 		if (!this.stagingTs) {
 			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS ON APPROVAL");
+		}
+		if (this.state !== "staged") {
+			return;
 		}
 		this.state = "approved";
 		this.channel = process.env.CONFESSIONS;
@@ -140,9 +169,12 @@ export class Confession {
 		if (this.state !== "approved" && this.state !== "rejected") {
 			return;
 		}
-
 		if (!this.stagingTs || !this.reviewer) {
 			throw new Error("THIS SHOULD NEVER HAPPEN: NO STAGING TS OR REVIEWER ON UNDO");
+		}
+		if (this.reviewer === process.env.SLACK_USER_ID) {
+			// note: reviewer is NYATTTTT this.reviewer......... grr
+			throw new Error("Self-rejected confession trying to be undone: not allowed");
 		}
 		let promises: Promise<void>[] = [Promise.resolve()];
 		if (this.channel && this.approvalTs) {
@@ -171,6 +203,7 @@ export class Confession {
 				process.env.CONFESSIONS_REVIEW,
 				stagingMessage(this.id, this.confession)
 			),
+			chatPostMessage(process.env.CONFESSIONS_LOG, logMessage(this.id, "undone")),
 			chatPostMessage(
 				process.env.CONFESSIONS_REVIEW,
 				undoneConfession(status, previousReviewer, this.id, reviewer),

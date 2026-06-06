@@ -17,5 +17,6 @@ declare namespace NodeJS {
 		SLACK_BOT_ID: string;
 		SLACK_SIGNING_SECRET: string;
 		SLACK_TOKEN: string;
+		SLACK_USER_ID: string;
 	}
 }

@@ -70,6 +70,11 @@ export async function getStagedConfessions() {
 }
 
 export async function putConfession(confession: Confession) {
+	const query = await sql`
+		SELECT staging_ts, approval_ts FROM confessions WHERE id = ${confession.id}
+	`;
+	const prev = query?.[0];
+
 	await sql`
 	INSERT INTO confessions (
 		id,
@@ -101,9 +106,19 @@ export async function putConfession(confession: Confession) {
 		reviewer = ${confession.reviewer}
 	`;
 	const s = JSON.stringify(confession);
-	await redis.setex(`confession:id:${confession.id}`, 60 * 10, s);
-	await redis.setex(`confession:staging_ts:${confession.stagingTs}`, 60 * 10, s);
-	if (confession.approvalTs) {
-		await redis.setex(`confession:approval_ts:${confession.approvalTs}`, 60 * 10, s);
+	const ops: Promise<unknown>[] = [redis.setex(`confession:id:${confession.id}`, 60 * 10, s)];
+
+	if (prev?.staging_ts && prev.staging_ts !== confession.stagingTs) {
+		ops.push(redis.del(`confession:staging_ts:${prev.staging_ts}`));
 	}
+	if (prev?.approval_ts && prev.approval_ts !== confession.approvalTs) {
+		ops.push(redis.del(`confession:approval_ts:${prev.approval_ts}`));
+	}
+	if (confession.stagingTs) {
+		ops.push(redis.setex(`confession:staging_ts:${confession.stagingTs}`, 600, s));
+	}
+	if (confession.approvalTs) {
+		ops.push(redis.setex(`confession:approval_ts:${confession.approvalTs}`, 600, s));
+	}
+	await Promise.all(ops);
 }

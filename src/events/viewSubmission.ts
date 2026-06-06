@@ -1,5 +1,6 @@
 import type { ViewSubmissionEvent } from "@/models/event.ts";
 import { getConfessionBy } from "@/utils/db/confession.ts";
+import { releaseLock } from "@/utils/db/lock.ts";
 import { toggleReaction } from "@/utils/slack/middleware.ts";
 
 type PlainTextInputValue = {
@@ -41,22 +42,26 @@ async function viewSubmissionHandler(body: ViewSubmissionEvent) {
 					throw new Error("missing staging timestamp");
 				}
 
-				const confession = await getConfessionBy("staging_ts", stagingTs);
-				console.log(`[view_submission] approve:tw: confession found=${!!confession}`);
-				if (!confession) {
-					throw new Error("confession not found");
-				}
+				try {
+					const confession = await getConfessionBy("staging_ts", stagingTs);
+					console.log(`[view_submission] approve:tw: confession found=${!!confession}`);
+					if (!confession) {
+						throw new Error("confession not found");
+					}
 
-				const values = body.view.state.values as ApproveTwViewState;
-				console.log(`[view_submission] approve:tw: values=${JSON.stringify(values)}`);
-				const input = values.tw?.approve_tw_input;
-				const tw = input?.value;
-				console.log(`[view_submission] approve:tw: tw=${tw}`);
-				if (!tw) {
-					throw new Error("trigger warning text not provided");
-				}
+					const values = body.view.state.values as ApproveTwViewState;
+					console.log(`[view_submission] approve:tw: values=${JSON.stringify(values)}`);
+					const input = values.tw?.approve_tw_input;
+					const tw = input?.value;
+					console.log(`[view_submission] approve:tw: tw=${tw}`);
+					if (!tw) {
+						throw new Error("trigger warning text not provided");
+					}
 
-				await confession.tw(body.user.id, tw.trim() || tw);
+					await confession.tw(body.user.id, tw.trim() || tw);
+				} finally {
+					await releaseLock(stagingTs);
+				}
 				return;
 			}
 			case "reply_anon": {

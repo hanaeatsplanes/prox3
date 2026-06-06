@@ -1,5 +1,5 @@
 import type { ViewClosedEvent } from "@/models/event.ts";
-import { clearLock } from "@/utils/db/lock.ts";
+import { releaseLock } from "@/utils/db/lock.ts";
 
 export default async function viewClosedHandler(body: ViewClosedEvent) {
 	switch (body.view.callback_id) {
@@ -9,7 +9,7 @@ export default async function viewClosedHandler(body: ViewClosedEvent) {
 				return;
 			}
 
-			return await clearLock(stagingTs);
+			return await releaseLock(stagingTs);
 		}
 	}
 }

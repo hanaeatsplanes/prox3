@@ -8,7 +8,7 @@
 Prox3 is a Slack Bot for creating anonymous confessions, made using:
 * Bun
 * ElysiaJS
-* Postgres and Redis
+* Postgres & Redis
 
 ## Deploying
 
@@ -21,7 +21,7 @@ Use the [manifest.json](/manifest.json) to have a template, but be sure to manua
 ```bash
 git clone https://github.com/hanaeatsplanes/prox3
 cd prox3
-cp .env.example
+cp .env.example .env
 ```
 
 Fill out your `.env` with the correct values.
@@ -33,7 +33,7 @@ bun run build
 bun run start
 ```
 
-and test --- go to http://localhost:3000 or whatever URL its on and you should get "Up!"
+and test --- go to http://localhost:3000, and you should get redirected to the API Documentation page.
 
 ## Usage
 

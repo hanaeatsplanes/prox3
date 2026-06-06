@@ -8,7 +8,10 @@ export const approvalMessage = (id: number, confession: string) => [
 	},
 ];
 
-export const logMessage = (id: number, status: "approved" | "approved for meta" | "rejected") => [
+export const logMessage = (
+	id: number,
+	status: "approved" | "approved for meta" | "rejected" | "undone"
+) => [
 	{
 		text: {
 			text: `Confession *#\u2060${id}* has been *${status}*`,
@@ -17,6 +20,34 @@ export const logMessage = (id: number, status: "approved" | "approved for meta" 
 		type: "section",
 	},
 ];
+
+export const selfReviewedMessage = (id: number, confession: string) => {
+	const epoch = Math.floor(Date.now() / 1000);
+	const timestamp = `<!date^${epoch}^{date_short_pretty} at {time}|${new Date().toISOString()}>`;
+	return [
+		{
+			text: {
+				text: `(staging) *${id}* ${confession}`,
+				type: "mrkdwn",
+			},
+			type: "section",
+		},
+		{
+			text: {
+				text: `Rejected by <@${process.env.SLACK_USER_ID}> at ${timestamp}`,
+				type: "mrkdwn",
+			},
+			type: "section",
+		},
+		{
+			text: {
+				text: "This decision cannot be undone, as it has been made by the OP.",
+				type: "mrkdwn",
+			},
+			type: "section",
+		},
+	];
+};
 
 export const reviewedMessage = (
 	id: number,

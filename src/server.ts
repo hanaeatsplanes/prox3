@@ -1,7 +1,7 @@
 import { openapi } from "@elysia/openapi";
 import serverTiming from "@elysia/server-timing";
 import { cors } from "@elysiajs/cors";
-import { redis } from "bun";
+import { redis, sql } from "bun";
 import { Elysia } from "elysia";
 import api from "@/api";
 import events from "@/events";
@@ -11,7 +11,7 @@ await redis.connect();
 await initializeDatabase();
 await initializeRedis();
 
-new Elysia()
+const app = new Elysia()
 	.use(cors())
 	.use(
 		openapi({
@@ -50,3 +50,14 @@ new Elysia()
 	.use(api)
 	.get("/", ({ redirect }) => redirect("/docs"))
 	.listen({ hostname: "0.0.0.0", port: 3000 });
+
+const shutdown = async () => {
+	console.log(`[worker ${process.pid}] draining`);
+	await app.stop();
+	redis.close();
+	await sql.close?.();
+	process.exit(0);
+};
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
+process.on("disconnect", shutdown);
