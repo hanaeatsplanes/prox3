@@ -11,6 +11,7 @@ export async function initializeDatabase() {
 
 export async function initializeRedis() {
 	try {
+		if (await redis.get("id")) return;
 		const result = await sql`SELECT MAX(id) as max_id FROM confessions`;
 		const maxId = result?.[0]?.max_id ?? 0;
 		await redis.set("id", `${maxId}`);
